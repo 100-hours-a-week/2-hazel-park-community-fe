@@ -17,10 +17,12 @@ body {
 }
 
 header {
-  background-color: #4CAF50;
+  display: flex;
+  background-color: #4caf50;
   color: white;
-  padding: 1rem;
-  text-align: center;
+  padding-top: 2.25rem;
+  padding-bottom: 2.25rem;
+  justify-content: center;
   height: 104px;
 }
 
@@ -34,4 +36,24 @@ footer {
   color: white;
   text-align: center;
   padding: 1rem;
+}
+
+.header-wrap {
+  width: fit-content;
+  padding-right: 40px;
+  padding-left: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8.313rem;
+}
+
+.header-text {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.header-profile-img {
+  width: 36px;
+  height: 36px;
 }
