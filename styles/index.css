@@ -4,12 +4,32 @@
 }
 
 .title-wrap {
-  padding-left: 40px;
-  padding-right: 40px;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 .title-text {
   width: 100%;
+  padding-right: 40.677vw;
+  padding-left: 40.625vw;
   font-size: 1.5rem;
   line-height: 31.2px;
+  text-wrap: nowrap;
+  text-align: center;
+}
+
+.add-post-button {
+  width: 8.625rem;
+  height: 2.438rem;
+  padding: 4px;
+  background-color: #aea0eb;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #f4f5f7;
+}
+
+.add-post-button:hover {
+  background-color: #7f6aee;
 }
