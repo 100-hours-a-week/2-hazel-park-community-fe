@@ -38,11 +38,15 @@ footer {
   padding: 1rem;
 }
 
+button {
+  cursor: pointer;
+}
+
 .header-wrap {
   width: 100%;
   height: fit-content;
-  padding-right: 43rem;
-  padding-left: 53.563rem;
+  padding-right: 35.833vw;
+  padding-left: 44.635vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -52,6 +56,7 @@ footer {
   font-size: 2rem;
   text-align: center;
   color: #000000;
+  text-wrap: nowrap;
 }
 
 .header-profile-img {
