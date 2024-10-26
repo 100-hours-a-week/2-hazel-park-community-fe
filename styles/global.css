@@ -1,0 +1,60 @@
+@import url('https://statics.goorm.io/fonts/GoormSans/v1.0.0/GoormSans.min.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Goorm Sans', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+header {
+  height: 104px;
+  padding-top: 2.25rem;
+  padding-bottom: 2.25rem;
+  background: #f4f5f7;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #000000;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+.header-wrap {
+  width: 100%;
+  height: fit-content;
+  padding-right: 43rem;
+  padding-left: 53.563rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header-text {
+  font-size: 2rem;
+  text-align: center;
+  color: #000000;
+}
+
+.header-profile-img {
+  width: auto;
+  height: 36px;
+}
