@@ -59,6 +59,7 @@
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 3px 4px 4px 0px #cccccc40;
+  cursor: pointer;
 }
 
 .post-info-wrap {
