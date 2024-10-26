@@ -1,3 +1,5 @@
+import checkCount from '../utils/check-count.js'
+
 class PostElement extends HTMLElement {
   constructor() {
     super()
@@ -25,9 +27,9 @@ class PostElement extends HTMLElement {
       {
         id: 1,
         title: '첫 번째 게시글의최대제목수수수',
-        likes: 0,
-        comments: 1,
-        views: 1,
+        likes: 1000,
+        comments: 10000,
+        views: 100000,
         updateAt: '2024-10-26 22:25:00',
         writer: 'user1',
       },
@@ -66,9 +68,9 @@ class PostElement extends HTMLElement {
                         <div class="post-info-wrap-left">
                             <div class="post-title">${post.title}</div>
                             <div class="post-wrap-detail">
-                                <div class="post-likes">좋아요 ${post.likes}</div>
-                                <div class="post-comment">댓글 ${post.comments}</div>
-                                <div class="post-views">조회수 ${post.views}</div>                        
+                                <div class="post-likes">좋아요 ${checkCount(post.likes)}</div>
+                                <div class="post-comment">댓글 ${checkCount(post.comments)}</div>
+                                <div class="post-views">조회수 ${checkCount(post.views)}</div>                        
                             </div>
                         </div>
                         <div class="post-updateAt">${post.updateAt}</div>
