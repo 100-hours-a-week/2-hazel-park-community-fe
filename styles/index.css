@@ -1,32 +1,38 @@
 .title {
-  margin-top: 2.5rem;
+  margin-top: 40px;
   text-align: center;
 }
 
 .title-wrap {
-  margin-left: 40px;
-  margin-right: 40px;
-}
-
-.title-text {
-  width: 100%;
   padding-right: 40.677vw;
   padding-left: 40.625vw;
-  font-size: 1.5rem;
-  line-height: 31.2px;
-  text-wrap: nowrap;
   text-align: center;
 }
 
+.title-text {
+  font-size: 24px;
+  line-height: 1.95rem;
+  text-wrap: nowrap;
+}
+
+.button {
+  margin-top: 24px;
+}
+
+.button-wrap {
+  padding-right: 34.583vw;
+  padding-left: 58.229vw;
+}
+
 .add-post-button {
-  width: 8.625rem;
-  height: 2.438rem;
-  padding: 4px;
+  width: 7.188vw;
+  height: 39px;
+  padding: 0.25rem;
   background-color: #aea0eb;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   border: none;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 16px;
   color: #f4f5f7;
 }
 
