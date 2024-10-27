@@ -1,9 +1,12 @@
 import checkCount from '../utils/check-count.js'
 
-const postBtn = document.getElementById('add-post-button')
-postBtn.addEventListener('click', handleClick)
+document.addEventListener('DOMContentLoaded', () => {
+  const postBtn = document.getElementById('add-post-button')
 
-function handleClick() {
+  if (postBtn) postBtn.addEventListener('click', handlePostBtn)
+})
+
+function handlePostBtn() {
   window.location.href = '/2-hazel-park-community-fe/html/make-post.html'
 }
 
@@ -61,6 +64,11 @@ class PostElement extends HTMLElement {
     ]
 
     this.shadowRoot.innerHTML = this.template(posts)
+
+    const postItems = this.shadowRoot.querySelectorAll('.post-item')
+    postItems.forEach((item) => {
+      item.addEventListener('click', handlePostItem)
+    })
   }
 
   template(posts) {
@@ -93,6 +101,10 @@ class PostElement extends HTMLElement {
         </div>
       `
   }
+}
+
+function handlePostItem() {
+  window.location.href = '/2-hazel-park-community-fe/html/post.html'
 }
 
 customElements.define('post-element', PostElement)
