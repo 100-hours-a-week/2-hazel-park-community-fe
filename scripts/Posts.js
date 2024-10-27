@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const postBtn = document.getElementById('add-post-button')
   const profileImg = document.getElementById('profile-img')
   const profileDropdown = document.getElementById('profile-dropdown')
+  const profileDropdownEditProfile = document.getElementById(
+    'profile-dropdown-edit-profile',
+  )
+  const profileDropdownEditPassword = document.getElementById(
+    'profile-dropdown-edit-password',
+  )
 
   if (postBtn) {
     postBtn.addEventListener('click', handlePostBtn)
