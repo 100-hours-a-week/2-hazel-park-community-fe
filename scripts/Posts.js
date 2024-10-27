@@ -1,5 +1,12 @@
 import checkCount from '../utils/check-count.js'
 
+const postBtn = document.getElementById('add-post-button')
+postBtn.addEventListener('click', handleClick)
+
+function handleClick() {
+  window.location.href = '/2-hazel-park-community-fe/html/make-post.html'
+}
+
 class PostElement extends HTMLElement {
   constructor() {
     super()
