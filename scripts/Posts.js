@@ -2,8 +2,25 @@ import checkCount from '../utils/check-count.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   const postBtn = document.getElementById('add-post-button')
+  const profileImg = document.getElementById('profile-img')
+  const profileDropdown = document.getElementById('profile-dropdown')
 
-  if (postBtn) postBtn.addEventListener('click', handlePostBtn)
+  if (postBtn) {
+    postBtn.addEventListener('click', handlePostBtn)
+  }
+  if (profileImg) {
+    profileImg.addEventListener('click', () => {
+      profileDropdown.style.visibility =
+        profileDropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
+    })
+  }
+  if (profileImg) {
+    document.addEventListener('click', (event) => {
+      if (!profileImg.contains(event.target)) {
+        profileDropdown.style.visibility = 'hidden'
+      }
+    })
+  }
 })
 
 function handlePostBtn() {
