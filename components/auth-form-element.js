@@ -17,7 +17,7 @@ class AuthFormElement extends HTMLElement {
         <div class="login-form-wrap">
             <form class="login-form">
                 <div class="email-wrap">
-                    <div class="input-title">이메일</div>
+                    <div class="input-title">${this.isLoginPage ? '이메일' : '이메일*'}</div>
                       <input
                         id="input-email"
                         type="email"
@@ -27,7 +27,7 @@ class AuthFormElement extends HTMLElement {
                     <div id="email-hyper-text" style="height: 1em" class="hyper-text"></div>
                 </div>
                 <div style="margin-top: 0.3em" class="password-wrap">
-                    <div class="input-title">비밀번호</div>
+                    <div class="input-title">${this.isLoginPage ? '비밀번호' : '비밀번호*'}</div>
                         <input
                         id="input-password"
                         type="password"
@@ -36,7 +36,21 @@ class AuthFormElement extends HTMLElement {
                         />
                     <div id="pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
                 </div>
-              <input id="submit" type="submit" value="${this.isLoginPage ? '로그인' : '회원가입'}" class="login-submit" />
+                ${
+                  !this.isLoginPage
+                    ? '<div style="margin-top: 0.3em" class="password-wrap">' +
+                      '<div class="input-title">비밀번호 확인*</div>' +
+                      '<input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />' +
+                      '<div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
+                      '</div>' +
+                      '<div style="margin-top: 0.3em" class="password-wrap">' +
+                      '<div class="input-title">닉네임*</div>' +
+                      '<input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />' +
+                      '<div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
+                      '</div>'
+                    : ''
+                }              
+                <input id="submit" type="submit" value="${this.isLoginPage ? '로그인' : '회원가입'}" class="login-submit" />
             </form>
         </div>
     `

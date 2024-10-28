@@ -1,0 +1,21 @@
+.signin {
+  margin-top: 14.907vh;
+  text-align: center;
+}
+
+.signin-text {
+  margin-bottom: 3.796vh;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 38.1904px;
+  text-wrap: nowrap;
+}
+
+.login {
+  margin-top: 1.111vh;
+  text-align: center;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.0444rem;
+  cursor: pointer;
+}

@@ -118,7 +118,10 @@ class headerElement extends HTMLElement {
     const currentPath = window.location.pathname
     const profileWrap = this.shadowRoot.getElementById('profile-wrap')
 
-    if (currentPath === '/2-hazel-park-community-fe/html/Log-in.html') {
+    if (
+      currentPath === '/2-hazel-park-community-fe/html/Log-in.html' ||
+      currentPath === '/2-hazel-park-community-fe/html/Sign-in.html'
+    ) {
       profileWrap.style.display = 'none'
     }
   }
