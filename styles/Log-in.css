@@ -40,6 +40,10 @@
   border-radius: 4px;
 }
 
+.input-value:focus {
+  outline: none;
+}
+
 .hyper-text {
   margin-top: 0.37vh;
   font-weight: 400;
