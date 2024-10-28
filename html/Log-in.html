@@ -3,10 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/Log-in.css" />
+    <title>Login</title>
   </head>
   <body>
     <header-element></header-element>
+    <section class="login">
+      <div class="login-text">로그인</div>
+      <div class="login-form-wrap">
+        <form class="login-form">
+          <div class="email-wrap">
+            <div class="input-title">이메일</div>
+            <input
+              type="text"
+              placeholder="이메일을 입력하세요"
+              class="input-value"
+            />
+          </div>
+          <div class="password-wrap">
+            <div class="input-title">비밀번호</div>
+            <input
+              type="password"
+              placeholder="비밀번호를 입력하세요"
+              class="input-value"
+            />
+          </div>
+          <input type="submit" value="로그인" class="login-submit" />
+        </form>
+      </div>
+    </section>
+    <section class="signIn">
+      <div id="sign-in">회원가입</div>
+    </section>
     <script src="../components/header-element.js"></script>
+    <script src="../scripts/Log-in.js"></script>
   </body>
 </html>
