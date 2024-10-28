@@ -16,7 +16,8 @@ class headerElement extends HTMLElement {
     return `
         <link rel="stylesheet" href="../styles/global.css" />
         <header>
-          <div class="header-wrap">
+          <div id="header-wrap" class="header-wrap">
+            <img id="header-back" src='../assets/back.svg' class='header-back' />
             <p class="header-text">아무 말 대잔치</p>
             <div id="profile-wrap" class="profile-wrap">
               <img
@@ -117,12 +118,18 @@ class headerElement extends HTMLElement {
   hideProfile() {
     const currentPath = window.location.pathname
     const profileWrap = this.shadowRoot.getElementById('profile-wrap')
+    const backIcon = this.shadowRoot.getElementById('header-back')
+    const headerWrap = this.shadowRoot.getElementById('header-wrap')
 
-    if (
-      currentPath === '/2-hazel-park-community-fe/html/Log-in.html' ||
-      currentPath === '/2-hazel-park-community-fe/html/Sign-in.html'
-    ) {
+    if (currentPath === '/2-hazel-park-community-fe/html/Log-in.html') {
+      backIcon.style.display = 'none'
       profileWrap.style.display = 'none'
+    } else if (currentPath === '/2-hazel-park-community-fe/html/Sign-in.html') {
+      profileWrap.style.display = 'none'
+      headerWrap.style.paddingLeft = '36.349vw'
+      headerWrap.style.paddingRight = '44.635vw'
+    } else if (currentPath === '/2-hazel-park-community-fe/html/Posts.html') {
+      backIcon.style.display = 'none'
     }
   }
 
