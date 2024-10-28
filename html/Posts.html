@@ -9,32 +9,7 @@
   </head>
   <body>
     <div id="root">
-      <header>
-        <div class="header-wrap">
-          <p class="header-text">아무 말 대잔치</p>
-          <div class="profile-wrap">
-            <img
-              id="profile-img"
-              alt="profile-img"
-              class="header-profile-img"
-            />
-            <div id="profile-dropdown" class="profile-dropdown">
-              <div id="dropdown-edit-profile" class="profile-dropdown-menu">
-                회원정보 수정
-              </div>
-              <div id="dropdown-edit-password" class="profile-dropdown-menu">
-                비밀번호 수정
-              </div>
-              <div id="dropdown-login" class="profile-dropdown-menu">
-                로그인
-              </div>
-              <div id="dropdown-logout" class="profile-dropdown-menu">
-                로그아웃
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <header-element></header-element>
       <section class="title">
         <div class="title-wrap">
           <p class="title-text">
@@ -54,6 +29,7 @@
         <post-element></post-element>
       </section>
     </div>
+    <script src="../components/header-element.js"></script>
     <script type="module" src="../components/post-element.js"></script>
     <script src="../scripts/Posts.js"></script>
   </body>

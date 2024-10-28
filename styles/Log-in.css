@@ -1,0 +1,75 @@
+.login {
+  margin-top: 24.444vh;
+  text-align: center;
+}
+
+.login-text {
+  margin-bottom: 3.796vh;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 38.1904px;
+  text-wrap: nowrap;
+}
+
+.login-form-wrap {
+  padding-right: 39.792vw;
+  padding-left: 39.792vw;
+}
+
+.login-form {
+  padding-top: 2.407vh;
+  padding-left: 0.938vw;
+  padding-right: 0.99vw;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+}
+
+.input-title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  margin-bottom: 0.417vw;
+}
+
+.input-value {
+  padding-left: 0.926vh;
+  padding-top: 0.417vw;
+  padding-bottom: 0.417vw;
+  width: 100%;
+  border: 1px solid #000000;
+  border-radius: 4px;
+}
+
+.input-value:focus {
+  outline: none;
+}
+
+.hyper-text {
+  margin-top: 0.37vh;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 0.9075rem;
+  color: #ff0000;
+  visibility: hidden;
+}
+
+.login-submit {
+  margin-top: 1vh;
+  padding-top: 0.741vh;
+  padding-bottom: 0.741vh;
+  background-color: #aea0eb;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: not-allowed;
+}
+
+.signIn {
+  margin-top: 1.111vh;
+  text-align: center;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.0444rem;
+}
