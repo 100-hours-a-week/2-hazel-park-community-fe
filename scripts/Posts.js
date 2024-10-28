@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         : '../assets/pre-profile.png'
     }
     if (profileDropdown) {
+      dropdownEditProfile.style.display = isLogin ? 'block' : 'none'
+      dropdownEditPassword.style.display = isLogin ? 'block' : 'none'
       dropdownLogin.style.display = isLogin ? 'none' : 'block'
       dropdownLogout.style.display = isLogin ? 'block' : 'none'
     }
