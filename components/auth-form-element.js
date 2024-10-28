@@ -14,8 +14,21 @@ class AuthFormElement extends HTMLElement {
   template() {
     return `
         <link rel="stylesheet" href="../styles/Log-in.css" />
+        <link rel="stylesheet" href="../styles/Sign-in.css" />
         <div class="login-form-wrap">
             <form class="login-form">
+              ${
+                !this.isLoginPage
+                  ? '<div style="margin-bottom: 2.87vh">' +
+                    '<div class="input-title">프로필 사진</div>' +
+                    '<div id="img-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
+                    '<label for="input-profile-img" class="input-profile-img-label">' +
+                    '<img src="../assets/plus.svg" class="plus-icon" />' +
+                    '</label>' +
+                    '<input type="file" id="input-profile-img" class="input-profile-img" accept="image/*" />' +
+                    '</div>'
+                  : ''
+              }
                 <div class="email-wrap">
                     <div class="input-title">${this.isLoginPage ? '이메일' : '이메일*'}</div>
                       <input

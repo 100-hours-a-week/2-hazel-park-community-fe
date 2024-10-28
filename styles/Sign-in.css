@@ -4,11 +4,41 @@
 }
 
 .signin-text {
-  margin-bottom: 3.796vh;
   font-weight: 700;
   font-size: 2rem;
   line-height: 38.1904px;
   text-wrap: nowrap;
+}
+
+.input-profile-img {
+  display: none;
+}
+
+.input-profile-img-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 149px;
+  height: 149px;
+  border-radius: 100%;
+  background-color: #c4c4c4;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.plus-icon {
+  width: 24px;
+  font-size: 2rem;
+  color: #00000;
+}
+
+.input-profile-img {
+  margin-left: 5.365vw;
+  margin-right: 5.365vw;
+  width: 149px;
+  height: 149px;
+  border-radius: 100%;
+  background-color: #c4c4c4;
 }
 
 .login {
