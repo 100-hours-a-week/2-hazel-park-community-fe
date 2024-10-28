@@ -22,7 +22,6 @@
   padding-right: 0.99vw;
   display: flex;
   flex-direction: column;
-  gap: 1.481vh;
   text-align: start;
 }
 
@@ -41,8 +40,17 @@
   border-radius: 4px;
 }
 
+.hyper-text {
+  margin-top: 0.37vh;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 0.9075rem;
+  color: #ff0000;
+  visibility: hidden;
+}
+
 .login-submit {
-  margin-top: 2.407vh;
+  margin-top: 1vh;
   padding-top: 0.741vh;
   padding-bottom: 0.741vh;
   background-color: #aea0eb;
@@ -51,6 +59,7 @@
   color: #ffffff;
   font-weight: 700;
   font-size: 14px;
+  cursor: not-allowed;
 }
 
 .signIn {
