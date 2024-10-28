@@ -96,8 +96,10 @@ class AuthFormElement extends HTMLElement {
     if (submit) {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
-        if (this.validateForm()) {
+        if (this.validateForm() === 'posts') {
           this.handleNavigation('/2-hazel-park-community-fe/html/Posts.html')
+        } else if (this.validateForm() === 'login') {
+          this.handleNavigation('/2-hazel-park-community-fe/html/Log-in.html')
         }
       })
     }
@@ -193,13 +195,13 @@ class AuthFormElement extends HTMLElement {
       if (emailCheck && pwCheck) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
-        return true
+        return 'posts'
       }
     } else {
       if (emailCheck && pwCheck && rePwCheck && nicknameCheck) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
-        return true
+        return 'login'
       }
     }
   }
