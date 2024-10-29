@@ -1,3 +1,5 @@
+import handleNavigation from '../utils/navigation.js'
+
 class AuthFormElement extends HTMLElement {
   constructor() {
     super()
@@ -97,9 +99,9 @@ class AuthFormElement extends HTMLElement {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
         if (this.validateForm() === 'posts') {
-          this.handleNavigation('/html/Posts.html')
+          handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'login') {
-          this.handleNavigation('/html/Log-in.html')
+          handleNavigation('/html/Log-in.html')
         }
       })
     }
@@ -236,10 +238,6 @@ class AuthFormElement extends HTMLElement {
     } else {
       profileHyperText.style.visibility = 'hidden'
     }
-  }
-
-  handleNavigation(url) {
-    window.location.href = url
   }
 }
 

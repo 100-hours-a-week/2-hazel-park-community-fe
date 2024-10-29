@@ -1,3 +1,5 @@
+import handleNavigation from '../utils/navigation.js'
+
 document.addEventListener('DOMContentLoaded', () => {
   const logInTxt = document.getElementById('log-in')
 
@@ -5,9 +7,5 @@ document.addEventListener('DOMContentLoaded', () => {
     logInTxt.addEventListener('click', () =>
       handleNavigation('/html/Log-in.html'),
     )
-  }
-
-  function handleNavigation(url) {
-    window.location.href = url
   }
 })

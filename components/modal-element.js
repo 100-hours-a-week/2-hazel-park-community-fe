@@ -1,3 +1,5 @@
+import handleNavigation from '../utils/navigation.js'
+
 class ModalElement extends HTMLElement {
   constructor() {
     super()
@@ -46,6 +48,7 @@ class ModalElement extends HTMLElement {
   confirmDeletion() {
     this.closeModal()
     console.log('계정 삭제 확인됨.')
+    handleNavigation('/html/Log-in.html')
   }
 }
 

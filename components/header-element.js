@@ -1,3 +1,5 @@
+import handleNavigation from '../utils/navigation.js'
+
 class headerElement extends HTMLElement {
   constructor() {
     super()
@@ -73,15 +75,15 @@ class headerElement extends HTMLElement {
     })
 
     dropdownEditProfile.addEventListener('click', () =>
-      this.handleDropdownNavigation('/html/edit-profile.html'),
+      handleNavigation('/html/edit-profile.html'),
     )
 
     dropdownEditPassword.addEventListener('click', () =>
-      this.handleDropdownNavigation('/html/edit-password.html'),
+      handleNavigation('/html/edit-password.html'),
     )
 
     dropdownLogin.addEventListener('click', () =>
-      this.handleDropdownNavigation('/html/Log-in.html'),
+      handleNavigation('/html/Log-in.html'),
     )
 
     if (dropdownLogout) {
@@ -137,10 +139,6 @@ class headerElement extends HTMLElement {
     ) {
       backIcon.style.display = 'none'
     }
-  }
-
-  handleDropdownNavigation(url) {
-    window.location.href = url
   }
 }
 

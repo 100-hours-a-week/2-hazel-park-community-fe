@@ -146,10 +146,6 @@ class EditFormElement extends HTMLElement {
       this.isEditProfilePage = false
     }
   }
-
-  handleNavigation(url) {
-    window.location.href = url
-  }
 }
 
 customElements.define('edit-form-element', EditFormElement)
