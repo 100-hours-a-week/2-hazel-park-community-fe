@@ -1,0 +1,101 @@
+.title {
+  padding-top: 2.222vh;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.post-form {
+  margin-top: 4.722vh;
+
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+}
+
+.post-form-wrap {
+  padding-right: 34.583vw;
+  padding-left: 34.583vw;
+}
+
+.input-title {
+  padding-left: 1.25vw;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.3rem;
+}
+
+.input-value {
+  margin-top: 1.481vh;
+  padding: 1.852vh 0 1.852vh 1.25vw;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.16);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+  background-color: transparent;
+}
+
+.input-value:focus {
+  outline: none;
+}
+
+.input-value-textarea {
+  padding-right: 1.25vw;
+  width: 100%;
+  height: 279px;
+  resize: none;
+}
+
+.input-file-wrap {
+  margin-top: 0.741vh;
+  padding-left: 1.25vw;
+  display: flex;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #000000;
+}
+
+.input-value-file {
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+}
+
+.input-file-label {
+  padding: 0.556vh 0.417vw 0.556vh 0.417vw;
+  background: #d9d9d9;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  line-height: 1.0444rem;
+  text-align: center;
+  text-wrap: nowrap;
+  cursor: pointer;
+}
+
+.input-file-span {
+  padding: 0.556vh 0 0.556vh 0;
+  margin-left: 0.625vw;
+  display: block;
+  line-height: 1.0444rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.make-post-submit {
+  padding-top: 0.741vh;
+  padding-bottom: 0.741vh;
+  margin: auto;
+  width: 18.49vw;
+  background-color: #aea0eb;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: not-allowed;
+}

@@ -145,6 +145,8 @@ class headerElement extends HTMLElement {
       currentPath === '/html/edit-password.html'
     ) {
       backIcon.style.display = 'none'
+    } else {
+      headerWrap.style.paddingLeft = '35.625vw'
     }
   }
 }
