@@ -16,7 +16,8 @@ class headerElement extends HTMLElement {
     return `
         <link rel="stylesheet" href="../styles/global.css" />
         <header>
-          <div class="header-wrap">
+          <div id="header-wrap" class="header-wrap">
+            <img id="header-back" src='../assets/back.svg' class='header-back' />
             <p class="header-text">아무 말 대잔치</p>
             <div id="profile-wrap" class="profile-wrap">
               <img
@@ -55,6 +56,7 @@ class headerElement extends HTMLElement {
     )
     const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
     const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
+    const backIcon = this.shadowRoot.getElementById('header-back')
 
     if (profileImg) {
       profileImg.addEventListener('click', (event) => {
@@ -71,25 +73,26 @@ class headerElement extends HTMLElement {
     })
 
     dropdownEditProfile.addEventListener('click', () =>
-      this.handleDropdownNavigation(
-        '/2-hazel-park-community-fe/html/edit-profile.html',
-      ),
+      this.handleDropdownNavigation('/html/edit-profile.html'),
     )
+
     dropdownEditPassword.addEventListener('click', () =>
-      this.handleDropdownNavigation(
-        '/2-hazel-park-community-fe/html/edit-password.html',
-      ),
+      this.handleDropdownNavigation('/html/edit-password.html'),
     )
+
     dropdownLogin.addEventListener('click', () =>
-      this.handleDropdownNavigation(
-        '/2-hazel-park-community-fe/html/Log-in.html',
-      ),
+      this.handleDropdownNavigation('/html/Log-in.html'),
     )
+
     if (dropdownLogout) {
       dropdownLogout.addEventListener('click', () => {
         this.isLogin = false
         this.updateProfileStatus()
       })
+    }
+
+    if (backIcon) {
+      backIcon.addEventListener('click', () => window.history.back())
     }
   }
 
@@ -117,9 +120,18 @@ class headerElement extends HTMLElement {
   hideProfile() {
     const currentPath = window.location.pathname
     const profileWrap = this.shadowRoot.getElementById('profile-wrap')
+    const backIcon = this.shadowRoot.getElementById('header-back')
+    const headerWrap = this.shadowRoot.getElementById('header-wrap')
 
-    if (currentPath === '/2-hazel-park-community-fe/html/Log-in.html') {
+    if (currentPath === '/html/Log-in.html') {
+      backIcon.style.display = 'none'
       profileWrap.style.display = 'none'
+    } else if (currentPath === '/html/Sign-in.html') {
+      profileWrap.style.display = 'none'
+      headerWrap.style.paddingLeft = '36.349vw'
+      headerWrap.style.paddingRight = '44.635vw'
+    } else if (currentPath === '/html/Posts.html') {
+      backIcon.style.display = 'none'
     }
   }
 
