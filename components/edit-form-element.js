@@ -59,6 +59,10 @@ class EditFormElement extends HTMLElement {
     const submit = this.shadowRoot.getElementById('submit')
     const toastMsg = document.getElementById('done-toast')
     toastMsg.style.visibility = 'hidden'
+    const deleteAccountButton = document.getElementById('delete-account')
+    if (deleteAccountButton) {
+      deleteAccountButton.addEventListener('click', () => this.openModal())
+    }
 
     if (inputNickname) {
       inputNickname.addEventListener('input', () => this.validateForm())
@@ -76,6 +80,18 @@ class EditFormElement extends HTMLElement {
         // }
       })
     }
+  }
+
+  openModal() {
+    const modalBackground = document.createElement('div')
+    modalBackground.classList.add('modal-background')
+
+    const modal = document.createElement('modal-element')
+
+    document.body.appendChild(modalBackground)
+    document.body.appendChild(modal)
+
+    modalBackground.addEventListener('click', () => this.closeModal())
   }
 
   validateForm() {
