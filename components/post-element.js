@@ -1,5 +1,4 @@
 import checkCount from '../utils/check-count.js'
-import handleNavigation from '../utils/navigation.js'
 
 class PostElement extends HTMLElement {
   constructor() {
