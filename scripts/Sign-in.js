@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (logInTxt) {
     logInTxt.addEventListener('click', () =>
-      handleNavigation('/2-hazel-park-community-fe/html/Log-in.html'),
+      handleNavigation('/html/Log-in.html'),
     )
   }
 

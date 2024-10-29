@@ -6,6 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handlePostBtn() {
-    window.location.href = '/2-hazel-park-community-fe/html/make-post.html'
+    window.location.href = '/html/make-post.html'
   }
 })

@@ -94,7 +94,7 @@ class PostElement extends HTMLElement {
 }
 
 function handlePostItem() {
-  window.location.href = '/2-hazel-park-community-fe/html/post.html'
+  window.location.href = '/html/post.html'
 }
 
 customElements.define('post-element', PostElement)

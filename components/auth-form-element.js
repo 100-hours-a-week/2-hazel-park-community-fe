@@ -97,9 +97,9 @@ class AuthFormElement extends HTMLElement {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
         if (this.validateForm() === 'posts') {
-          this.handleNavigation('/2-hazel-park-community-fe/html/Posts.html')
+          this.handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'login') {
-          this.handleNavigation('/2-hazel-park-community-fe/html/Log-in.html')
+          this.handleNavigation('/html/Log-in.html')
         }
       })
     }
@@ -219,7 +219,7 @@ class AuthFormElement extends HTMLElement {
 
   checkLocation() {
     const currentPath = window.location.pathname
-    if (currentPath === '/2-hazel-park-community-fe/html/Log-in.html') {
+    if (currentPath === '/html/Log-in.html') {
       this.isLoginPage = true
     } else {
       this.isLoginPage = false
