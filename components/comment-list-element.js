@@ -38,10 +38,27 @@ class CommentListElement extends HTMLElement {
     })
 
     deleteButtons.forEach((button, index) => {
-      button.addEventListener('click', () =>
-        this.handleDelete(comments[index].id),
-      )
+      button.addEventListener('click', () => openModal(comments[index].id))
     })
+
+    function openModal(id) {
+      const modalBackground = document.createElement('div')
+      modalBackground.classList.add('modal-background')
+
+      const modal = document.createElement('modal-element')
+      modal.setAttribute('title-text', '댓글을 삭제하시겠습니까?')
+      modal.setAttribute(
+        'description-text',
+        '삭제한 내용은 복구할 수 없습니다.',
+      )
+
+      document.body.appendChild(modalBackground)
+      document.body.appendChild(modal)
+
+      modal.onConfirm = () => location.reload()
+      modalBackground.addEventListener('click', () => this.closeModal())
+      console.log(`${id}번째 댓글이 삭제되었습니다.`)
+    }
   }
 
   template(comments) {
@@ -75,10 +92,6 @@ class CommentListElement extends HTMLElement {
 
   handleUpdate(id) {
     console.log(`댓글 ${id} 수정`)
-  }
-
-  handleDelete(id) {
-    console.log(`댓글 ${id} 삭제`)
   }
 }
 
