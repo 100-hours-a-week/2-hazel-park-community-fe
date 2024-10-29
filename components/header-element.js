@@ -20,7 +20,7 @@ class headerElement extends HTMLElement {
         <header>
           <div id="header-wrap" class="header-wrap">
             <img id="header-back" src='../assets/back.svg' class='header-back' />
-            <p class="header-text">아무 말 대잔치</p>
+            <p id="header-text" class="header-text">아무 말 대잔치</p>
             <div id="profile-wrap" class="profile-wrap">
               <img
                 id="profile-img"
@@ -48,6 +48,7 @@ class headerElement extends HTMLElement {
   }
 
   addEventListener() {
+    const headerText = this.shadowRoot.getElementById('header-text')
     const profileImg = this.shadowRoot.getElementById('profile-img')
     const profileDropdown = this.shadowRoot.getElementById('profile-dropdown')
     const dropdownEditProfile = this.shadowRoot.getElementById(
@@ -59,6 +60,12 @@ class headerElement extends HTMLElement {
     const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
     const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
     const backIcon = this.shadowRoot.getElementById('header-back')
+
+    if (headerText) {
+      headerText.addEventListener('click', () =>
+        handleNavigation('/html/Posts.html'),
+      )
+    }
 
     if (profileImg) {
       profileImg.addEventListener('click', (event) => {
