@@ -1,11 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/post.css" />
     <title>Document</title>
-</head>
-<body>
-    게시글 상세 페이지
-</body>
+  </head>
+  <body>
+    <header-element></header-element>
+    <post-element></post-element>
+    <section class="comment">
+      <article class="comment-write-article">
+        <textarea
+          name="comment"
+          id="comment"
+          placeholder="댓글을 남겨주세요!"
+          class="comment-area"
+        ></textarea>
+        <div class="comment-btn-wrap">
+          <button id="comment-button" class="comment-button">댓글 등록</button>
+        </div>
+      </article>
+      <article class="comment-list-article">
+        <comment-list-element></comment-list-element>
+      </article>
+    </section>
+    <script type="module" src="../components/header-element.js"></script>
+    <script type="module" src="../components/post-element.js"></script>
+    <script type="module" src="../components/comment-list-element.js"></script>
+    <script type="module" src="../components/modal-element.js"></script>
+  </body>
 </html>
