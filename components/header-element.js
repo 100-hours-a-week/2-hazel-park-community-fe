@@ -130,7 +130,11 @@ class headerElement extends HTMLElement {
       profileWrap.style.display = 'none'
       headerWrap.style.paddingLeft = '36.349vw'
       headerWrap.style.paddingRight = '44.635vw'
-    } else if (currentPath === '/html/Posts.html') {
+    } else if (
+      currentPath === '/html/Posts.html' ||
+      currentPath === '/html/edit-profile.html' ||
+      currentPath === '/html/edit-password.html'
+    ) {
       backIcon.style.display = 'none'
     }
   }
