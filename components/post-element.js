@@ -1,4 +1,5 @@
 import checkCount from '../utils/check-count.js'
+import handleNavigation from '../utils/navigation.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -57,7 +58,7 @@ class PostElement extends HTMLElement {
 
     const postItems = this.shadowRoot.querySelectorAll('.post-item')
     postItems.forEach((item) => {
-      item.addEventListener('click', handlePostItem)
+      item.addEventListener('click', () => handleNavigation('/html/post.html'))
     })
   }
 
@@ -91,10 +92,6 @@ class PostElement extends HTMLElement {
           </div>
         `
   }
-}
-
-function handlePostItem() {
-  window.location.href = '/2-hazel-park-community-fe/html/post.html'
 }
 
 customElements.define('post-element', PostElement)
