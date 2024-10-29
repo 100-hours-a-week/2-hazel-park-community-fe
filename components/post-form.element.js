@@ -105,9 +105,9 @@ class postFormElement extends HTMLElement {
       titleCheck = false
       titleHyperText.innerText = '제목, 내용을 모두 작성해주세요.'
       titleHyperText.style.visibility = 'visible'
-    } else if (inputTitle.value.length > 27) {
+    } else if (inputTitle.value.length >= 27) {
       titleCheck = false
-      titleHyperText.innerText = '제목은 27자 이하로 작성해주세요.'
+      titleHyperText.innerText = '제목은 26자 이하로 작성해주세요.'
       titleHyperText.style.visibility = 'visible'
       inputTitle.value = inputTitle.value.slice(0, 27)
     } else {
