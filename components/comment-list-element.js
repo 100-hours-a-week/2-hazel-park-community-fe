@@ -31,6 +31,9 @@ class CommentListElement extends HTMLElement {
     const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
     const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
+    const commentArea = document.getElementById('comment')
+    const commentButton = document.getElementById('comment-button')
+
     updateButtons.forEach((button, index) => {
       button.addEventListener('click', () =>
         this.handleUpdate(comments[index].id),
@@ -40,6 +43,20 @@ class CommentListElement extends HTMLElement {
     deleteButtons.forEach((button, index) => {
       button.addEventListener('click', () => openModal(comments[index].id))
     })
+
+    if (commentArea) {
+      commentArea.addEventListener('input', () => this.validateForm())
+    }
+
+    if (commentButton) {
+      commentButton.addEventListener('click', (event) => {
+        if (this.validateForm()) {
+          console.log('댓글 등록 완료')
+        } else {
+          console.log('등록 실패')
+        }
+      })
+    }
 
     function openModal(id) {
       const modalBackground = document.createElement('div')
@@ -92,6 +109,29 @@ class CommentListElement extends HTMLElement {
 
   handleUpdate(id) {
     console.log(`댓글 ${id} 수정`)
+  }
+
+  validateForm() {
+    const commentArea = document.getElementById('comment')
+    const submit = document.getElementById('comment-button')
+
+    if (submit) {
+      submit.style.backgroundColor = '#aea0eb'
+      submit.style.cursor = 'not-allowed'
+    }
+
+    let commentCheck = false
+
+    if (commentArea && commentArea.value.trim()) {
+      commentCheck = true
+    }
+
+    if (commentArea && commentCheck && submit) {
+      submit.style.backgroundColor = '#7f6aee'
+      submit.style.cursor = 'pointer'
+      return true
+    }
+    return false
   }
 }
 
