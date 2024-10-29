@@ -1,4 +1,5 @@
 import checkCount from '../utils/check-count.js'
+import handleNavigation from '../utils/navigation.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -8,6 +9,7 @@ class PostElement extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = this.template()
+    this.addEventListener()
   }
 
   template() {
@@ -64,6 +66,29 @@ class PostElement extends HTMLElement {
             </article>
         </section>
     `
+  }
+
+  addEventListener() {
+    const detelePost = this.shadowRoot.getElementById('button-delete')
+
+    if (detelePost) {
+      detelePost.addEventListener('click', () => this.openModal())
+    }
+  }
+
+  openModal() {
+    const modalBackground = document.createElement('div')
+    modalBackground.classList.add('modal-background')
+
+    const modal = document.createElement('modal-element')
+    modal.setAttribute('title-text', '게시글을 삭제하시겠습니까?')
+    modal.setAttribute('description-text', '삭제한 내용은 복구할 수 없습니다.')
+
+    document.body.appendChild(modalBackground)
+    document.body.appendChild(modal)
+
+    modal.onConfirm = () => handleNavigation('/html/Posts.html')
+    modalBackground.addEventListener('click', () => this.closeModal())
   }
 }
 

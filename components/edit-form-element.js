@@ -1,3 +1,5 @@
+import handleNavigation from '../utils/navigation.js'
+
 class EditFormElement extends HTMLElement {
   constructor() {
     super()
@@ -94,10 +96,13 @@ class EditFormElement extends HTMLElement {
     modalBackground.classList.add('modal-background')
 
     const modal = document.createElement('modal-element')
+    modal.setAttribute('title-text', '회원탈퇴 하시겠습니까?')
+    modal.setAttribute('description-text', '작성된 게시글과 댓글은 삭제됩니다.')
 
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
+    modal.onConfirm = () => handleNavigation('/html/Log-in.html')
     modalBackground.addEventListener('click', () => this.closeModal())
   }
 
