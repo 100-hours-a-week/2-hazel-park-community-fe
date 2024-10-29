@@ -11,10 +11,18 @@
 }
 
 .post-title-detail-wrap {
-  margin-top: 1.111vh;
-
+  margin-top: 1rem;
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.post-writer-name,
+.post-updateAt,
+.post-controll-button {
+  width: auto;
+  white-space: nowrap;
 }
 
 .post-title {
@@ -28,26 +36,22 @@
   background-color: #d9d9d9;
   border-radius: 100%;
 }
-
 .post-writer-name {
-  margin-left: 0.521vw;
-  padding: 0.741vh 0 0.741vh 0;
+  padding-left: 0.625rem;
   font-weight: 700;
   font-size: 0.9375rem;
   line-height: 1.2188rem;
 }
 
 .post-updateAt {
-  margin-left: 1.25vw;
-  padding: 0.926vh 0 0.741vh 0;
+  margin-left: 1.5rem;
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.1375rem;
 }
 
 .post-controll-button {
-  margin-left: 8.021vw;
-  padding: 0.37vh 0 0.463vh 0;
+  margin-left: auto;
   font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.4675rem;
@@ -59,4 +63,57 @@
   padding: 0.185vh 0.625vw 0.185vh 0.625vw;
   border: 1px solid #aca0eb;
   border-radius: 8px;
+  background-color: transparent;
+}
+
+.post-detail-bottom {
+  padding: 2.222vh 1.25vw 2.963vh 1.25vw;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+}
+
+.post-contents-img {
+  width: 28.333vw;
+  height: 28.333vh;
+  background-color: #d9d9d9;
+}
+
+.post-contents {
+  margin-top: 2.222vh;
+  width: 28.333vw;
+  height: fit-content;
+  font-weight: 400;
+  font-size: 0.9375rem;
+  line-height: 1.3219rem;
+}
+
+.post-interaction {
+  padding: 0 4.688vw 0 4.688vw;
+  margin-top: 2.963vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.post-interaction-box {
+  padding: 1.111vh 0 1.204vh 0;
+  min-width: 7.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background-color: #d9d9d9;
+  font-weight: 700;
+  text-align: center;
+}
+
+.post-interaction-value {
+  padding: 0;
+  font-size: 1rem;
+}
+
+.post-interaction-title {
+  margin-top: 0.0625rem;
+  font-size: 1.25rem;
 }
