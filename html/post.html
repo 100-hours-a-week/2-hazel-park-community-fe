@@ -1,11 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/post.css" />
     <title>Document</title>
-</head>
-<body>
-    게시글 상세 페이지
-</body>
+  </head>
+  <body>
+    <header-element></header-element>
+    <section class="post">
+      <div class="post-detail-top">
+        <div class="post-title">제목</div>
+        <div class="post-title-detail-wrap">
+          <div class="post-writer-img"></div>
+          <div class="post-writer-name">작성자</div>
+          <div class="post-updateAt">yyyy-mm-dd hh:mm:ss</div>
+          <div class="post-controll-button">
+            <button id="button-update" class="post-controll-button-detail">
+              수정
+            </button>
+            <button id="button-delete" class="post-controll-button-detail">
+              삭제
+            </button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>이미지</div>
+        <div>내용</div>
+        <div>상호작용</div>
+      </div>
+    </section>
+    <section class="comment">
+      <div>댓글섹션임</div>
+    </section>
+    <script type="module" src="../components/header-element.js"></script>
+  </body>
 </html>
