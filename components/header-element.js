@@ -56,6 +56,7 @@ class headerElement extends HTMLElement {
     )
     const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
     const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
+    const backIcon = this.shadowRoot.getElementById('header-back')
 
     if (profileImg) {
       profileImg.addEventListener('click', (event) => {
@@ -74,17 +75,24 @@ class headerElement extends HTMLElement {
     dropdownEditProfile.addEventListener('click', () =>
       this.handleDropdownNavigation('/html/edit-profile.html'),
     )
+
     dropdownEditPassword.addEventListener('click', () =>
       this.handleDropdownNavigation('/html/edit-password.html'),
     )
+
     dropdownLogin.addEventListener('click', () =>
       this.handleDropdownNavigation('/html/Log-in.html'),
     )
+
     if (dropdownLogout) {
       dropdownLogout.addEventListener('click', () => {
         this.isLogin = false
         this.updateProfileStatus()
       })
+    }
+
+    if (backIcon) {
+      backIcon.addEventListener('click', () => window.history.back())
     }
   }
 
