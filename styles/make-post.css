@@ -25,6 +25,15 @@
   line-height: 1.3rem;
 }
 
+.hyper-text {
+  padding-left: 0.781vw;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 0.9075rem;
+  color: #ff0000;
+  visibility: hidden;
+}
+
 .input-value {
   margin-top: 1.481vh;
   padding: 1.852vh 0 1.852vh 1.25vw;
