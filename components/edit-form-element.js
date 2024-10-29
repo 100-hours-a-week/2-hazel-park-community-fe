@@ -56,16 +56,27 @@ class EditFormElement extends HTMLElement {
 
   addEventListeners() {
     const inputNickname = this.shadowRoot.getElementById('input-nickname')
+    const inputPassword = this.shadowRoot.getElementById('input-password')
+    const inputRePassword = this.shadowRoot.getElementById('input-re-password')
     const submit = this.shadowRoot.getElementById('submit')
+
     const toastMsg = document.getElementById('done-toast')
     toastMsg.style.visibility = 'hidden'
+
     const deleteAccountButton = document.getElementById('delete-account')
+
     if (deleteAccountButton) {
       deleteAccountButton.addEventListener('click', () => this.openModal())
     }
 
     if (inputNickname) {
       inputNickname.addEventListener('input', () => this.validateForm())
+    }
+    if (inputPassword) {
+      inputPassword.addEventListener('input', () => this.validateForm())
+    }
+    if (inputRePassword) {
+      inputRePassword.addEventListener('input', () => this.validateForm())
     }
 
     if (submit) {
@@ -74,10 +85,6 @@ class EditFormElement extends HTMLElement {
         if (this.validateForm()) {
           toastMsg.style.visibility = 'visible'
         }
-        //   this.handleNavigation('/html/Posts.html')
-        // } else if (this.validateForm() === 'login') {
-        //   this.handleNavigation('/html/Log-in.html')
-        // }
       })
     }
   }
@@ -96,9 +103,14 @@ class EditFormElement extends HTMLElement {
 
   validateForm() {
     const inputNickname = this.shadowRoot.getElementById('input-nickname')
+    const inputPassword = this.shadowRoot.getElementById('input-password')
+    const inputRePassword = this.shadowRoot.getElementById('input-re-password')
+
     let nicknameHyperText = this.shadowRoot.getElementById(
       'nickname-hyper-text',
     )
+    let pwHyperText = this.shadowRoot.getElementById('pw-hyper-text')
+    let rePwHyperText = this.shadowRoot.getElementById('re-pw-hyper-text')
 
     const submit = this.shadowRoot.getElementById('submit')
     submit.style.backgroundColor = '#aea0eb'
@@ -107,24 +119,61 @@ class EditFormElement extends HTMLElement {
     if (nicknameHyperText) {
       nicknameHyperText.innerText = ''
     }
+    if (pwHyperText || rePwHyperText) {
+      pwHyperText.innerText = ''
+      rePwHyperText.innerText = ''
+    }
 
     let nicknameCheck = false
+    let pwCheck = false
+    let rePwCheck = false
 
-    if (!inputNickname.value.trim()) {
-      nicknameCheck = false
-      nicknameHyperText.innerText = '닉네임을 입력해주세요.'
-      nicknameHyperText.style.visibility = 'visible'
-    } else if (inputNickname.value.trim().length > 10) {
-      nicknameCheck = false
-      nicknameHyperText.innerText = '닉네임은 최대 10자까지 입력 가능합니다.'
-      nicknameHyperText.style.visibility = 'visible'
-    } else if (/\s/.test(inputNickname.value.trim())) {
-      nicknameCheck = false
-      nicknameHyperText.innerText = '띄어쓰기를 없애주세요.'
-      nicknameHyperText.style.visibility = 'visible'
-    } else {
-      nicknameCheck = true
-      nicknameHyperText.style.visibility = 'hidden'
+    if (inputNickname) {
+      if (!inputNickname.value.trim()) {
+        nicknameCheck = false
+        nicknameHyperText.innerText = '닉네임을 입력해주세요.'
+        nicknameHyperText.style.visibility = 'visible'
+      } else if (inputNickname.value.trim().length > 10) {
+        nicknameCheck = false
+        nicknameHyperText.innerText = '닉네임은 최대 10자까지 입력 가능합니다.'
+        nicknameHyperText.style.visibility = 'visible'
+      } else if (/\s/.test(inputNickname.value.trim())) {
+        nicknameCheck = false
+        nicknameHyperText.innerText = '띄어쓰기를 없애주세요.'
+        nicknameHyperText.style.visibility = 'visible'
+      } else {
+        nicknameCheck = true
+        nicknameHyperText.style.visibility = 'hidden'
+      }
+    }
+
+    if (inputPassword) {
+      if (!inputPassword.value.trim()) {
+        pwCheck = false
+        pwHyperText.style.visibility = 'visible'
+        pwHyperText.innerText = '*비밀번호를 입력해주세요.'
+      } else if (!this.pwValidCheck(inputPassword.value.trim())) {
+        pwCheck = false
+        pwHyperText.innerText =
+          '*비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.'
+        pwHyperText.style.visibility = 'visible'
+      } else {
+        pwCheck = true
+        pwHyperText.style.visibility = 'hidden'
+      }
+
+      if (!inputRePassword.value.trim()) {
+        rePwCheck = false
+        rePwHyperText.style.visibility = 'visible'
+        rePwHyperText.innerText = '*비밀번호를 한 번 더 입력해주세요.'
+      } else if (inputRePassword.value.trim() !== inputPassword.value.trim()) {
+        rePwCheck = false
+        rePwHyperText.style.visibility = 'visible'
+        rePwHyperText.innerText = '*비밀번호가 다릅니다.'
+      } else {
+        rePwCheck = true
+        rePwHyperText.style.visibility = 'hidden'
+      }
     }
 
     if (inputNickname) {
@@ -133,7 +182,19 @@ class EditFormElement extends HTMLElement {
         submit.style.cursor = 'pointer'
         return 'true'
       }
+    } else if (inputPassword) {
+      if (pwCheck && rePwCheck) {
+        submit.style.backgroundColor = '#7f6aee'
+        submit.style.cursor = 'pointer'
+        return 'true'
+      }
     }
+  }
+
+  pwValidCheck(value) {
+    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/.test(
+      value,
+    )
   }
 
   checkLocation() {
