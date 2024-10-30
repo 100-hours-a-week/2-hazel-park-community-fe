@@ -5,16 +5,22 @@ class postFormElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.isMakePostPage = true
+    this.postId = null
+    this.postData = null
   }
 
   connectedCallback() {
     this.checkLocation()
+    if (!this.isMakePostPage) {
+      this.loadPostData()
+    }
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
   }
 
   template() {
     return `
+        <link rel="stylesheet" href="../styles/global.css" />
         <link rel="stylesheet" href="../styles/Sign-in.css" />
         <link rel="stylesheet" href="../styles/edit-profile.css" />
         <link rel="stylesheet" href="../styles/make-post.css" />
@@ -40,15 +46,23 @@ class postFormElement extends HTMLElement {
                     '</div>' +
                     '<div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>' +
                     '</div>'
-                  : '<div style="margin-top: 0.3em" class="password-wrap">' +
-                    '<div class="input-title">비밀번호</div>' +
-                    '<input id="input-password" type="password" placeholder="비밀번호를 입력하세요" class="input-value" />' +
-                    '<div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>' +
+                  : '<div>' +
+                    '<div class="input-title">제목*</div>' +
+                    `<input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData?.post_title || ''}" />` +
+                    '<div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
                     '</div>' +
-                    '<div style="margin-top: 0.3em" class="password-wrap">' +
-                    '<div class="input-title">비밀번호 확인*</div>' +
-                    '<input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />' +
-                    '<div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
+                    '<div class="email-wrap">' +
+                    '<div class="input-title">내용*</div>' +
+                    `<textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData?.post_contents || ''}</textarea>` +
+                    '<div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
+                    '</div>' +
+                    '<div class="nickname-wrap">' +
+                    '<div class="input-title">이미지</div>' +
+                    '<div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>' +
+                    '<label for="input-nickname" class="input-file-label">파일 선택</label>' +
+                    '<span class="input-file-span">파일을 선택해주세요.</span>' +
+                    '</div>' +
+                    '<div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>' +
                     '</div>'
               }           
                 <input id="submit" type="submit" value="완료" class="make-post-submit" />
@@ -73,6 +87,9 @@ class postFormElement extends HTMLElement {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
         if (this.validateForm() === 'posts') {
+          const titleValue = inputTitle.value.trim()
+          const contentsValue = inputContents.value.trim()
+          this.saveDataInLocalStorage(titleValue, contentsValue)
           handleNavigation('/html/Posts.html')
         }
       })
@@ -137,6 +154,64 @@ class postFormElement extends HTMLElement {
       this.isMakePostPage = true
     } else {
       this.isMakePostPage = false
+    }
+  }
+
+  saveDataInLocalStorage(titleValue, contentsValue) {
+    const storedData = JSON.parse(localStorage.getItem('user'))
+    const post = {
+      post_id: 1,
+      post_title: titleValue,
+      post_writer: storedData.user_name,
+      post_updatedAt: new Date().toISOString(),
+      post_contents: contentsValue,
+      post_likes: 0,
+      post_views: 0,
+      post_comments: 0,
+    }
+
+    localStorage.setItem('post', JSON.stringify(post))
+  }
+
+  loadPostData() {
+    const urlParams = new URLSearchParams(window.location.search)
+    this.postId = Number(urlParams.get('id'))
+
+    if (!this.postId) {
+      console.error('해당 ID의 포스트를 찾을 수 없습니다.')
+      return
+    }
+
+    fetch('../data/posts.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText)
+        }
+        return response.json()
+      })
+      .then((allPosts) => {
+        this.postData = allPosts.find((post) => post.post_id === this.postId)
+        if (!this.postData) {
+          console.error('해당 ID의 포스트를 찾을 수 없습니다.')
+        } else {
+          this.renderPost()
+        }
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error)
+      })
+  }
+
+  renderPost() {
+    const inputTitle = this.shadowRoot.getElementById('input-title')
+    const inputContents = this.shadowRoot.getElementById('input-contents')
+
+    if (inputTitle) {
+      inputTitle.value = this.postData.post_title
+    }
+
+    if (inputContents) {
+      inputContents.value = this.postData.post_contents
     }
   }
 }

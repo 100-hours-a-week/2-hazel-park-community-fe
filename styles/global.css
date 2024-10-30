@@ -47,6 +47,14 @@ button {
   cursor: pointer;
 }
 
+input {
+  font-family: 'Goorm Sans', sans-serif;
+}
+
+textarea {
+  font-family: 'Goorm Sans', sans-serif;
+}
+
 .header-wrap {
   width: 100%;
   height: fit-content;

@@ -64,6 +64,7 @@
   border: 1px solid #aca0eb;
   border-radius: 8px;
   background-color: transparent;
+  cursor: pointer;
 }
 
 .post-detail-bottom {
