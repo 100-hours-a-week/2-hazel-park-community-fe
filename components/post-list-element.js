@@ -19,8 +19,12 @@ class PostListElement extends HTMLElement {
     this.shadowRoot.innerHTML = this.template(posts)
 
     const postItems = this.shadowRoot.querySelectorAll('.post-item')
-    postItems.forEach((item) => {
-      item.addEventListener('click', () => handleNavigation('/html/post.html'))
+    postItems.forEach((item, index) => {
+      const postId = posts[index].post_id
+      item.dataset.id = postId
+      item.addEventListener('click', () =>
+        handleNavigation(`/html/post.html?id=${postId}`),
+      )
     })
   }
 
