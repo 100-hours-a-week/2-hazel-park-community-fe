@@ -1,4 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
+import { loginUser, registerUser } from '../services/auth-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -251,29 +252,30 @@ class AuthFormElement extends HTMLElement {
     }
   }
 
-  login(email, password) {
-    const storedData = JSON.parse(localStorage.getItem('user'))
-    if (
-      storedData &&
-      storedData.user_email === email &&
-      storedData.user_pw === password
-    ) {
+  async login(email, password) {
+    try {
+      await loginUser(email, password)
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
+      const user = {
+        user_email: email,
+        user_pw: password,
+      }
+
+      localStorage.setItem('user', JSON.stringify(user))
       handleNavigation('/html/Posts.html')
-    } else {
-      alert('이메일 또는 비밀번호가 잘못되었습니다.')
+    } catch (error) {
+      alert(error.message)
     }
   }
 
-  saveDataInLocalStorage(email, password, nickname) {
-    const user = {
-      user_email: email,
-      user_pw: password,
-      user_name: nickname,
+  async saveDataInLocalStorage(email, password, nickname) {
+    try {
+      await registerUser(email, password, nickname)
+      handleNavigation('/html/Log-in.html')
+    } catch (error) {
+      alert(error.message)
     }
-
-    localStorage.setItem('user', JSON.stringify(user))
   }
 }
 

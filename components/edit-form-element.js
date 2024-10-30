@@ -1,4 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
+import { patchUserNickname, patchUserPw } from '../services/auth-api.js'
 
 class EditFormElement extends HTMLElement {
   constructor() {
@@ -91,6 +92,7 @@ class EditFormElement extends HTMLElement {
             .value.trim()
           this.storedData.user_name = nickname
           localStorage.setItem('user', JSON.stringify(this.storedData))
+          patchUserNickname(this.storedData.user_email, nickname)
           toastMsg.style.visibility = 'visible'
         } else if (this.validateForm() === 'password') {
           const password = this.shadowRoot
@@ -98,6 +100,7 @@ class EditFormElement extends HTMLElement {
             .value.trim()
           this.storedData.user_pw = password
           localStorage.setItem('user', JSON.stringify(this.storedData))
+          patchUserPw(this.storedData.user_email, password)
           toastMsg.style.visibility = 'visible'
         }
       })
