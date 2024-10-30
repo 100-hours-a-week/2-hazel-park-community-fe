@@ -1,4 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
+import saveDataInJson from '../utils/save-data-in-json.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -101,6 +102,16 @@ class AuthFormElement extends HTMLElement {
         if (this.validateForm() === 'posts') {
           handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'login') {
+          const email = this.shadowRoot
+            .getElementById('input-email')
+            .value.trim()
+          const password = this.shadowRoot
+            .getElementById('input-password')
+            .value.trim()
+          const nickname = this.shadowRoot
+            .getElementById('input-nickname')
+            .value.trim()
+          saveDataInJson('user', email, password, nickname)
           handleNavigation('/html/Log-in.html')
         }
       })
