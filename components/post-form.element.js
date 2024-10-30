@@ -1,4 +1,6 @@
 import handleNavigation from '../utils/navigation.js'
+import { uploadPost } from '../services/post-api.js'
+import { formatDate } from '../utils/format-date.js'
 
 class postFormElement extends HTMLElement {
   constructor() {
@@ -7,6 +9,7 @@ class postFormElement extends HTMLElement {
     this.isMakePostPage = true
     this.postId = null
     this.postData = null
+    this.storedData = JSON.parse(localStorage.getItem('user'))
   }
 
   connectedCallback() {
@@ -90,6 +93,15 @@ class postFormElement extends HTMLElement {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
           this.saveDataInLocalStorage(titleValue, contentsValue)
+          uploadPost(
+            titleValue,
+            this.storedData.user_email,
+            formatDate(Date.now()),
+            contentsValue,
+            0,
+            0,
+            0,
+          )
           handleNavigation('/html/Posts.html')
         }
       })
