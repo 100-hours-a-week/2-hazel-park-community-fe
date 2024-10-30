@@ -34,24 +34,20 @@ export async function uploadPost(
   }
 }
 
-export async function registerUser(email, password, nickname) {
+export async function getPosts() {
   try {
-    const response = await fetch(`${baseUrl}/register`, {
-      method: 'POST',
+    const response = await fetch(`${baseUrl}/`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        password,
-        nickname,
-      }),
     })
 
     const data = await response.json()
-    console.log(data.message)
+    return data
   } catch (error) {
     alert(error.message)
+    return []
   }
 }
 
