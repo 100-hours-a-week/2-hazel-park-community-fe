@@ -101,6 +101,7 @@ class headerElement extends HTMLElement {
     if (dropdownLogout) {
       dropdownLogout.addEventListener('click', () => {
         this.isLogin = false
+        localStorage.setItem('isLogin', this.isLogin)
         this.updateProfileStatus()
       })
     }
