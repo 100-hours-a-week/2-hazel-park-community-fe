@@ -257,6 +257,12 @@ class AuthFormElement extends HTMLElement {
       await loginUser(email, password)
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
+      const user = {
+        user_email: email,
+        user_pw: password,
+      }
+
+      localStorage.setItem('user', JSON.stringify(user))
       handleNavigation('/html/Posts.html')
     } catch (error) {
       alert(error.message)
@@ -266,7 +272,6 @@ class AuthFormElement extends HTMLElement {
   async saveDataInLocalStorage(email, password, nickname) {
     try {
       await registerUser(email, password, nickname)
-      alert('성공')
       handleNavigation('/html/Log-in.html')
     } catch (error) {
       alert(error.message)
