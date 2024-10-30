@@ -5,8 +5,12 @@ class AuthFormElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.isLogin = false
-    localStorage.setItem('isLogin', this.isLogin)
+    if (localStorage.getItem('isLogin')) {
+      this.isLogin = localStorage.getItem('isLogin')
+    } else {
+      this.isLogin = false
+      localStorage.setItem('isLogin', this.isLogin)
+    }
     this.isLoginPage = true
   }
 
