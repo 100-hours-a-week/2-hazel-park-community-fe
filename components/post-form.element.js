@@ -95,7 +95,7 @@ class postFormElement extends HTMLElement {
           this.saveDataInLocalStorage(titleValue, contentsValue)
           uploadPost(
             titleValue,
-            this.storedData.user_email,
+            this.storedData.user_name,
             formatDate(Date.now()),
             contentsValue,
             0,
