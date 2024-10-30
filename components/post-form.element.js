@@ -1,5 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
-import { uploadPost } from '../services/post-api.js'
+import { uploadPost, getPostDetail, patchPost } from '../services/post-api.js'
 import { formatDate } from '../utils/format-date.js'
 
 class postFormElement extends HTMLElement {
@@ -12,7 +12,7 @@ class postFormElement extends HTMLElement {
     this.storedData = JSON.parse(localStorage.getItem('user'))
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.checkLocation()
     if (!this.isMakePostPage) {
       this.loadPostData()
@@ -89,7 +89,17 @@ class postFormElement extends HTMLElement {
     if (submit) {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
-        if (this.validateForm() === 'posts') {
+        if (!this.isMakePostPage) {
+          const titleValue = inputTitle.value.trim()
+          const contentsValue = inputContents.value.trim()
+          patchPost(
+            this.postId,
+            titleValue,
+            contentsValue,
+            formatDate(Date.now()),
+          )
+          handleNavigation('/html/Posts.html')
+        } else if (this.validateForm() === 'posts') {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
           this.saveDataInLocalStorage(titleValue, contentsValue)
@@ -185,7 +195,7 @@ class postFormElement extends HTMLElement {
     localStorage.setItem('post', JSON.stringify(post))
   }
 
-  loadPostData() {
+  async loadPostData() {
     const urlParams = new URLSearchParams(window.location.search)
     this.postId = Number(urlParams.get('id'))
 
@@ -194,24 +204,27 @@ class postFormElement extends HTMLElement {
       return
     }
 
-    fetch('../data/posts.json')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText)
-        }
-        return response.json()
-      })
-      .then((allPosts) => {
-        this.postData = allPosts.find((post) => post.post_id === this.postId)
-        if (!this.postData) {
-          console.error('해당 ID의 포스트를 찾을 수 없습니다.')
-        } else {
-          this.renderPost()
-        }
-      })
-      .catch((error) => {
-        console.error('Fetch error:', error)
-      })
+    this.postData = await getPostDetail(this.postId)
+    this.renderPost()
+    // NOTE: FE 로컬에서 json 이용하는 경우
+    // fetch('../data/posts.json')
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok ' + response.statusText)
+    //     }
+    //     return response.json()
+    //   })
+    //   .then((allPosts) => {
+    //     this.postData = allPosts.find((post) => post.post_id === this.postId)
+    //     if (!this.postData) {
+    //       console.error('해당 ID의 포스트를 찾을 수 없습니다.')
+    //     } else {
+    //       this.renderPost()
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Fetch error:', error)
+    //   })
   }
 
   renderPost() {

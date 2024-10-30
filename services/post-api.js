@@ -10,7 +10,7 @@ export async function uploadPost(
   comments,
 ) {
   try {
-    const response = await fetch(`${baseUrl}/upload`, {
+    const response = await fetch(`${baseUrl}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export async function getPosts() {
 
 export async function getPostDetail(postId) {
   try {
-    const response = await fetch(`${baseUrl}/postDetail/${postId}`, {
+    const response = await fetch(`${baseUrl}/${postId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -68,16 +68,17 @@ export async function getPostDetail(postId) {
   }
 }
 
-export async function patchUserPw(email, password) {
+export async function patchPost(postId, title, content, updatedAt) {
   try {
-    const response = await fetch(`${baseUrl}/patchPw`, {
+    const response = await fetch(`${baseUrl}/${postId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email,
-        password,
+        title,
+        content,
+        updatedAt,
       }),
     })
 
