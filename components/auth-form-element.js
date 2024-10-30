@@ -1,5 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
-import { loginUser, registerUser } from '../services/auth-api.js'
+import { loginUser, registerUser } from '../services/user-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {

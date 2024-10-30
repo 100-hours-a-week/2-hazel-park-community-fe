@@ -1,5 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
-import { patchUserNickname, patchUserPw } from '../services/auth-api.js'
+import { patchUserNickname, patchUserPw } from '../services/user-api.js'
 
 class EditFormElement extends HTMLElement {
   constructor() {
