@@ -2,79 +2,62 @@ class CommentListElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.postId = null
   }
 
-  connectedCallback() {
-    const comments = [
-      {
-        id: 1,
-        writer: 'user1',
-        updateAt: '2024-10-26 22:25:00',
-        content: '첫 번째 댓글 내용',
-      },
-      {
-        id: 2,
-        writer: 'user2',
-        updateAt: '2024-10-26 22:24:01',
-        content: '두 번째 댓글 내용',
-      },
-      {
-        id: 3,
-        writer: 'user3',
-        updateAt: '2024-10-26 22:20:10',
-        content: '세 번째 댓글 내용',
-      },
-    ]
+  async connectedCallback() {
+    const urlParams = new URLSearchParams(window.location.search)
+    this.postId = Number(urlParams.get('id'))
 
-    this.shadowRoot.innerHTML = this.template(comments)
+    if (this.postId) {
+      const comments = await this.fetchComments(this.postId)
+      this.shadowRoot.innerHTML = this.template(comments)
 
-    const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
-    const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
+      const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
+      const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
-    const commentArea = document.getElementById('comment')
-    const commentButton = document.getElementById('comment-button')
+      const commentArea = document.getElementById('comment') // update: use the document scope
+      const commentButton = this.shadowRoot.getElementById('comment-button')
 
-    updateButtons.forEach((button, index) => {
-      button.addEventListener('click', () =>
-        this.handleUpdate(comments[index].id),
-      )
-    })
-
-    deleteButtons.forEach((button, index) => {
-      button.addEventListener('click', () => openModal(comments[index].id))
-    })
-
-    if (commentArea) {
-      commentArea.addEventListener('input', () => this.validateForm())
-    }
-
-    if (commentButton) {
-      commentButton.addEventListener('click', (event) => {
-        if (this.validateForm()) {
-          console.log('댓글 등록 완료')
-        } else {
-          console.log('등록 실패')
-        }
+      updateButtons.forEach((button, index) => {
+        button.addEventListener(
+          'click',
+          () => this.handleUpdate(comments[index].id, comments[index].content), // pass the comment content
+        )
       })
+
+      deleteButtons.forEach((button, index) => {
+        button.addEventListener('click', () =>
+          this.openModal(comments[index].id),
+        )
+      })
+
+      if (commentArea) {
+        commentArea.addEventListener('input', () => this.validateForm())
+      }
+
+      if (commentButton) {
+        commentButton.addEventListener('click', (event) => {
+          if (this.validateForm()) {
+            console.log('댓글 등록 완료')
+          } else {
+            console.log('등록 실패')
+          }
+        })
+      }
+    } else {
+      console.error('postId를 찾을 수 없습니다.')
     }
+  }
 
-    function openModal(id) {
-      const modalBackground = document.createElement('div')
-      modalBackground.classList.add('modal-background')
-
-      const modal = document.createElement('modal-element')
-      modal.setAttribute('title-text', '댓글을 삭제하시겠습니까?')
-      modal.setAttribute(
-        'description-text',
-        '삭제한 내용은 복구할 수 없습니다.',
-      )
-
-      document.body.appendChild(modalBackground)
-      document.body.appendChild(modal)
-
-      modal.onConfirm = () => location.reload()
-      modalBackground.addEventListener('click', () => this.closeModal())
-      console.log(`${id}번째 댓글이 삭제되었습니다.`)
+  async fetchComments(postId) {
+    try {
+      const response = await fetch('../data/comments.json')
+      const data = await response.json()
+      return data.comments[postId] || []
+    } catch (error) {
+      console.error('댓글을 불러오는 데 실패했습니다:', error)
+      return []
     }
   }
 
@@ -107,13 +90,23 @@ class CommentListElement extends HTMLElement {
     `
   }
 
-  handleUpdate(id) {
+  handleUpdate(id, content) {
     console.log(`댓글 ${id} 수정`)
+    const commentArea = document.getElementById('comment') 
+    const commentButton = document.getElementById('comment-button') 
+    if (commentArea) {
+      commentArea.value = content
+      commentArea.focus() 
+    }
+    if (commentButton) {
+      commentButton.innerText = '댓글 수정'
+      commentButton.dataset.commentId = id 
+    }
   }
 
   validateForm() {
-    const commentArea = document.getElementById('comment')
-    const submit = document.getElementById('comment-button')
+    const commentArea = this.shadowRoot.getElementById('comment')
+    const submit = this.shadowRoot.getElementById('comment-button')
 
     if (submit) {
       submit.style.backgroundColor = '#aea0eb'
@@ -132,6 +125,29 @@ class CommentListElement extends HTMLElement {
       return true
     }
     return false
+  }
+
+  openModal(id) {
+    const modalBackground = document.createElement('div')
+    modalBackground.classList.add('modal-background')
+
+    const modal = document.createElement('modal-element')
+    modal.setAttribute('title-text', '댓글을 삭제하시겠습니까?')
+    modal.setAttribute('description-text', '삭제한 내용은 복구할 수 없습니다.')
+
+    document.body.appendChild(modalBackground)
+    document.body.appendChild(modal)
+
+    modal.onConfirm = () => location.reload()
+    modalBackground.addEventListener('click', () => this.closeModal())
+    console.log(`${id}번째 댓글이 삭제되었습니다.`)
+  }
+
+  closeModal() {
+    const modalBackground = this.shadowRoot.querySelector('.modal-background')
+    const modal = this.shadowRoot.querySelector('modal-element')
+    if (modalBackground) modalBackground.remove()
+    if (modal) modal.remove()
   }
 }
 

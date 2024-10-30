@@ -1,5 +1,4 @@
 import handleNavigation from '../utils/navigation.js'
-import saveDataInJson from '../utils/save-data-in-json.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -112,7 +111,7 @@ class AuthFormElement extends HTMLElement {
           const nickname = this.shadowRoot
             .getElementById('input-nickname')
             .value.trim()
-          saveDataInJson('user', email, password, nickname)
+          this.saveDataInLocalStorage(email, password, nickname)
           handleNavigation('/html/Log-in.html')
         }
       })
@@ -265,6 +264,16 @@ class AuthFormElement extends HTMLElement {
     } else {
       alert('이메일 또는 비밀번호가 잘못되었습니다.')
     }
+  }
+
+  saveDataInLocalStorage(email, password, nickname) {
+    const user = {
+      user_email: email,
+      user_pw: password,
+      user_name: nickname,
+    }
+
+    localStorage.setItem('user', JSON.stringify(user))
   }
 }
 
