@@ -5,6 +5,7 @@ class EditFormElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.isEditProfilePage = true
+    this.storedData = JSON.parse(localStorage.getItem('user'))
   }
 
   connectedCallback() {
@@ -32,7 +33,7 @@ class EditFormElement extends HTMLElement {
                 '</div>' +
                 '<div class="email-wrap">' +
                 '<div class="input-title">이메일</div>' +
-                '<div id="user-email" class="user-email" />user@email.com</div>' +
+                `<div id="user-email" class="user-email" />${this.storedData.user_email}</div>` +
                 '</div>' +
                 '<div style="margin-top: 1rem" class="nickname-wrap">' +
                 '<div class="input-title">닉네임</div>' +
@@ -84,7 +85,19 @@ class EditFormElement extends HTMLElement {
     if (submit) {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
-        if (this.validateForm()) {
+        if (this.validateForm() === 'nickname') {
+          const nickname = this.shadowRoot
+            .getElementById('input-nickname')
+            .value.trim()
+          this.storedData.user_name = nickname
+          localStorage.setItem('user', JSON.stringify(this.storedData))
+          toastMsg.style.visibility = 'visible'
+        } else if (this.validateForm() === 'password') {
+          const password = this.shadowRoot
+            .getElementById('input-password')
+            .value.trim()
+          this.storedData.user_pw = password
+          localStorage.setItem('user', JSON.stringify(this.storedData))
           toastMsg.style.visibility = 'visible'
         }
       })
@@ -102,7 +115,7 @@ class EditFormElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => handleNavigation('/html/Log-in.html')
+    modal.onConfirm = () => this.deleteUser()
     modalBackground.addEventListener('click', () => this.closeModal())
   }
 
@@ -185,13 +198,13 @@ class EditFormElement extends HTMLElement {
       if (nicknameCheck) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
-        return 'true'
+        return 'nickname'
       }
     } else if (inputPassword) {
       if (pwCheck && rePwCheck) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
-        return 'true'
+        return 'password'
       }
     }
   }
@@ -211,6 +224,13 @@ class EditFormElement extends HTMLElement {
       console.log(false)
       this.isEditProfilePage = false
     }
+  }
+
+  deleteUser() {
+    this.isLogin = false
+    localStorage.setItem('isLogin', this.isLogin)
+    localStorage.removeItem('user')
+    handleNavigation('/html/Log-in.html')
   }
 }
 

@@ -4,7 +4,8 @@ class headerElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.isLogin = true
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    localStorage.setItem('isLogin', this.isLogin)
   }
 
   connectedCallback() {
@@ -96,6 +97,7 @@ class headerElement extends HTMLElement {
     if (dropdownLogout) {
       dropdownLogout.addEventListener('click', () => {
         this.isLogin = false
+        localStorage.setItem('isLogin', this.isLogin)
         this.updateProfileStatus()
       })
     }
