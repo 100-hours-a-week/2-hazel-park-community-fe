@@ -1,4 +1,5 @@
-import { getComments } from '../services/comment-api.js'
+import { editComments, getComments } from '../services/comment-api.js'
+import { formatDate } from '../utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
   constructor() {
@@ -93,7 +94,7 @@ class CommentListElement extends HTMLElement {
     `
   }
 
-  handleUpdate(id, content) {
+  async handleUpdate(id, content) {
     console.log(`댓글 ${id} 수정`)
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
@@ -102,8 +103,26 @@ class CommentListElement extends HTMLElement {
       commentArea.focus()
     }
     if (commentButton) {
+      if (!commentButton.innerText === '댓글 수정') {
+      }
       commentButton.innerText = '댓글 수정'
       commentButton.dataset.commentId = id
+      console.log(this.postId, id, content)
+      commentButton.onclick = async () => {
+        const updatedContent = commentArea.value.trim()
+        if (updatedContent) {
+          await editComments(
+            this.postId,
+            id,
+            updatedContent,
+            formatDate(Date.now()),
+          )
+          console.log('댓글 수정 완료')
+          location.reload()
+        } else {
+          console.log('수정할 내용이 없습니다.')
+        }
+      }
     }
   }
 
