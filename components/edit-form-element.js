@@ -115,7 +115,7 @@ class EditFormElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => handleNavigation('/html/Log-in.html')
+    modal.onConfirm = () => this.deleteUser()
     modalBackground.addEventListener('click', () => this.closeModal())
   }
 
@@ -224,6 +224,13 @@ class EditFormElement extends HTMLElement {
       console.log(false)
       this.isEditProfilePage = false
     }
+  }
+
+  deleteUser() {
+    this.isLogin = false
+    localStorage.setItem('isLogin', this.isLogin)
+    localStorage.removeItem('user')
+    handleNavigation('/html/Log-in.html')
   }
 }
 
