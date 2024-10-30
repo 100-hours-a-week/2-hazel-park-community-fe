@@ -58,9 +58,14 @@ class PostElement extends HTMLElement {
 
   addEventListener() {
     const deletePost = this.shadowRoot.getElementById('button-delete')
+    const updatePost = this.shadowRoot.getElementById('button-update')
 
     if (deletePost) {
       deletePost.addEventListener('click', () => this.openModal())
+    }
+
+    if (updatePost) {
+      updatePost.addEventListener('click', () => this.navigateToEditPage())
     }
   }
 
@@ -77,6 +82,11 @@ class PostElement extends HTMLElement {
 
     modal.onConfirm = () => handleNavigation('/html/Posts.html')
     modalBackground.addEventListener('click', () => this.closeModal())
+  }
+
+  navigateToEditPage() {
+    const postId = this.post.post_id
+    handleNavigation(`/html/edit-post.html?id=${postId}`)
   }
 
   loadPostData() {
