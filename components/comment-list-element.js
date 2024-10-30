@@ -1,3 +1,5 @@
+import { getComments } from '../services/comment-api.js'
+
 class CommentListElement extends HTMLElement {
   constructor() {
     super()
@@ -10,19 +12,20 @@ class CommentListElement extends HTMLElement {
     this.postId = Number(urlParams.get('id'))
 
     if (this.postId) {
-      const comments = await this.fetchComments(this.postId)
+      console.log(this.postId)
+      const comments = await getComments(this.postId)
+      //const comments = await this.fetchComments(this.postId)
       this.shadowRoot.innerHTML = this.template(comments)
 
       const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
       const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
-      const commentArea = document.getElementById('comment') // update: use the document scope
+      const commentArea = document.getElementById('comment')
       const commentButton = this.shadowRoot.getElementById('comment-button')
 
       updateButtons.forEach((button, index) => {
-        button.addEventListener(
-          'click',
-          () => this.handleUpdate(comments[index].id, comments[index].content), // pass the comment content
+        button.addEventListener('click', () =>
+          this.handleUpdate(comments[index].id, comments[index].content),
         )
       })
 
@@ -92,15 +95,15 @@ class CommentListElement extends HTMLElement {
 
   handleUpdate(id, content) {
     console.log(`댓글 ${id} 수정`)
-    const commentArea = document.getElementById('comment') 
-    const commentButton = document.getElementById('comment-button') 
+    const commentArea = document.getElementById('comment')
+    const commentButton = document.getElementById('comment-button')
     if (commentArea) {
       commentArea.value = content
-      commentArea.focus() 
+      commentArea.focus()
     }
     if (commentButton) {
       commentButton.innerText = '댓글 수정'
-      commentButton.dataset.commentId = id 
+      commentButton.dataset.commentId = id
     }
   }
 
