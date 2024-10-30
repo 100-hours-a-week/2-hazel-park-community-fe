@@ -1,6 +1,6 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
-import { getPostDetail } from '../services/post-api.js'
+import { getPostDetail, deletePost } from '../services/post-api.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -81,7 +81,7 @@ class PostElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => handleNavigation('/html/Posts.html')
+    modal.onConfirm = () => this.deleteContirm()
     modalBackground.addEventListener('click', () => this.closeModal())
   }
 
@@ -95,6 +95,7 @@ class PostElement extends HTMLElement {
     const postId = Number(urlParams.get('id'))
 
     this.post = await getPostDetail(postId)
+    this.postId = postId
     this.renderPost()
     // NOTE: FE 로컬에서 json 이용하는 경우
     // fetch('../data/posts.json')
@@ -115,6 +116,11 @@ class PostElement extends HTMLElement {
     //   .catch((error) => {
     //     console.error('Fetch error:', error)
     //   })
+  }
+
+  async deleteContirm() {
+    deletePost(this.postId)
+    handleNavigation('/html/Posts.html')
   }
 
   renderPost() {

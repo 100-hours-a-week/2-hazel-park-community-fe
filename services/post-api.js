@@ -88,3 +88,19 @@ export async function patchPost(postId, title, content, updatedAt) {
     alert(error.message)
   }
 }
+
+export async function deletePost(postId) {
+  try {
+    const response = await fetch(`${baseUrl}/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const data = await response.json()
+    console.log(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
+}
