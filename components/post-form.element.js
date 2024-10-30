@@ -73,6 +73,9 @@ class postFormElement extends HTMLElement {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
         if (this.validateForm() === 'posts') {
+          const titleValue = inputTitle.value.trim()
+          const contentsValue = inputContents.value.trim()
+          this.saveDataInLocalStorage(titleValue, contentsValue)
           handleNavigation('/html/Posts.html')
         }
       })
@@ -138,6 +141,22 @@ class postFormElement extends HTMLElement {
     } else {
       this.isMakePostPage = false
     }
+  }
+
+  saveDataInLocalStorage(titleValue, contentsValue) {
+    const storedData = JSON.parse(localStorage.getItem('user'))
+    const post = {
+      post_id: 1,
+      post_title: titleValue,
+      post_writer: storedData.user_name,
+      post_updatedAt: new Date().toISOString(),
+      post_contents: contentsValue,
+      post_likes: 0,
+      post_views: 0,
+      post_comments: 0,
+    }
+
+    localStorage.setItem('post', JSON.stringify(post))
   }
 }
 
