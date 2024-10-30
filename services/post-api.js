@@ -51,23 +51,20 @@ export async function getPosts() {
   }
 }
 
-export async function patchUserNickname(email, nickname) {
+export async function getPostDetail(postId) {
   try {
-    const response = await fetch(`${baseUrl}/patchName`, {
-      method: 'PATCH',
+    const response = await fetch(`${baseUrl}/postDetail/${postId}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        nickname,
-      }),
     })
 
     const data = await response.json()
-    console.log(data.message)
+    return data
   } catch (error) {
     alert(error.message)
+    return []
   }
 }
 

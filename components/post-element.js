@@ -1,5 +1,6 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
+import { getPostDetail } from '../services/post-api.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -8,7 +9,7 @@ class PostElement extends HTMLElement {
     this.post = null
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.loadPostData()
   }
 
@@ -89,28 +90,31 @@ class PostElement extends HTMLElement {
     handleNavigation(`/html/edit-post.html?id=${postId}`)
   }
 
-  loadPostData() {
+  async loadPostData() {
     const urlParams = new URLSearchParams(window.location.search)
     const postId = Number(urlParams.get('id'))
 
-    fetch('../data/posts.json')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText)
-        }
-        return response.json()
-      })
-      .then((allPosts) => {
-        this.post = allPosts.find((post) => post.post_id === postId)
-        if (!this.post) {
-          console.error('해당 ID의 포스트를 찾을 수 없습니다.')
-        } else {
-          this.renderPost()
-        }
-      })
-      .catch((error) => {
-        console.error('Fetch error:', error)
-      })
+    this.post = await getPostDetail(postId)
+    this.renderPost()
+    // NOTE: FE 로컬에서 json 이용하는 경우
+    // fetch('../data/posts.json')
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok ' + response.statusText)
+    //     }
+    //     return response.json()
+    //   })
+    //   .then((allPosts) => {
+    //     this.post = allPosts.find((post) => post.post_id === postId)
+    //     if (!this.post) {
+    //       console.error('해당 ID의 포스트를 찾을 수 없습니다.')
+    //     } else {
+    //       this.renderPost()
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Fetch error:', error)
+    //   })
   }
 
   renderPost() {
