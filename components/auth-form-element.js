@@ -1,9 +1,12 @@
 import handleNavigation from '../utils/navigation.js'
+import saveDataInJson from '../utils/save-data-in-json.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    localStorage.setItem('isLogin', this.isLogin)
     this.isLoginPage = true
   }
 
@@ -98,9 +101,18 @@ class AuthFormElement extends HTMLElement {
     if (submit) {
       submit.addEventListener('click', (event) => {
         event.preventDefault()
+        const email = this.shadowRoot.getElementById('input-email').value.trim()
+        const password = this.shadowRoot
+          .getElementById('input-password')
+          .value.trim()
+
         if (this.validateForm() === 'posts') {
-          handleNavigation('/html/Posts.html')
+          this.login(email, password)
         } else if (this.validateForm() === 'login') {
+          const nickname = this.shadowRoot
+            .getElementById('input-nickname')
+            .value.trim()
+          saveDataInJson('user', email, password, nickname)
           handleNavigation('/html/Log-in.html')
         }
       })
@@ -237,6 +249,21 @@ class AuthFormElement extends HTMLElement {
       profileHyperText.style.visibility = 'visible'
     } else {
       profileHyperText.style.visibility = 'hidden'
+    }
+  }
+
+  login(email, password) {
+    const storedData = JSON.parse(localStorage.getItem('user'))
+    if (
+      storedData &&
+      storedData.user_email === email &&
+      storedData.user_pw === password
+    ) {
+      this.isLogin = true
+      localStorage.setItem('isLogin', this.isLogin)
+      handleNavigation('/html/Posts.html')
+    } else {
+      alert('이메일 또는 비밀번호가 잘못되었습니다.')
     }
   }
 }
