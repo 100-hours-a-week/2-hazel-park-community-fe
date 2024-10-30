@@ -100,6 +100,7 @@ class EditFormElement extends HTMLElement {
             .value.trim()
           this.storedData.user_pw = password
           localStorage.setItem('user', JSON.stringify(this.storedData))
+          patchUserPw(this.storedData.user_email, password)
           toastMsg.style.visibility = 'visible'
         }
       })
