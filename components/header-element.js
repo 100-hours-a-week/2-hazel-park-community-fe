@@ -4,12 +4,8 @@ class headerElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    if (localStorage.getItem('isLogin')) {
-      this.isLogin = localStorage.getItem('isLogin')
-    } else {
-      this.isLogin = false
-      localStorage.setItem('isLogin', this.isLogin)
-    }
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    localStorage.setItem('isLogin', this.isLogin)
   }
 
   connectedCallback() {
