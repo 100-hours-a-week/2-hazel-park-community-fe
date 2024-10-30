@@ -10,13 +10,6 @@ class PostElement extends HTMLElement {
 
   connectedCallback() {
     this.loadPostData()
-    if (!this.post) {
-      this.shadowRoot.innerHTML = `<p>게시물을 찾을 수 없습니다.</p>`
-      return
-    } else {
-      this.shadowRoot.innerHTML = this.template()
-      this.addEventListener()
-    }
   }
 
   template() {
@@ -64,10 +57,10 @@ class PostElement extends HTMLElement {
   }
 
   addEventListener() {
-    const detelePost = this.shadowRoot.getElementById('button-delete')
+    const deletePost = this.shadowRoot.getElementById('button-delete')
 
-    if (detelePost) {
-      detelePost.addEventListener('click', () => this.openModal())
+    if (deletePost) {
+      deletePost.addEventListener('click', () => this.openModal())
     }
   }
 
@@ -90,17 +83,29 @@ class PostElement extends HTMLElement {
     const urlParams = new URLSearchParams(window.location.search)
     const postId = Number(urlParams.get('id'))
 
-    const storedData = JSON.parse(localStorage.getItem('post')) || []
+    fetch('../data/posts.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText)
+        }
+        return response.json()
+      })
+      .then((allPosts) => {
+        this.post = allPosts.find((post) => post.post_id === postId)
+        if (!this.post) {
+          console.error('해당 ID의 포스트를 찾을 수 없습니다.')
+        } else {
+          this.renderPost()
+        }
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error)
+      })
+  }
 
-    const allPosts = Array.isArray(storedData) ? storedData : [storedData]
-
-    this.post = allPosts.find((post) => post.post_id === postId)
-
-    if (this.post) {
-      console.log('포스트를 찾았습니다:', this.post)
-    } else {
-      console.log('해당 ID의 포스트를 찾을 수 없습니다.')
-    }
+  renderPost() {
+    this.shadowRoot.innerHTML = this.template()
+    this.addEventListener()
   }
 }
 

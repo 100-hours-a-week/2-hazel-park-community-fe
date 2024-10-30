@@ -5,11 +5,28 @@ class PostListElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.posts = JSON.parse(localStorage.getItem('post')) || []
+    this.posts = []
   }
 
   connectedCallback() {
-    this.render()
+    this.loadPostsData()
+  }
+
+  loadPostsData() {
+    fetch('../data/posts.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText)
+        }
+        return response.json()
+      })
+      .then((data) => {
+        this.posts = data
+        this.render()
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error)
+      })
   }
 
   render() {
@@ -45,7 +62,7 @@ class PostListElement extends HTMLElement {
                                   <div class="post-views">조회수 ${checkCount(post.post_views)}</div>                        
                               </div>
                           </div>
-                          <div class="post-updateAt">${new Date(post.post_updatedAt).toLocaleString()}</div>
+                          <div class="post-updateAt">${post.post_updatedAt.toLocaleString()}</div>
                       </div>
                       <div class="post-writer-wrap">
                         <div class="post-writer-img"></div>
