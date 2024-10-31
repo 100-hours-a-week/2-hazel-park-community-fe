@@ -104,3 +104,20 @@ export async function deletePost(postId) {
     alert(error.message)
   }
 }
+
+export async function updateLike(postId) {
+  try {
+    const response = await fetch(`${baseUrl}/likes/${postId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const data = await response.json()
+    console.log(data.message)
+    return data.post_likes
+  } catch (error) {
+    alert(error.message)
+  }
+}

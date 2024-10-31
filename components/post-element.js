@@ -1,6 +1,6 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
-import { getPostDetail, deletePost } from '../services/post-api.js'
+import { getPostDetail, deletePost, updateLike } from '../services/post-api.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -39,7 +39,7 @@ class PostElement extends HTMLElement {
               ${this.post.post_contents}
               </div>
               <div class="post-interaction">
-                <div class="post-interaction-box">
+                <div id="post-interaction-likes" class="post-interaction-box">
                   <div class="post-interaction-value">${checkCount(this.post.post_likes)}</div>
                   <div class="post-interaction-title">좋아요</div>
                 </div>
@@ -60,6 +60,7 @@ class PostElement extends HTMLElement {
   addEventListener() {
     const deletePost = this.shadowRoot.getElementById('button-delete')
     const updatePost = this.shadowRoot.getElementById('button-update')
+    const likes = this.shadowRoot.getElementById('post-interaction-likes')
 
     if (deletePost) {
       deletePost.addEventListener('click', () => this.openModal())
@@ -67,6 +68,10 @@ class PostElement extends HTMLElement {
 
     if (updatePost) {
       updatePost.addEventListener('click', () => this.navigateToEditPage())
+    }
+
+    if (likes) {
+      likes.addEventListener('click', async () => this.updateLikes())
     }
   }
 
@@ -121,6 +126,12 @@ class PostElement extends HTMLElement {
   async deleteContirm() {
     deletePost(this.postId)
     handleNavigation('/html/Posts.html')
+  }
+
+  async updateLikes() {
+    const updatedLikes = await updateLike(this.postId)
+    this.post.post_likes = updatedLikes
+    this.renderPost()
   }
 
   renderPost() {
