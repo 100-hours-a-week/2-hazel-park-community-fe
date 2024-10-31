@@ -86,6 +86,7 @@ class EditFormElement extends HTMLElement {
     if (submit) {
       submit.addEventListener('click', async (event) => {
         event.preventDefault()
+
         const validationResult = this.validateForm()
         if (validationResult === 'nickname') {
           const nickname = this.shadowRoot

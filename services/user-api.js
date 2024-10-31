@@ -37,6 +37,7 @@ export async function registerUser(email, password, nickname) {
 
     const data = await response.json()
     console.log(data.message)
+    return data.message
   } catch (error) {
     alert(error.message)
   }
