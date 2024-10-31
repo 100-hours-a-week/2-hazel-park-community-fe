@@ -84,23 +84,39 @@ class EditFormElement extends HTMLElement {
     }
 
     if (submit) {
-      submit.addEventListener('click', (event) => {
+      submit.addEventListener('click', async (event) => {
         event.preventDefault()
-        if (this.validateForm() === 'nickname') {
+
+        const validationResult = this.validateForm()
+        if (validationResult === 'nickname') {
           const nickname = this.shadowRoot
             .getElementById('input-nickname')
             .value.trim()
           this.storedData.user_name = nickname
           localStorage.setItem('user', JSON.stringify(this.storedData))
-          patchUserNickname(this.storedData.user_email, nickname)
-          toastMsg.style.visibility = 'visible'
-        } else if (this.validateForm() === 'password') {
+
+          const result = await patchUserNickname(
+            this.storedData.user_email,
+            nickname,
+          )
+          let nicknameHyperText = this.shadowRoot.getElementById(
+            'nickname-hyper-text',
+          )
+
+          if (result === 400) {
+            nicknameHyperText.innerText = '중복된 닉네임 입니다.'
+            nicknameHyperText.style.visibility = 'visible'
+          } else {
+            nicknameHyperText.style.visibility = 'hidden'
+            toastMsg.style.visibility = 'visible'
+          }
+        } else if (validationResult === 'password') {
           const password = this.shadowRoot
             .getElementById('input-password')
             .value.trim()
           this.storedData.user_pw = password
           localStorage.setItem('user', JSON.stringify(this.storedData))
-          patchUserPw(this.storedData.user_email, password)
+          await patchUserPw(this.storedData.user_email, password)
           toastMsg.style.visibility = 'visible'
         }
       })
