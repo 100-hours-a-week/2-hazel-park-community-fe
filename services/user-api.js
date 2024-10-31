@@ -37,6 +37,7 @@ export async function registerUser(email, password, nickname) {
 
     const data = await response.json()
     console.log(data.message)
+    return data.message
   } catch (error) {
     alert(error.message)
   }
@@ -55,8 +56,7 @@ export async function patchUserNickname(email, nickname) {
       }),
     })
 
-    const data = await response.json()
-    console.log(data.message)
+    return response.status
   } catch (error) {
     alert(error.message)
   }

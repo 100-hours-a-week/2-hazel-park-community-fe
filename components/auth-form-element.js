@@ -106,14 +106,15 @@ class AuthFormElement extends HTMLElement {
           .getElementById('input-password')
           .value.trim()
 
-        if (this.validateForm() === 'posts') {
+        const validationResult = this.validateForm()
+
+        if (validationResult === 'posts') {
           this.login(email, password)
-        } else if (this.validateForm() === 'login') {
+        } else if (validationResult === 'login') {
           const nickname = this.shadowRoot
             .getElementById('input-nickname')
             .value.trim()
-          this.saveDataInLocalStorage(email, password, nickname)
-          handleNavigation('/html/Log-in.html')
+          this.register(email, password, nickname)
         }
       })
     }
@@ -269,10 +270,22 @@ class AuthFormElement extends HTMLElement {
     }
   }
 
-  async saveDataInLocalStorage(email, password, nickname) {
+  async register(email, password, nickname) {
     try {
-      await registerUser(email, password, nickname)
-      handleNavigation('/html/Log-in.html')
+      const result = await registerUser(email, password, nickname)
+      if (result === '이미 존재하는 이메일입니다.') {
+        let emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
+        emailHyperText.innerText = result
+        emailHyperText.style.visibility = 'visible'
+      } else if (result === '중복된 닉네임 입니다.') {
+        let nicknameHyperText = this.shadowRoot.getElementById(
+          'nickname-hyper-text',
+        )
+        nicknameHyperText.innerText = result
+        nicknameHyperText.style.visibility = 'visible'
+      } else {
+        handleNavigation('/html/Log-in.html')
+      }
     } catch (error) {
       alert(error.message)
     }

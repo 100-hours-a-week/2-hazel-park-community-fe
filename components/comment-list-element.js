@@ -1,4 +1,9 @@
-import { editComments, getComments } from '../services/comment-api.js'
+import {
+  getComments,
+  uploadComment,
+  editComments,
+  deleteComments,
+} from '../services/comment-api.js'
 import { formatDate } from '../utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
@@ -6,6 +11,7 @@ class CommentListElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.postId = null
+    this.storedData = JSON.parse(localStorage.getItem('user'))
   }
 
   async connectedCallback() {
@@ -15,6 +21,7 @@ class CommentListElement extends HTMLElement {
     if (this.postId) {
       console.log(this.postId)
       const comments = await getComments(this.postId)
+      // FE에서 json 이용하는 경우
       //const comments = await this.fetchComments(this.postId)
       this.shadowRoot.innerHTML = this.template(comments)
 
@@ -22,7 +29,7 @@ class CommentListElement extends HTMLElement {
       const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
       const commentArea = document.getElementById('comment')
-      const commentButton = this.shadowRoot.getElementById('comment-button')
+      const commentButton = document.getElementById('comment-button')
 
       updateButtons.forEach((button, index) => {
         button.addEventListener('click', () =>
@@ -41,8 +48,16 @@ class CommentListElement extends HTMLElement {
       }
 
       if (commentButton) {
-        commentButton.addEventListener('click', (event) => {
+        commentButton.addEventListener('click', async () => {
           if (this.validateForm()) {
+            const updatedContent = commentArea.value.trim()
+            await uploadComment(
+              this.postId,
+              this.storedData.user_name,
+              formatDate(Date.now()),
+              updatedContent,
+            )
+            location.reload()
             console.log('댓글 등록 완료')
           } else {
             console.log('등록 실패')
@@ -127,8 +142,8 @@ class CommentListElement extends HTMLElement {
   }
 
   validateForm() {
-    const commentArea = this.shadowRoot.getElementById('comment')
-    const submit = this.shadowRoot.getElementById('comment-button')
+    const commentArea = document.getElementById('comment')
+    const submit = document.getElementById('comment-button')
 
     if (submit) {
       submit.style.backgroundColor = '#aea0eb'
@@ -160,7 +175,7 @@ class CommentListElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => location.reload()
+    modal.onConfirm = () => this.deleteContirm(id)
     modalBackground.addEventListener('click', () => this.closeModal())
     console.log(`${id}번째 댓글이 삭제되었습니다.`)
   }
@@ -170,6 +185,12 @@ class CommentListElement extends HTMLElement {
     const modal = this.shadowRoot.querySelector('modal-element')
     if (modalBackground) modalBackground.remove()
     if (modal) modal.remove()
+  }
+
+  deleteContirm(commentId) {
+    deleteComments(this.postId, commentId)
+
+    location.reload()
   }
 }
 
