@@ -39,3 +39,22 @@ export async function editComments(postId, commentId, content, updatedAt) {
     return []
   }
 }
+
+export async function deleteComments(postId, commentId) {
+  try {
+    const response = await fetch(`${baseUrl}/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        postId,
+      }),
+    })
+
+    const data = await response.json()
+    console.log(data.message)
+  } catch (error) {
+    console.log(error.message)
+  }
+}

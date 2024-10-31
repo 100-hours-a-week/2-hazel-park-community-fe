@@ -1,4 +1,8 @@
-import { editComments, getComments } from '../services/comment-api.js'
+import {
+  editComments,
+  getComments,
+  deleteComments,
+} from '../services/comment-api.js'
 import { formatDate } from '../utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
@@ -15,6 +19,7 @@ class CommentListElement extends HTMLElement {
     if (this.postId) {
       console.log(this.postId)
       const comments = await getComments(this.postId)
+      // FE에서 json 이용하는 경우
       //const comments = await this.fetchComments(this.postId)
       this.shadowRoot.innerHTML = this.template(comments)
 
@@ -160,7 +165,7 @@ class CommentListElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => location.reload()
+    modal.onConfirm = () => this.deleteContirm(id)
     modalBackground.addEventListener('click', () => this.closeModal())
     console.log(`${id}번째 댓글이 삭제되었습니다.`)
   }
@@ -170,6 +175,12 @@ class CommentListElement extends HTMLElement {
     const modal = this.shadowRoot.querySelector('modal-element')
     if (modalBackground) modalBackground.remove()
     if (modal) modal.remove()
+  }
+
+  deleteContirm(commentId) {
+    deleteComments(this.postId, commentId)
+
+    location.reload()
   }
 }
 
