@@ -24,46 +24,7 @@ class CommentListElement extends HTMLElement {
       // FE에서 json 이용하는 경우
       //const comments = await this.fetchComments(this.postId)
       this.shadowRoot.innerHTML = this.template(comments)
-
-      const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
-      const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
-
-      const commentArea = document.getElementById('comment')
-      const commentButton = document.getElementById('comment-button')
-
-      updateButtons.forEach((button, index) => {
-        button.addEventListener('click', () =>
-          this.handleUpdate(comments[index].id, comments[index].content),
-        )
-      })
-
-      deleteButtons.forEach((button, index) => {
-        button.addEventListener('click', () =>
-          this.openModal(comments[index].id),
-        )
-      })
-
-      if (commentArea) {
-        commentArea.addEventListener('input', () => this.validateForm())
-      }
-
-      if (commentButton) {
-        commentButton.addEventListener('click', async () => {
-          if (this.validateForm()) {
-            const updatedContent = commentArea.value.trim()
-            await uploadComment(
-              this.postId,
-              this.storedData.user_name,
-              formatDate(Date.now()),
-              updatedContent,
-            )
-            location.reload()
-            console.log('댓글 등록 완료')
-          } else {
-            console.log('등록 실패')
-          }
-        })
-      }
+      this.addEventListener(comments)
     } else {
       console.error('postId를 찾을 수 없습니다.')
     }
@@ -109,20 +70,84 @@ class CommentListElement extends HTMLElement {
     `
   }
 
-  async handleUpdate(id, content) {
-    console.log(`댓글 ${id} 수정`)
+  addEventListener(comments) {
+    this.registerComment()
+    this.updateComment(comments)
+    this.deleteComments(comments)
+  }
+
+  registerComment() {
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
+
+    this.checkCommentInput(commentArea)
+    this.ConfirmComment(commentArea, commentButton)
+  }
+
+  updateComment(comments) {
+    const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
+
+    updateButtons.forEach((button, index) => {
+      button.addEventListener('click', () =>
+        this.handleUpdate(comments[index].id, comments[index].content),
+      )
+    })
+  }
+
+  deleteComments(comments) {
+    const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
+
+    deleteButtons.forEach((button, index) => {
+      button.addEventListener('click', () => this.openModal(comments[index].id))
+    })
+  }
+
+  checkCommentInput(commentArea) {
+    commentArea.addEventListener('input', () => this.validateForm())
+  }
+
+  ConfirmComment(commentArea, commentButton) {
+    if (
+      commentButton.innerText === '댓글 등록' &&
+      !commentButton.innerText === '댓글 수정'
+    ) {
+      commentButton.addEventListener(
+        'click',
+        async () => {
+          if (this.validateForm()) {
+            const updatedContent = commentArea.value.trim()
+            await uploadComment(
+              this.postId,
+              this.storedData.user_name,
+              formatDate(Date.now()),
+              updatedContent,
+            )
+            location.reload()
+            console.log('댓글 등록 완료')
+          } else {
+            console.log('등록 실패')
+          }
+        },
+        { once: true },
+      )
+    }
+  }
+
+  async handleUpdate(id, content) {
+    console.log(`댓글 ${id} 수정`)
+
+    const commentArea = document.getElementById('comment')
+    const commentButton = document.getElementById('comment-button')
+
     if (commentArea) {
       commentArea.value = content
       commentArea.focus()
     }
+
     if (commentButton) {
-      if (!commentButton.innerText === '댓글 수정') {
-      }
       commentButton.innerText = '댓글 수정'
       commentButton.dataset.commentId = id
-      console.log(this.postId, id, content)
+
       commentButton.onclick = async () => {
         const updatedContent = commentArea.value.trim()
         if (updatedContent) {
