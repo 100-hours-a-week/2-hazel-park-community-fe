@@ -81,3 +81,22 @@ export async function patchUserPw(email, password) {
     alert(error.message)
   }
 }
+
+export async function deleteUser(email) {
+  try {
+    const response = await fetch(`${baseUrl}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    })
+
+    const data = await response.json()
+    console.log(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
+}
