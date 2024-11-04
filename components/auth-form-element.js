@@ -243,12 +243,12 @@ class AuthFormElement extends HTMLElement {
 
   async login(email, password) {
     try {
-      await loginUser(email, password)
+      const response = await loginUser(email, password)
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
       const user = {
-        user_email: email,
-        user_pw: password,
+        user_email: response.user_email,
+        user_name: response.user_name,
       }
 
       localStorage.setItem('user', JSON.stringify(user))

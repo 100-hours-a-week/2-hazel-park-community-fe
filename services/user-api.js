@@ -14,8 +14,7 @@ export async function loginUser(email, password) {
     })
 
     const data = await response.json()
-    console.log(data.message)
-    console.log(data.user)
+    return data.user
   } catch (error) {
     alert(error.message)
   }
