@@ -30,47 +30,58 @@ class postFormElement extends HTMLElement {
         <div class="post-form-wrap">
             <form class="post-form">
               ${
-                this.isMakePostPage
-                  ? '<div>' +
-                    '<div class="input-title">제목*</div>' +
-                    '<input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" />' +
-                    '<div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                    '</div>' +
-                    '<div class="email-wrap">' +
-                    '<div class="input-title">내용*</div>' +
-                    '<textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>' +
-                    '<div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text">dfsfs</div>' +
-                    '</div>' +
-                    '<div class="nickname-wrap">' +
-                    '<div class="input-title">이미지</div>' +
-                    '<div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>' +
-                    '<label for="input-nickname" class="input-file-label">파일 선택</label>' +
-                    '<span class="input-file-span">파일을 선택해주세요.</span>' +
-                    '</div>' +
-                    '<div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>' +
-                    '</div>'
-                  : '<div>' +
-                    '<div class="input-title">제목*</div>' +
-                    `<input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData?.post_title || ''}" />` +
-                    '<div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                    '</div>' +
-                    '<div class="email-wrap">' +
-                    '<div class="input-title">내용*</div>' +
-                    `<textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData?.post_contents || ''}</textarea>` +
-                    '<div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                    '</div>' +
-                    '<div class="nickname-wrap">' +
-                    '<div class="input-title">이미지</div>' +
-                    '<div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>' +
-                    '<label for="input-nickname" class="input-file-label">파일 선택</label>' +
-                    '<span class="input-file-span">파일을 선택해주세요.</span>' +
-                    '</div>' +
-                    '<div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>' +
-                    '</div>'
+                this.isMakePostPage ? this.makePostForm() : this.editPostForm()
               }           
                 <input id="submit" type="submit" value="완료" class="make-post-submit" />
             </form>
         </div>`
+  }
+
+  makePostForm() {
+    return `    
+      <div>
+        <div class="input-title">제목*</div>
+        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" />
+        <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+      </div>
+      <div class="email-wrap">
+        <div class="input-title">내용*</div>
+        <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
+        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text">dfsfs</div>
+      </div>
+      <div class="nickname-wrap">
+        <div class="input-title">이미지</div>
+        <div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>
+        <label for="input-nickname" class="input-file-label">파일 선택</label>
+        <span class="input-file-span">파일을 선택해주세요.</span>
+      </div>
+        <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
+      </div>
+    `
+  }
+
+  editPostForm() {
+    const { post_title = '', post_contents = '' } = this.postData || {}
+    return `
+      <div>
+        <div class="input-title">제목*</div>
+        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
+        <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
+      </div>
+      <div class="email-wrap">
+        <div class="input-title">내용*</div>
+        <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
+        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+      </div>
+      <div class="nickname-wrap">
+        <div class="input-title">이미지</div>
+        <div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>
+        <label for="input-nickname" class="input-file-label">파일 선택</label>
+        <span class="input-file-span">파일을 선택해주세요.</span>
+      </div>
+        <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
+      </div>
+    `
   }
 
   addEventListener() {
@@ -206,25 +217,6 @@ class postFormElement extends HTMLElement {
 
     this.postData = await getPostDetail(this.postId)
     this.renderPost()
-    // NOTE: FE 로컬에서 json 이용하는 경우
-    // fetch('../data/posts.json')
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok ' + response.statusText)
-    //     }
-    //     return response.json()
-    //   })
-    //   .then((allPosts) => {
-    //     this.postData = allPosts.find((post) => post.post_id === this.postId)
-    //     if (!this.postData) {
-    //       console.error('해당 ID의 포스트를 찾을 수 없습니다.')
-    //     } else {
-    //       this.renderPost()
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Fetch error:', error)
-    //   })
   }
 
   renderPost() {

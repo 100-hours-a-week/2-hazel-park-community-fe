@@ -16,21 +16,6 @@ class PostListElement extends HTMLElement {
   async loadPostsData() {
     this.posts = await getPosts()
     this.render()
-    // NOTE: FE 로컬에서 json 쓰는 경우
-    // fetch('../data/posts.json')
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok ' + response.statusText)
-    //     }
-    //     return response.json()
-    //   })
-    //   .then((data) => {
-    //     this.posts = data
-    //     this.render()
-    //   })
-    //   .catch((error) => {
-    //     console.error('Fetch error:', error)
-    //   })
   }
 
   render() {

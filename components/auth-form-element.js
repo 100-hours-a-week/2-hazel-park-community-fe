@@ -22,18 +22,7 @@ class AuthFormElement extends HTMLElement {
         <link rel="stylesheet" href="../styles/Sign-in.css" />
         <div class="login-form-wrap">
             <form class="login-form">
-              ${
-                !this.isLoginPage
-                  ? '<div style="margin-bottom: 2.87vh">' +
-                    '<div class="input-title">프로필 사진</div>' +
-                    '<div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                    '<label for="input-profile-img" class="input-profile-img-label">' +
-                    '<img src="../assets/plus.svg" class="plus-icon" />' +
-                    '</label>' +
-                    '<input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />' +
-                    '</div>'
-                  : ''
-              }
+              ${!this.isLoginPage ? this.rendingProfileImg() : ''}
                 <div class="email-wrap">
                     <div class="input-title">${this.isLoginPage ? '이메일' : '이메일*'}</div>
                       <input
@@ -54,69 +43,82 @@ class AuthFormElement extends HTMLElement {
                         />
                     <div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>
                 </div>
-                ${
-                  !this.isLoginPage
-                    ? '<div style="margin-top: 0.3em" class="password-wrap">' +
-                      '<div class="input-title">비밀번호 확인*</div>' +
-                      '<input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />' +
-                      '<div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
-                      '</div>' +
-                      '<div style="margin-top: 0.3em" class="password-wrap">' +
-                      '<div class="input-title">닉네임*</div>' +
-                      '<input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />' +
-                      '<div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
-                      '</div>'
-                    : ''
-                }              
+                ${!this.isLoginPage ? this.rendingSignInForm() : ''}              
                 <input id="submit" type="submit" value="${this.isLoginPage ? '로그인' : '회원가입'}" class="login-submit" />
             </form>
         </div>
     `
   }
 
+  rendingProfileImg() {
+    return `
+      <div style="margin-bottom: 2.87vh">
+        <div class="input-title">프로필 사진</div>
+          <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+          <label for="input-profile-img" class="input-profile-img-label">
+          <img src="../assets/plus.svg" class="plus-icon" />
+          </label>
+        <input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />
+      </div>
+    `
+  }
+
+  rendingSignInForm() {
+    return `
+      <div style="margin-top: 0.3em" class="password-wrap">
+        <div class="input-title">비밀번호 확인*</div>
+        <input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />
+        <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
+      </div>
+      <div style="margin-top: 0.3em" class="password-wrap">
+        <div class="input-title">닉네임*</div>
+        <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
+        <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
+      </div>
+    `
+  }
+
   addEventListeners() {
-    const inputProfileImg = this.shadowRoot.getElementById('input-profile-img')
-    const inputEmail = this.shadowRoot.getElementById('input-email')
-    const inputPassword = this.shadowRoot.getElementById('input-password')
-    const inputRePassword = this.shadowRoot.getElementById('input-re-password')
-    const inputNickname = this.shadowRoot.getElementById('input-nickname')
-    const submit = this.shadowRoot.getElementById('submit')
+    const {
+      inputProfileImg,
+      inputEmail,
+      inputPassword,
+      inputRePassword,
+      inputNickname,
+      submit,
+    } = this.getElement()
 
-    if (inputProfileImg) {
-      inputProfileImg.addEventListener('input', () => this.checkImgUpload())
-    }
-    if (inputEmail) {
-      inputEmail.addEventListener('input', () => this.validateForm())
-    }
-    if (inputPassword) {
-      inputPassword.addEventListener('input', () => this.validateForm())
-    }
-    if (inputRePassword) {
-      inputRePassword.addEventListener('input', () => this.validateForm())
-    }
-    if (inputNickname) {
-      inputNickname.addEventListener('input', () => this.validateForm())
-    }
+    inputProfileImg?.addEventListener('input', () => this.checkImgUpload())
+    inputEmail?.addEventListener('input', () => this.validateForm())
+    inputPassword?.addEventListener('input', () => this.validateForm())
+    inputRePassword?.addEventListener('input', () => this.validateForm())
+    inputNickname?.addEventListener('input', () => this.validateForm())
 
-    if (submit) {
-      submit.addEventListener('click', (event) => {
-        event.preventDefault()
-        const email = this.shadowRoot.getElementById('input-email').value.trim()
-        const password = this.shadowRoot
-          .getElementById('input-password')
-          .value.trim()
+    submit?.addEventListener('click', (event) => {
+      event.preventDefault()
+      const email = inputEmail.value.trim()
+      const password = inputPassword.value.trim()
 
-        const validationResult = this.validateForm()
+      const validationResult = this.validateForm()
 
-        if (validationResult === 'posts') {
-          this.login(email, password)
-        } else if (validationResult === 'login') {
-          const nickname = this.shadowRoot
-            .getElementById('input-nickname')
-            .value.trim()
-          this.register(email, password, nickname)
-        }
-      })
+      if (validationResult === 'posts') {
+        this.login(email, password)
+      } else if (validationResult === 'login') {
+        const nickname = inputNickname.value.trim()
+        this.register(email, password, nickname)
+      }
+    })
+  }
+
+  getElement() {
+    const getElement = (id) => this.shadowRoot.getElementById(id)
+    return {
+      inputProfileImg: getElement('input-profile-img'),
+      inputEmail: getElement('input-email'),
+      inputPassword: getElement('input-password'),
+      inputRePassword: getElement('input-re-password'),
+      inputNickname: getElement('input-nickname'),
+      submit: getElement('submit'),
     }
   }
 
@@ -255,12 +257,12 @@ class AuthFormElement extends HTMLElement {
 
   async login(email, password) {
     try {
-      await loginUser(email, password)
+      const response = await loginUser(email, password)
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
       const user = {
-        user_email: email,
-        user_pw: password,
+        user_email: response.user_email,
+        user_name: response.user_name,
       }
 
       localStorage.setItem('user', JSON.stringify(user))

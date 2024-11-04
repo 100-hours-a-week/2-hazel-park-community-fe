@@ -1,5 +1,3 @@
-import handleNavigation from '../utils/navigation.js'
-
 class ModalElement extends HTMLElement {
   constructor() {
     super()
