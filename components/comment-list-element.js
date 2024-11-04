@@ -22,8 +22,6 @@ class CommentListElement extends HTMLElement {
     if (this.postId) {
       console.log(this.postId)
       const comments = await getComments(this.postId)
-      // FE에서 json 이용하는 경우
-      //const comments = await this.fetchComments(this.postId)
       this.shadowRoot.innerHTML = this.template(comments)
       this.addEventListener(comments)
     } else {
