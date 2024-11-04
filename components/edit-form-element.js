@@ -1,5 +1,9 @@
 import handleNavigation from '../utils/navigation.js'
-import { patchUserNickname, patchUserPw } from '../services/user-api.js'
+import {
+  patchUserNickname,
+  patchUserPw,
+  deleteUser,
+} from '../services/user-api.js'
 
 class EditFormElement extends HTMLElement {
   constructor() {
@@ -245,7 +249,8 @@ class EditFormElement extends HTMLElement {
     }
   }
 
-  deleteUser() {
+  async deleteUser() {
+    deleteUser(this.storedData.user_email)
     this.isLogin = false
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')
