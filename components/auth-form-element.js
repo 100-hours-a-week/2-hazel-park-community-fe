@@ -79,12 +79,14 @@ class AuthFormElement extends HTMLElement {
   }
 
   addEventListeners() {
-    const inputProfileImg = this.shadowRoot.getElementById('input-profile-img')
-    const inputEmail = this.shadowRoot.getElementById('input-email')
-    const inputPassword = this.shadowRoot.getElementById('input-password')
-    const inputRePassword = this.shadowRoot.getElementById('input-re-password')
-    const inputNickname = this.shadowRoot.getElementById('input-nickname')
-    const submit = this.shadowRoot.getElementById('submit')
+    const {
+      inputProfileImg,
+      inputEmail,
+      inputPassword,
+      inputRePassword,
+      inputNickname,
+      submit,
+    } = this.getElement()
 
     inputProfileImg?.addEventListener('input', () => this.checkImgUpload())
     inputEmail?.addEventListener('input', () => this.validateForm())
@@ -106,6 +108,18 @@ class AuthFormElement extends HTMLElement {
         this.register(email, password, nickname)
       }
     })
+  }
+
+  getElement() {
+    const getElement = (id) => this.shadowRoot.getElementById(id)
+    return {
+      inputProfileImg: getElement('input-profile-img'),
+      inputEmail: getElement('input-email'),
+      inputPassword: getElement('input-password'),
+      inputRePassword: getElement('input-re-password'),
+      inputNickname: getElement('input-nickname'),
+      submit: getElement('submit'),
+    }
   }
 
   validateForm() {
