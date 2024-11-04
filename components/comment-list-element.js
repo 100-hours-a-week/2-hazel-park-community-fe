@@ -12,6 +12,7 @@ class CommentListElement extends HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.postId = null
     this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.isEditing = false
   }
 
   async connectedCallback() {
@@ -109,21 +110,23 @@ class CommentListElement extends HTMLElement {
   ConfirmComment(commentArea, commentButton) {
     if (
       commentButton.innerText === '댓글 등록' &&
-      !commentButton.innerText === '댓글 수정'
+      commentButton.innerText !== '댓글 수정'
     ) {
       commentButton.addEventListener(
         'click',
         async () => {
           if (this.validateForm()) {
             const updatedContent = commentArea.value.trim()
-            await uploadComment(
-              this.postId,
-              this.storedData.user_name,
-              formatDate(Date.now()),
-              updatedContent,
-            )
-            location.reload()
-            console.log('댓글 등록 완료')
+            if (!this.isEditing) {
+              await uploadComment(
+                this.postId,
+                this.storedData.user_name,
+                formatDate(Date.now()),
+                updatedContent,
+              )
+              location.reload()
+              console.log('댓글 등록 완료')
+            }
           } else {
             console.log('등록 실패')
           }
@@ -147,6 +150,7 @@ class CommentListElement extends HTMLElement {
     if (commentButton) {
       commentButton.innerText = '댓글 수정'
       commentButton.dataset.commentId = id
+      this.isEditing = true
 
       commentButton.onclick = async () => {
         const updatedContent = commentArea.value.trim()
@@ -159,6 +163,7 @@ class CommentListElement extends HTMLElement {
           )
           console.log('댓글 수정 완료')
           location.reload()
+          this.isEditing = false
         } else {
           console.log('수정할 내용이 없습니다.')
         }
