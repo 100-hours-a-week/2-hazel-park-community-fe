@@ -45,21 +45,27 @@ class EditFormElement extends HTMLElement {
                 '<input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />' +
                 '<div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
                 '</div>'
-              : '<div style="margin-top: 0.3em" class="password-wrap">' +
-                '<div class="input-title">비밀번호</div>' +
-                ' <input id="input-password" type="password" placeholder="비밀번호를 입력하세요" class="input-value" />' +
-                '<div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>' +
-                '</div>' +
-                '<div style="margin-top: 0.3em" class="password-wrap">' +
-                '<div class="input-title">비밀번호 확인*</div>' +
-                '<input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />' +
-                '<div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
-                '</div>'
+              : this.passwordFrom()
           }           
             <input id="submit" type="submit" value="수정하기" class="login-submit" />
         </form>
     </div>
 `
+  }
+
+  passwordFrom() {
+    return `
+      <div style="margin-top: 0.3em" class="password-wrap">
+        <div class="input-title">비밀번호</div>
+         <input id="input-password" type="password" placeholder="비밀번호를 입력하세요" class="input-value" />
+        <div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>
+      </div>
+      <div style="margin-top: 0.3em" class="password-wrap">
+        <div class="input-title">비밀번호 확인*</div>
+        <input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />
+        <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
+      </div>
+    `
   }
 
   addEventListeners() {
@@ -73,58 +79,43 @@ class EditFormElement extends HTMLElement {
 
     const deleteAccountButton = document.getElementById('delete-account')
 
-    if (deleteAccountButton) {
-      deleteAccountButton.addEventListener('click', () => this.openModal())
-    }
+    deleteAccountButton?.addEventListener('click', () => this.openModal())
+    inputNickname?.addEventListener('input', () => this.validateForm())
+    inputPassword?.addEventListener('input', () => this.validateForm())
+    inputRePassword?.addEventListener('input', () => this.validateForm())
 
-    if (inputNickname) {
-      inputNickname.addEventListener('input', () => this.validateForm())
-    }
-    if (inputPassword) {
-      inputPassword.addEventListener('input', () => this.validateForm())
-    }
-    if (inputRePassword) {
-      inputRePassword.addEventListener('input', () => this.validateForm())
-    }
+    submit?.addEventListener('click', async (event) => {
+      event.preventDefault()
 
-    if (submit) {
-      submit.addEventListener('click', async (event) => {
-        event.preventDefault()
+      const validationResult = this.validateForm()
+      if (validationResult === 'nickname') {
+        const nickname = inputNickname.value.trim()
+        this.storedData.user_name = nickname
+        localStorage.setItem('user', JSON.stringify(this.storedData))
 
-        const validationResult = this.validateForm()
-        if (validationResult === 'nickname') {
-          const nickname = this.shadowRoot
-            .getElementById('input-nickname')
-            .value.trim()
-          this.storedData.user_name = nickname
-          localStorage.setItem('user', JSON.stringify(this.storedData))
+        const result = await patchUserNickname(
+          this.storedData.user_email,
+          nickname,
+        )
+        let nicknameHyperText = this.shadowRoot.getElementById(
+          'nickname-hyper-text',
+        )
 
-          const result = await patchUserNickname(
-            this.storedData.user_email,
-            nickname,
-          )
-          let nicknameHyperText = this.shadowRoot.getElementById(
-            'nickname-hyper-text',
-          )
-
-          if (result === 400) {
-            nicknameHyperText.innerText = '중복된 닉네임 입니다.'
-            nicknameHyperText.style.visibility = 'visible'
-          } else {
-            nicknameHyperText.style.visibility = 'hidden'
-            toastMsg.style.visibility = 'visible'
-          }
-        } else if (validationResult === 'password') {
-          const password = this.shadowRoot
-            .getElementById('input-password')
-            .value.trim()
-          this.storedData.user_pw = password
-          localStorage.setItem('user', JSON.stringify(this.storedData))
-          await patchUserPw(this.storedData.user_email, password)
+        if (result === 400) {
+          nicknameHyperText.innerText = '중복된 닉네임 입니다.'
+          nicknameHyperText.style.visibility = 'visible'
+        } else {
+          nicknameHyperText.style.visibility = 'hidden'
           toastMsg.style.visibility = 'visible'
         }
-      })
-    }
+      } else if (validationResult === 'password') {
+        const password = inputPassword.value.trim()
+        this.storedData.user_pw = password
+        localStorage.setItem('user', JSON.stringify(this.storedData))
+        await patchUserPw(this.storedData.user_email, password)
+        toastMsg.style.visibility = 'visible'
+      }
+    })
   }
 
   openModal() {
