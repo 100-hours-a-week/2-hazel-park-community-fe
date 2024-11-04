@@ -49,32 +49,26 @@ class headerElement extends HTMLElement {
   }
 
   addEventListener() {
-    const headerText = this.shadowRoot.getElementById('header-text')
-    const profileImg = this.shadowRoot.getElementById('profile-img')
-    const profileDropdown = this.shadowRoot.getElementById('profile-dropdown')
-    const dropdownEditProfile = this.shadowRoot.getElementById(
-      'dropdown-edit-profile',
-    )
-    const dropdownEditPassword = this.shadowRoot.getElementById(
-      'dropdown-edit-password',
-    )
-    const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
-    const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
-    const backIcon = this.shadowRoot.getElementById('header-back')
+    const {
+      headerText,
+      profileImg,
+      profileDropdown,
+      dropdownEditProfile,
+      dropdownEditPassword,
+      dropdownLogin,
+      dropdownLogout,
+      backIcon,
+    } = this.getElements()
 
-    if (headerText) {
-      headerText.addEventListener('click', () =>
-        handleNavigation('/html/Posts.html'),
-      )
-    }
+    headerText?.addEventListener('click', () =>
+      handleNavigation('/html/Posts.html'),
+    )
 
-    if (profileImg) {
-      profileImg.addEventListener('click', (event) => {
-        event.stopPropagation()
-        profileDropdown.style.visibility =
-          profileDropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
-      })
-    }
+    profileImg?.addEventListener('click', (event) => {
+      event.stopPropagation()
+      profileDropdown.style.visibility =
+        profileDropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
+    })
 
     document.addEventListener('click', (event) => {
       if (profileImg && !profileImg.contains(event.target)) {
@@ -94,16 +88,28 @@ class headerElement extends HTMLElement {
       handleNavigation('/html/Log-in.html'),
     )
 
-    if (dropdownLogout) {
-      dropdownLogout.addEventListener('click', () => {
-        this.isLogin = false
-        localStorage.setItem('isLogin', this.isLogin)
-        this.updateProfileStatus()
-      })
-    }
+    dropdownLogout?.addEventListener('click', () => {
+      this.isLogin = false
+      localStorage.setItem('isLogin', this.isLogin)
+      this.updateProfileStatus()
+    })
 
-    if (backIcon) {
-      backIcon.addEventListener('click', () => window.history.back())
+    backIcon?.addEventListener('click', () => window.history.back())
+  }
+
+  getElements() {
+    const getElement = (id) => this.shadowRoot.getElementById(id)
+    return {
+      headerText: getElement('header-text'),
+      profileImg: getElement('profile-img'),
+      profileDropdown: getElement('profile-dropdown'),
+      dropdownEditProfile: getElement('dropdown-edit-profile'),
+      dropdownEditPassword: getElement('dropdown-edit-password'),
+      dropdownLogin: getElement('dropdown-login'),
+      dropdownLogout: getElement('dropdown-logout'),
+      backIcon: getElement('header-back'),
+      profileWrap: getElement('profile-wrap'),
+      headerWrap: getElement('header-wrap'),
     }
   }
 
