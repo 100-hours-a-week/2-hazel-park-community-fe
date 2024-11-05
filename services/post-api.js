@@ -15,6 +15,7 @@ export async function uploadPost(
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({
         title,
         writer,
@@ -75,6 +76,7 @@ export async function patchPost(postId, title, content, updatedAt) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({
         title,
         content,
@@ -96,6 +98,7 @@ export async function deletePost(postId) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     })
 
     const data = await response.json()
