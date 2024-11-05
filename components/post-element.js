@@ -14,41 +14,44 @@ class PostElement extends HTMLElement {
   }
 
   template() {
+    const {
+      post_title,
+      post_writer,
+      post_updatedAt,
+      post_contents,
+      post_likes,
+      post_views,
+      post_comments,
+    } = this.post
     return `
         <link rel="stylesheet" href="../styles/post.css" />
         <section class="post">
             <article class="post-detail-top">
-              <div class="post-title">${this.post.post_title}</div>
+              <div class="post-title">${post_title}</div>
               <div class="post-title-detail-wrap">
                 <div class="post-writer-img"></div>
-                <div class="post-writer-name">${this.post.post_writer}</div>
-                <div class="post-updateAt">${this.post.post_updatedAt}</div>
+                <div class="post-writer-name">${post_writer}</div>
+                <div class="post-updateAt">${post_updatedAt}</div>
                 <div class="post-controll-button">
-                  <button id="button-update" class="post-controll-button-detail">
-                    수정
-                  </button>
-                  <button id="button-delete" class="post-controll-button-detail">
-                    삭제
-                  </button>
+                  <button id="button-update" class="post-controll-button-detail">수정</button>
+                  <button id="button-delete" class="post-controll-button-detail">삭제</button>
                 </div>
               </div>
             </article>
             <article class="post-detail-bottom">
               <div class="post-contents-img"></div>
-              <div class="post-contents">
-              ${this.post.post_contents}
-              </div>
+              <div class="post-contents">${post_contents}</div>
               <div class="post-interaction">
                 <div id="post-interaction-likes" class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(this.post.post_likes)}</div>
+                  <div class="post-interaction-value">${checkCount(post_likes)}</div>
                   <div class="post-interaction-title">좋아요</div>
                 </div>
                 <div class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(this.post.post_views)}</div>
+                  <div class="post-interaction-value">${checkCount(post_views)}</div>
                   <div class="post-interaction-title">조회수</div>
                 </div>
                 <div class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(this.post.post_comments)}</div>
+                  <div class="post-interaction-value">${checkCount(post_comments)}</div>
                   <div class="post-interaction-title">댓글</div>
                 </div>
               </div>
@@ -56,23 +59,14 @@ class PostElement extends HTMLElement {
         </section>
     `
   }
-
   addEventListener() {
     const deletePost = this.shadowRoot.getElementById('button-delete')
     const updatePost = this.shadowRoot.getElementById('button-update')
     const likes = this.shadowRoot.getElementById('post-interaction-likes')
 
-    if (deletePost) {
-      deletePost.addEventListener('click', () => this.openModal())
-    }
-
-    if (updatePost) {
-      updatePost.addEventListener('click', () => this.navigateToEditPage())
-    }
-
-    if (likes) {
-      likes.addEventListener('click', async () => this.updateLikes())
-    }
+    deletePost?.addEventListener('click', () => this.openModal())
+    updatePost?.addEventListener('click', () => this.navigateToEditPage())
+    likes?.addEventListener('click', async () => this.updateLikes())
   }
 
   openModal() {
@@ -102,25 +96,6 @@ class PostElement extends HTMLElement {
     this.post = await getPostDetail(postId)
     this.postId = postId
     this.renderPost()
-    // NOTE: FE 로컬에서 json 이용하는 경우
-    // fetch('../data/posts.json')
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok ' + response.statusText)
-    //     }
-    //     return response.json()
-    //   })
-    //   .then((allPosts) => {
-    //     this.post = allPosts.find((post) => post.post_id === postId)
-    //     if (!this.post) {
-    //       console.error('해당 ID의 포스트를 찾을 수 없습니다.')
-    //     } else {
-    //       this.renderPost()
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Fetch error:', error)
-    //   })
   }
 
   async deleteContirm() {
