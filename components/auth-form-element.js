@@ -261,8 +261,8 @@ class AuthFormElement extends HTMLElement {
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
       const user = {
-        user_email: response.user_email,
-        user_name: response.user_name,
+        user_email: response.email,
+        user_name: response.nickname,
       }
 
       localStorage.setItem('user', JSON.stringify(user))

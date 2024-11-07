@@ -4,9 +4,11 @@ export async function loginUser(email, password) {
   try {
     const response = await fetch(`${baseUrl}/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
+
       body: JSON.stringify({
         email,
         password,
@@ -16,6 +18,7 @@ export async function loginUser(email, password) {
     const data = await response.json()
     return data.user
   } catch (error) {
+    console.log(error)
     alert(error.message)
   }
 }
@@ -91,6 +94,22 @@ export async function deleteUser(email) {
       body: JSON.stringify({
         email,
       }),
+    })
+
+    const data = await response.json()
+    console.log(data.message)
+  } catch (error) {
+    alert(error.message)
+  }
+}
+
+export async function logoutUser() {
+  try {
+    const response = await fetch(`${baseUrl}/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
     const data = await response.json()

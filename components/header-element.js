@@ -1,4 +1,5 @@
 import handleNavigation from '../utils/navigation.js'
+import { logoutUser } from '../services/user-api.js'
 
 class headerElement extends HTMLElement {
   constructor() {
@@ -88,7 +89,9 @@ class headerElement extends HTMLElement {
       handleNavigation('/html/Log-in.html'),
     )
 
-    dropdownLogout?.addEventListener('click', () => {
+    dropdownLogout?.addEventListener('click', async () => {
+      await logoutUser()
+      localStorage.removeItem('user')
       this.isLogin = false
       localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()
