@@ -16,6 +16,7 @@ export async function loginUser(email, password) {
     })
 
     const data = await response.json()
+    localStorage.setItem('user', JSON.stringify(data.user))
     return data.user
   } catch (error) {
     console.log(error)
@@ -23,18 +24,22 @@ export async function loginUser(email, password) {
   }
 }
 
-export async function registerUser(email, password, nickname) {
+export async function registerUser(email, password, nickname, profilePic) {
+  const formData = new FormData()
+  formData.append('email', email)
+  formData.append('password', password)
+  formData.append('nickname', nickname)
+
+  if (profilePic) {
+    const base64Data = profilePic.split(',')[1]
+    const blob = await fetch(profilePic).then((res) => res.blob())
+    formData.append('profilePic', blob, 'profile.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        nickname,
-      }),
+      body: formData,
     })
 
     const data = await response.json()

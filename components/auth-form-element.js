@@ -8,6 +8,7 @@ class AuthFormElement extends HTMLElement {
     this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
     localStorage.setItem('isLogin', this.isLogin)
     this.isLoginPage = true
+    this.profileImageData = null
   }
 
   connectedCallback() {
@@ -56,7 +57,8 @@ class AuthFormElement extends HTMLElement {
         <div class="input-title">프로필 사진</div>
           <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
           <label for="input-profile-img" class="input-profile-img-label">
-          <img src="../assets/plus.svg" class="plus-icon" />
+          <img id="profile-plus-icon" src="../assets/plus.svg" class="plus-icon" />
+          <img id="profile-img-preview" class="preview-profile-img" />
           </label>
         <input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />
       </div>
@@ -105,7 +107,8 @@ class AuthFormElement extends HTMLElement {
         this.login(email, password)
       } else if (validationResult === 'login') {
         const nickname = inputNickname.value.trim()
-        this.register(email, password, nickname)
+        console.log('in addEventListeners: ', this.profileImageData)
+        this.register(email, password, nickname, this.profileImageData)
       }
     })
   }
@@ -246,12 +249,67 @@ class AuthFormElement extends HTMLElement {
   checkImgUpload() {
     const inputProfileImg = this.shadowRoot.getElementById('input-profile-img')
     const profileHyperText = this.shadowRoot.getElementById('img-hyper-text')
+    const profileImgPreview = this.shadowRoot.getElementById(
+      'profile-img-preview',
+    )
+    const profilePlusIcon = this.shadowRoot.getElementById('profile-plus-icon')
+    const inputProfileImgLabel = this.shadowRoot.getElementById(
+      'input-profile-img-label',
+    )
+
+    const maxFileSize = 5 * 1024 * 1024 // 5MB
 
     if (!inputProfileImg.value) {
       profileHyperText.innerHTML = '프로필 사진을 추가해주세요.'
       profileHyperText.style.visibility = 'visible'
+      if (profileImgPreview) {
+        profileImgPreview.style.display = 'none'
+      }
+      if (profilePlusIcon) {
+        profilePlusIcon.style.display = 'block'
+      }
+      if (inputProfileImgLabel) {
+        inputProfileImgLabel.style.display = 'block'
+      }
     } else {
+      const file = inputProfileImg.files[0]
+
+      if (file.size > maxFileSize) {
+        profileHyperText.innerHTML = '파일 용량이 너무 큽니다. (최대 5MB)'
+        profileHyperText.style.visibility = 'visible'
+        if (profileImgPreview) {
+          profileImgPreview.style.display = 'none'
+        }
+        if (profilePlusIcon) {
+          profilePlusIcon.style.display = 'block'
+        }
+        if (inputProfileImgLabel) {
+          inputProfileImgLabel.style.display = 'block'
+        }
+        return
+      }
+
+      // 이미지 미리보기
       profileHyperText.style.visibility = 'hidden'
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        if (profileImgPreview) {
+          profileImgPreview.src = reader.result
+          profileImgPreview.style.display = 'block'
+          this.profileImageData = reader.result
+          console.log(profileImgPreview)
+          console.log(this.profileImageData)
+        }
+      }
+
+      reader.readAsDataURL(file)
+      if (profilePlusIcon) {
+        profilePlusIcon.style.display = 'none'
+      }
+      if (inputProfileImgLabel) {
+        inputProfileImgLabel.style.display = 'none'
+      }
     }
   }
 
@@ -260,21 +318,21 @@ class AuthFormElement extends HTMLElement {
       const response = await loginUser(email, password)
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
-      const user = {
-        user_email: response.email,
-        user_name: response.nickname,
-      }
+      // const user = {
+      //   user_email: response.email,
+      //   user_name: response.nickname,
+      // }
 
-      localStorage.setItem('user', JSON.stringify(user))
+      // localStorage.setItem('user', JSON.stringify(user))
       handleNavigation('/html/Posts.html')
     } catch (error) {
       alert(error.message)
     }
   }
 
-  async register(email, password, nickname) {
+  async register(email, password, nickname, profilePic) {
     try {
-      const result = await registerUser(email, password, nickname)
+      const result = await registerUser(email, password, nickname, profilePic)
       if (result === '이미 존재하는 이메일입니다.') {
         let emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
         emailHyperText.innerText = result
