@@ -1,16 +1,48 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
-import { getPostDetail, deletePost, updateLike } from '../services/post-api.js'
+import { getPostDetail, deletePost, likes } from '../services/post-api.js'
 
 class PostElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.post = null
+    this.postId = null
+    this.isLiked = false
   }
 
   async connectedCallback() {
-    this.loadPostData()
+    await this.loadPostData()
+    this.loadLikeState()
+  }
+
+  loadLikeState() {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
+    this.isLiked = likedPosts[this.postId] === true
+  }
+
+  saveLikeState() {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
+    if (this.isLiked) {
+      likedPosts[this.postId] = true
+    } else {
+      delete likedPosts[this.postId]
+    }
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts))
+  }
+
+  async updateLikes() {
+    const isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    if (!isLogin) {
+      alert('로그인 후 좋아요를 누를 수 있습니다.')
+      return
+    }
+
+    this.isLiked = !this.isLiked
+    const updatedLikes = await likes(this.postId, this.isLiked)
+    this.post.post_likes = updatedLikes
+    this.saveLikeState()
+    this.renderPost()
   }
 
   template() {
@@ -24,41 +56,42 @@ class PostElement extends HTMLElement {
       post_comments,
     } = this.post
     return `
-        <link rel="stylesheet" href="../styles/post.css" />
-        <section class="post">
-            <article class="post-detail-top">
-              <div class="post-title">${post_title}</div>
-              <div class="post-title-detail-wrap">
-                <div class="post-writer-img"></div>
-                <div class="post-writer-name">${post_writer}</div>
-                <div class="post-updateAt">${post_updatedAt}</div>
-                <div class="post-controll-button">
-                  <button id="button-update" class="post-controll-button-detail">수정</button>
-                  <button id="button-delete" class="post-controll-button-detail">삭제</button>
-                </div>
+      <link rel="stylesheet" href="../styles/post.css" />
+      <section class="post">
+          <article class="post-detail-top">
+            <div class="post-title">${post_title}</div>
+            <div class="post-title-detail-wrap">
+              <div class="post-writer-img"></div>
+              <div class="post-writer-name">${post_writer}</div>
+              <div class="post-updateAt">${post_updatedAt}</div>
+              <div class="post-controll-button">
+                <button id="button-update" class="post-controll-button-detail">수정</button>
+                <button id="button-delete" class="post-controll-button-detail">삭제</button>
               </div>
-            </article>
-            <article class="post-detail-bottom">
-              <div class="post-contents-img"></div>
-              <div class="post-contents">${post_contents}</div>
-              <div class="post-interaction">
-                <div id="post-interaction-likes" class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(post_likes)}</div>
-                  <div class="post-interaction-title">좋아요</div>
-                </div>
-                <div class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(post_views)}</div>
-                  <div class="post-interaction-title">조회수</div>
-                </div>
-                <div class="post-interaction-box">
-                  <div class="post-interaction-value">${checkCount(post_comments)}</div>
-                  <div class="post-interaction-title">댓글</div>
-                </div>
+            </div>
+          </article>
+          <article class="post-detail-bottom">
+            <div class="post-contents-img"></div>
+            <div class="post-contents">${post_contents}</div>
+            <div class="post-interaction">
+              <div id="post-interaction-likes" class="post-interaction-box">
+                <div class="post-interaction-value">${checkCount(post_likes)}</div>
+                <div class="post-interaction-title">좋아요</div>
               </div>
-            </article>
-        </section>
+              <div class="post-interaction-box">
+                <div class="post-interaction-value">${checkCount(post_views)}</div>
+                <div class="post-interaction-title">조회수</div>
+              </div>
+              <div class="post-interaction-box">
+                <div class="post-interaction-value">${checkCount(post_comments)}</div>
+                <div class="post-interaction-title">댓글</div>
+              </div>
+            </div>
+          </article>
+      </section>
     `
   }
+
   addEventListener() {
     const deletePost = this.shadowRoot.getElementById('button-delete')
     const updatePost = this.shadowRoot.getElementById('button-update')
@@ -92,7 +125,6 @@ class PostElement extends HTMLElement {
   async loadPostData() {
     const urlParams = new URLSearchParams(window.location.search)
     const postId = Number(urlParams.get('id'))
-
     this.post = await getPostDetail(postId)
     this.postId = postId
     this.renderPost()
@@ -101,12 +133,6 @@ class PostElement extends HTMLElement {
   async deleteContirm() {
     deletePost(this.postId)
     handleNavigation('/html/Posts.html')
-  }
-
-  async updateLikes() {
-    const updatedLikes = await updateLike(this.postId)
-    this.post.post_likes = updatedLikes
-    this.renderPost()
   }
 
   renderPost() {

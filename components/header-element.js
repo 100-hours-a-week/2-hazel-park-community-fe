@@ -92,6 +92,7 @@ class headerElement extends HTMLElement {
     dropdownLogout?.addEventListener('click', async () => {
       await logoutUser()
       localStorage.removeItem('user')
+      localStorage.removeItem('likedPosts')
       this.isLogin = false
       localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()

@@ -10,7 +10,7 @@ export async function uploadPost(
   comments,
 ) {
   try {
-    const response = await fetch(`${baseUrl}/`, {
+    const response = await fetch(`${baseUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,13 +108,16 @@ export async function deletePost(postId) {
   }
 }
 
-export async function updateLike(postId) {
+export async function likes(postId, isLiked) {
   try {
     const response = await fetch(`${baseUrl}/likes/${postId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        isLiked,
+      }),
     })
 
     const data = await response.json()
