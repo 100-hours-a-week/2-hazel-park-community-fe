@@ -119,3 +119,10 @@
   background-color: #d9d9d9;
   border-radius: 100%;
 }
+
+.post-writer-profile {
+  width: 36px;
+  height: 36px;
+  border-radius: 100%;
+  object-fit: cover;
+}

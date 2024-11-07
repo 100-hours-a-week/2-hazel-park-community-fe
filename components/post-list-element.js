@@ -54,7 +54,16 @@ class PostListElement extends HTMLElement {
                           <div class="post-updateAt">${post.post_updatedAt.toLocaleString()}</div>
                       </div>
                       <div class="post-writer-wrap">
-                        <div class="post-writer-img"></div>
+                      ${
+                        post.author_profile_picture
+                          ? `
+                            <img id="post-writer-img" src="${post.author_profile_picture}" class="post-writer-profile" />
+                            `
+                          : `
+                            <div id="post-writer-div" class="post-writer-img"></div>
+                            `
+                      }
+                        
                         <div class="post-writer">${post.post_writer}</div>                  
                       </div>
                   </div>

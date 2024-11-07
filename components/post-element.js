@@ -54,6 +54,7 @@ class PostElement extends HTMLElement {
       post_likes,
       post_views,
       post_comments,
+      author_profile_picture,
     } = this.post
     return `
       <link rel="stylesheet" href="../styles/post.css" />
@@ -61,7 +62,15 @@ class PostElement extends HTMLElement {
           <article class="post-detail-top">
             <div class="post-title">${post_title}</div>
             <div class="post-title-detail-wrap">
-              <div class="post-writer-img"></div>
+            ${
+              author_profile_picture
+                ? `
+                    <img id="post-writer-img" src="${author_profile_picture}" class="post-writer-profile" />
+                  `
+                : `
+                    <div id="post-writer-div" class="post-writer-img"></div>
+                  `
+            }
               <div class="post-writer-name">${post_writer}</div>
               <div class="post-updateAt">${post_updatedAt}</div>
               <div class="post-controll-button">
