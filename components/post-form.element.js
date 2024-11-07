@@ -66,7 +66,7 @@ class postFormElement extends HTMLElement {
       <div>
         <div class="input-title">제목*</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
-        <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
+        <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
         <div class="input-title">내용*</div>
