@@ -16,7 +16,7 @@ class postFormElement extends HTMLElement {
   async connectedCallback() {
     this.checkLocation()
     if (!this.isMakePostPage) {
-      this.loadPostData()
+      await this.loadPostData()
     }
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
@@ -63,7 +63,7 @@ class postFormElement extends HTMLElement {
   }
 
   editPostForm() {
-    const { post_title = '', post_contents = '' } = this.postData || {}
+    const { post_title, post_contents, post_img } = this.postData || {}
     return `
       <div>
         <div class="input-title">제목*</div>
@@ -77,9 +77,21 @@ class postFormElement extends HTMLElement {
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
-        <div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>
-        <label for="input-nickname" class="input-file-label">파일 선택</label>
-        <span class="input-file-span">파일을 선택해주세요.</span>
+        <div class="input-file-wrap">
+          <input id="imageUpload" type="file" class="input-value-file"/>
+          <label for="imageUpload" class="input-file-label">파일 선택</label>
+        ${
+          post_img
+            ? this.isMakePostPage
+              ? `
+                <span class="input-file-span">${post_img}</span>
+              `
+              : `<span id="input-file-span" class="input-file-span">${post_img}</span>`
+            : `
+                <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
+
+              `
+        }
       </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
@@ -120,23 +132,24 @@ class postFormElement extends HTMLElement {
     }
 
     if (submit) {
-      submit.addEventListener('click', (event) => {
+      submit.addEventListener('click', async (event) => {
         event.preventDefault()
         if (!this.isMakePostPage) {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
-          patchPost(
+          await patchPost(
             this.postId,
             titleValue,
             contentsValue,
             formatDate(Date.now()),
+            this.postImg,
           )
           handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'posts') {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
           this.saveDataInLocalStorage(titleValue, contentsValue)
-          uploadPost(
+          await uploadPost(
             titleValue,
             this.storedData.email,
             formatDate(Date.now()),
@@ -146,7 +159,7 @@ class postFormElement extends HTMLElement {
             0,
             this.postImg,
           )
-          //handleNavigation('/html/Posts.html')
+          handleNavigation('/html/Posts.html')
         }
       })
     }
@@ -256,20 +269,6 @@ class postFormElement extends HTMLElement {
     }
 
     this.postData = await getPostDetail(this.postId)
-    this.renderPost()
-  }
-
-  renderPost() {
-    const inputTitle = this.shadowRoot.getElementById('input-title')
-    const inputContents = this.shadowRoot.getElementById('input-contents')
-
-    if (inputTitle) {
-      inputTitle.value = this.postData.post_title
-    }
-
-    if (inputContents) {
-      inputContents.value = this.postData.post_contents
-    }
   }
 }
 

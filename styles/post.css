@@ -89,6 +89,7 @@
 .post-img {
   width: 28.333vw;
   height: 28.333vh;
+  object-fit: cover;
 }
 
 .post-contents {
