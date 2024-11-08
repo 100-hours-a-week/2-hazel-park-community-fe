@@ -27,25 +27,7 @@ class EditFormElement extends HTMLElement {
     <div class="edit-form-wrap">
         <form class="edit-form">
           ${
-            this.isEditProfilePage
-              ? '<div style="margin-bottom: 2.87vh">' +
-                '<div class="input-title">프로필 사진*</div>' +
-                '<div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                '<label for="input-profile-img" class="input-profile-img-label">' +
-                '<img src="../assets/plus.svg" class="plus-icon" />' +
-                '</label>' +
-                '<input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />' +
-                '</div>' +
-                '<div class="email-wrap">' +
-                '<div class="input-title">이메일</div>' +
-                `<div id="user-email" class="user-email" />${this.storedData.user_email}</div>` +
-                '</div>' +
-                '<div style="margin-top: 1rem" class="nickname-wrap">' +
-                '<div class="input-title">닉네임</div>' +
-                '<input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />' +
-                '<div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
-                '</div>'
-              : this.passwordFrom()
+            this.isEditProfilePage ? this.profileForm() : this.passwordForm()
           }           
             <input id="submit" type="submit" value="수정하기" class="login-submit" />
         </form>
@@ -53,7 +35,40 @@ class EditFormElement extends HTMLElement {
 `
   }
 
-  passwordFrom() {
+  profileForm() {
+    return `
+      <div style="margin-bottom: 2.87vh">
+        <div class="input-title">프로필 사진*</div>
+        <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+      ${
+        this.storedData.profilePicture
+          ? `
+              <div class="wrap-profile-img">
+                <button class="profile-img-change-btn" >변경</button>
+                <img id="post-writer-img" src="${this.storedData.profilePicture}" class="profile-img" />
+              </div>
+            `
+          : `
+              <label for="input-profile-img" class="input-profile-img-label">
+                <img src="../assets/plus.svg" class="plus-icon" />
+              </label>
+              <input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />
+            `
+      }
+        </div>
+        <div class="email-wrap">
+          <div class="input-title">이메일</div>
+          <div id="user-email" class="user-email" />${this.storedData.email}</div>
+        </div>
+        <div style="margin-top: 1rem" class="nickname-wrap">
+          <div class="input-title">닉네임</div>
+            <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
+            <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
+        </div>
+    `
+  }
+
+  passwordForm() {
     return `
       <div style="margin-top: 0.3em" class="password-wrap">
         <div class="input-title">비밀번호</div>
