@@ -51,7 +51,15 @@ class CommentListElement extends HTMLElement {
             <div class="comment-wrap">
               <div class="comment-wrap-detail">
                 <div class="comment-writer-info">
-                  <div class="post-writer-img"></div>
+                ${
+                  comment.author_profile_picture
+                    ? `
+                        <img id="post-writer-img" src="${comment.author_profile_picture}" class="post-writer-profile" />
+                      `
+                    : `
+                        <div id="post-writer-div" class="post-writer-img"></div>
+                      `
+                }
                   <div class="post-writer-name">${comment.writer}</div>
                   <div class="post-updateAt">${comment.updateAt}</div>
                 </div>
