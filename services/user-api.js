@@ -49,18 +49,21 @@ export async function registerUser(email, password, nickname, profilePic) {
     alert(error.message)
   }
 }
+export async function patchUserNickname(email, nickname, newImageData) {
+  const formData = new FormData()
+  formData.append('email', email)
+  formData.append('nickname', nickname)
 
-export async function patchUserNickname(email, nickname) {
+  if (newImageData) {
+    const base64Data = newImageData.split(',')[1]
+    const blob = await fetch(newImageData).then((res) => res.blob())
+    formData.append('newProfileImg', blob, 'newProfile.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}/patchName`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        nickname,
-      }),
+      body: formData,
     })
 
     return response.status

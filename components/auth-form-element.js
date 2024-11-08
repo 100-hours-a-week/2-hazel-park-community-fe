@@ -298,7 +298,7 @@ class AuthFormElement extends HTMLElement {
           profileImgPreview.src = reader.result
           profileImgPreview.style.display = 'block'
           this.profileImageData = reader.result
-          console.log(profileImgPreview)
+          //console.log(profileImgPreview)
           console.log(this.profileImageData)
         }
       }
