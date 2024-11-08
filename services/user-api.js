@@ -49,6 +49,7 @@ export async function registerUser(email, password, nickname, profilePic) {
     alert(error.message)
   }
 }
+
 export async function patchUserNickname(email, nickname, newImageData) {
   const formData = new FormData()
   formData.append('email', email)
@@ -61,7 +62,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
   }
 
   try {
-    const response = await fetch(`${baseUrl}/patchName`, {
+    const response = await fetch(`${baseUrl}/userInfo`, {
       method: 'PATCH',
       body: formData,
     })
