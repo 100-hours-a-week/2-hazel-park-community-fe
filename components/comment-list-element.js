@@ -21,7 +21,10 @@ class CommentListElement extends HTMLElement {
 
     if (this.postId) {
       console.log(this.postId)
-      const comments = await getComments(this.postId)
+      let comments = await getComments(this.postId)
+
+      comments = Array.isArray(comments) ? comments : []
+
       this.shadowRoot.innerHTML = this.template(comments)
       this.addEventListener(comments)
     } else {
@@ -126,7 +129,7 @@ class CommentListElement extends HTMLElement {
             if (!this.isEditing) {
               await uploadComment(
                 this.postId,
-                this.storedData.user_name,
+                this.storedData.email,
                 formatDate(Date.now()),
                 updatedContent,
               )

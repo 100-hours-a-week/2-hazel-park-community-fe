@@ -119,7 +119,7 @@ export async function deletePost(postId) {
 
 export async function likes(postId, isLiked) {
   try {
-    const response = await fetch(`${baseUrl}/likes/${postId}`, {
+    const response = await fetch(`${baseUrl}/${postId}/likes`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

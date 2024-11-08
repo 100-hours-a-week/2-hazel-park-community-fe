@@ -9,6 +9,7 @@ class PostElement extends HTMLElement {
     this.post = null
     this.postId = null
     this.isLiked = false
+    this.likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
   }
 
   async connectedCallback() {
@@ -17,18 +18,16 @@ class PostElement extends HTMLElement {
   }
 
   loadLikeState() {
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
-    this.isLiked = likedPosts[this.postId] === true
+    this.isLiked = this.likedPosts[this.postId] === true
   }
 
-  saveLikeState() {
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
+  async saveLikeState() {
     if (this.isLiked) {
-      likedPosts[this.postId] = true
+      this.likedPosts[this.postId] = true
     } else {
-      delete likedPosts[this.postId]
+      delete this.likedPosts[this.postId]
     }
-    localStorage.setItem('likedPosts', JSON.stringify(likedPosts))
+    localStorage.setItem('likedPosts', JSON.stringify(this.likedPosts))
   }
 
   async updateLikes() {
@@ -38,11 +37,32 @@ class PostElement extends HTMLElement {
       return
     }
 
-    this.isLiked = !this.isLiked
-    const updatedLikes = await likes(this.postId, this.isLiked)
-    this.post.post_likes = updatedLikes
-    this.saveLikeState()
-    this.renderPost()
+    try {
+      this.isLiked = !this.isLiked
+
+      this.post.post_likes += this.isLiked ? 1 : -1
+      this.renderPost()
+
+      const updatedLikes = await likes(this.postId, this.isLiked)
+
+      this.post.post_likes = updatedLikes
+      await this.saveLikeState()
+      this.renderPost()
+    } catch (error) {
+      console.error('Failed to update likes:', error)
+      this.isLiked = !this.isLiked
+      this.post.post_likes += this.isLiked ? 1 : -1
+      this.renderPost()
+    }
+  }
+
+  updateLikesUI() {
+    const likesElement = this.shadowRoot.getElementById(
+      'post-interaction-likes',
+    )
+    if (likesElement && this.likedPosts[this.postId]) {
+      likesElement.style.backgroundColor = '#e9e9e9'
+    }
   }
 
   template() {
@@ -156,6 +176,7 @@ class PostElement extends HTMLElement {
   renderPost() {
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
+    this.updateLikesUI()
   }
 }
 
