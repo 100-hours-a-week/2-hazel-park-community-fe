@@ -1,8 +1,9 @@
 const baseUrl = 'http://localhost:3000/api/comments'
+const postUrl = 'http://localhost:3000/api/posts'
 
 export async function getComments(postId) {
   try {
-    const response = await fetch(`${baseUrl}/${postId}`, {
+    const response = await fetch(`${postUrl}/${postId}/comments`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +21,7 @@ export async function getComments(postId) {
 
 export async function uploadComment(postId, writer, updatedAt, content) {
   try {
-    const response = await fetch(`${baseUrl}/${postId}`, {
+    const response = await fetch(`${postUrl}/${postId}/comment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

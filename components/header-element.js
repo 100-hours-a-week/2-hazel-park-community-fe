@@ -92,6 +92,7 @@ class headerElement extends HTMLElement {
     dropdownLogout?.addEventListener('click', async () => {
       await logoutUser()
       localStorage.removeItem('user')
+      localStorage.removeItem('likedPosts')
       this.isLogin = false
       localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()
@@ -127,14 +128,13 @@ class headerElement extends HTMLElement {
     const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
     const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
 
-    profileImg.src = this.isLogin
-      ? '../assets/admin.png'
-      : '../assets/pre-profile.png'
-
     dropdownEditProfile.style.display = this.isLogin ? 'block' : 'none'
     dropdownEditPassword.style.display = this.isLogin ? 'block' : 'none'
     dropdownLogin.style.display = this.isLogin ? 'none' : 'block'
     dropdownLogout.style.display = this.isLogin ? 'block' : 'none'
+
+    const user = JSON.parse(localStorage.getItem('user'))
+    profileImg.src = user?.profilePicture || '../assets/pre-profile.png'
   }
 
   hideProfile() {

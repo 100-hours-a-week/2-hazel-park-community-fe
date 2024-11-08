@@ -11,6 +11,7 @@ class EditFormElement extends HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.isEditProfilePage = true
     this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.newImageData = null
   }
 
   connectedCallback() {
@@ -27,25 +28,7 @@ class EditFormElement extends HTMLElement {
     <div class="edit-form-wrap">
         <form class="edit-form">
           ${
-            this.isEditProfilePage
-              ? '<div style="margin-bottom: 2.87vh">' +
-                '<div class="input-title">프로필 사진*</div>' +
-                '<div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>' +
-                '<label for="input-profile-img" class="input-profile-img-label">' +
-                '<img src="../assets/plus.svg" class="plus-icon" />' +
-                '</label>' +
-                '<input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />' +
-                '</div>' +
-                '<div class="email-wrap">' +
-                '<div class="input-title">이메일</div>' +
-                `<div id="user-email" class="user-email" />${this.storedData.user_email}</div>` +
-                '</div>' +
-                '<div style="margin-top: 1rem" class="nickname-wrap">' +
-                '<div class="input-title">닉네임</div>' +
-                '<input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />' +
-                '<div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>' +
-                '</div>'
-              : this.passwordFrom()
+            this.isEditProfilePage ? this.profileForm() : this.passwordForm()
           }           
             <input id="submit" type="submit" value="수정하기" class="login-submit" />
         </form>
@@ -53,7 +36,44 @@ class EditFormElement extends HTMLElement {
 `
   }
 
-  passwordFrom() {
+  profileForm() {
+    return `
+      <div style="margin-bottom: 2.87vh">
+        <div class="input-title">프로필 사진*</div>
+        <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+      ${
+        this.storedData.profilePicture
+          ? `
+              <div class="wrap-profile-img">
+                <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
+                <input type="file" id="imageUpload" style="display: none;" accept="image/*" />
+                <img id="profileImage" src="${this.storedData.profilePicture}" class="profile-img" />
+              </div>
+            `
+          : `
+              <div class="wrap-profile-img">
+                <label for="imageUpload" class="input-profile-img-label">
+                  <img src="../assets/plus.svg" class="plus-icon" />
+                </label>
+                <input id="imageUpload" type="file" class="input-profile-img" accept="image/*" style="display: none;" />
+                <img id="profileImage" style="display: none;" class="profile-img" />
+              </div>
+            `
+      }
+        </div>
+        <div class="email-wrap">
+          <div class="input-title">이메일</div>
+          <div id="user-email" class="user-email" />${this.storedData.email}</div>
+        </div>
+        <div style="margin-top: 1rem" class="nickname-wrap">
+          <div class="input-title">닉네임</div>
+            <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
+            <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
+        </div>
+    `
+  }
+
+  passwordForm() {
     return `
       <div style="margin-top: 0.3em" class="password-wrap">
         <div class="input-title">비밀번호</div>
@@ -79,6 +99,32 @@ class EditFormElement extends HTMLElement {
 
     const deleteAccountButton = document.getElementById('delete-account')
 
+    const imageUpload = this.shadowRoot.getElementById('imageUpload')
+    const changeImageBtn = this.shadowRoot.getElementById('changeImageBtn')
+
+    if (changeImageBtn) {
+      changeImageBtn.addEventListener('click', () => {
+        imageUpload.click()
+      })
+    }
+
+    if (imageUpload) {
+      imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0]
+        if (file) {
+          if (this.validateImageFile(file)) {
+            this.handleImageUpload(file)
+          } else {
+            const imgHyperText =
+              this.shadowRoot.getElementById('img-hyper-text')
+            imgHyperText.innerText =
+              '이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)'
+            imgHyperText.style.visibility = 'visible'
+          }
+        }
+      })
+    }
+
     deleteAccountButton?.addEventListener('click', () => this.openModal())
     inputNickname?.addEventListener('input', () => this.validateForm())
     inputPassword?.addEventListener('input', () => this.validateForm())
@@ -89,13 +135,19 @@ class EditFormElement extends HTMLElement {
 
       const validationResult = this.validateForm()
       if (validationResult === 'nickname') {
+        if (this.newImageData) {
+          this.storedData.profilePicture = this.newImageData
+        }
+
         const nickname = inputNickname.value.trim()
         this.storedData.user_name = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
+        console.log(this.newImageData)
 
         const result = await patchUserNickname(
-          this.storedData.user_email,
+          this.storedData.email,
           nickname,
+          this.newImageData,
         )
         let nicknameHyperText = this.shadowRoot.getElementById(
           'nickname-hyper-text',
@@ -116,6 +168,35 @@ class EditFormElement extends HTMLElement {
         toastMsg.style.visibility = 'visible'
       }
     })
+  }
+
+  validateImageFile(file) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+    return validTypes.includes(file.type)
+  }
+
+  handleImageUpload(file) {
+    const reader = new FileReader()
+    const profileImage = this.shadowRoot.getElementById('profileImage')
+    const imgHyperText = this.shadowRoot.getElementById('img-hyper-text')
+
+    reader.onload = (e) => {
+      profileImage.src = e.target.result
+      profileImage.style.display = 'block'
+
+      this.newImageData = e.target.result
+      //this.newImageData = file
+
+      imgHyperText.innerText =
+        '수정하기 버튼을 누르면 프로필 이미지가 변경됩니다.'
+      imgHyperText.style.visibility = 'visible'
+
+      setTimeout(() => {
+        imgHyperText.style.visibility = 'hidden'
+      }, 3000)
+    }
+
+    reader.readAsDataURL(file)
   }
 
   openModal() {

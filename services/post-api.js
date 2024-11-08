@@ -8,23 +8,28 @@ export async function uploadPost(
   likes,
   views,
   comments,
+  postImg,
 ) {
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('writer', writer)
+  formData.append('updatedAt', updatedAt)
+  formData.append('contents', contents)
+  formData.append('likes', likes)
+  formData.append('views', views)
+  formData.append('comments', comments)
+
+  if (postImg) {
+    const base64Data = postImg.split(',')[1]
+    const blob = await fetch(postImg).then((res) => res.blob())
+    formData.append('postImg', blob, 'postImg.jpg')
+  }
+
   try {
-    const response = await fetch(`${baseUrl}/`, {
+    const response = await fetch(`${baseUrl}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       credentials: 'include',
-      body: JSON.stringify({
-        title,
-        writer,
-        updatedAt,
-        contents,
-        likes,
-        views,
-        comments,
-      }),
+      body: formData,
     })
 
     const data = await response.json()
@@ -69,19 +74,23 @@ export async function getPostDetail(postId) {
   }
 }
 
-export async function patchPost(postId, title, content, updatedAt) {
+export async function patchPost(postId, title, content, updatedAt, postImg) {
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('content', content)
+  formData.append('updatedAt', updatedAt)
+
+  if (postImg) {
+    const base64Data = postImg.split(',')[1]
+    const blob = await fetch(postImg).then((res) => res.blob())
+    formData.append('postImg', blob, 'postImg.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}/${postId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       credentials: 'include',
-      body: JSON.stringify({
-        title,
-        content,
-        updatedAt,
-      }),
+      body: formData,
     })
 
     const data = await response.json()
@@ -108,13 +117,16 @@ export async function deletePost(postId) {
   }
 }
 
-export async function updateLike(postId) {
+export async function likes(postId, isLiked) {
   try {
     const response = await fetch(`${baseUrl}/likes/${postId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        isLiked,
+      }),
     })
 
     const data = await response.json()

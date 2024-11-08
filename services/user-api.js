@@ -16,6 +16,7 @@ export async function loginUser(email, password) {
     })
 
     const data = await response.json()
+    localStorage.setItem('user', JSON.stringify(data.user))
     return data.user
   } catch (error) {
     console.log(error)
@@ -23,18 +24,22 @@ export async function loginUser(email, password) {
   }
 }
 
-export async function registerUser(email, password, nickname) {
+export async function registerUser(email, password, nickname, profilePic) {
+  const formData = new FormData()
+  formData.append('email', email)
+  formData.append('password', password)
+  formData.append('nickname', nickname)
+
+  if (profilePic) {
+    const base64Data = profilePic.split(',')[1]
+    const blob = await fetch(profilePic).then((res) => res.blob())
+    formData.append('profilePic', blob, 'profile.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        nickname,
-      }),
+      body: formData,
     })
 
     const data = await response.json()
@@ -44,18 +49,21 @@ export async function registerUser(email, password, nickname) {
     alert(error.message)
   }
 }
+export async function patchUserNickname(email, nickname, newImageData) {
+  const formData = new FormData()
+  formData.append('email', email)
+  formData.append('nickname', nickname)
 
-export async function patchUserNickname(email, nickname) {
+  if (newImageData) {
+    const base64Data = newImageData.split(',')[1]
+    const blob = await fetch(newImageData).then((res) => res.blob())
+    formData.append('newProfileImg', blob, 'newProfile.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}/patchName`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        nickname,
-      }),
+      body: formData,
     })
 
     return response.status

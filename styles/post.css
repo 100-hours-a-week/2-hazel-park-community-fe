@@ -36,6 +36,14 @@
   background-color: #d9d9d9;
   border-radius: 100%;
 }
+
+.post-writer-profile {
+  width: 36px;
+  height: 36px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
 .post-writer-name {
   padding-left: 0.625rem;
   font-weight: 700;
@@ -76,6 +84,12 @@
   width: 28.333vw;
   height: 28.333vh;
   background-color: #d9d9d9;
+}
+
+.post-img {
+  width: 28.333vw;
+  height: 28.333vh;
+  object-fit: cover;
 }
 
 .post-contents {

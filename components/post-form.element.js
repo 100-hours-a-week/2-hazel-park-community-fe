@@ -10,12 +10,13 @@ class postFormElement extends HTMLElement {
     this.postId = null
     this.postData = null
     this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.postImg = null
   }
 
   async connectedCallback() {
     this.checkLocation()
     if (!this.isMakePostPage) {
-      this.loadPostData()
+      await this.loadPostData()
     }
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
@@ -51,17 +52,18 @@ class postFormElement extends HTMLElement {
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
-        <div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>
-        <label for="input-nickname" class="input-file-label">파일 선택</label>
-        <span class="input-file-span">파일을 선택해주세요.</span>
-      </div>
+        <div class="input-file-wrap">
+          <input id="imageUpload" type="file" class="input-value-file"/>
+          <label for="imageUpload" class="input-file-label">파일 선택</label>
+          <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
+        </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
     `
   }
 
   editPostForm() {
-    const { post_title = '', post_contents = '' } = this.postData || {}
+    const { post_title, post_contents, post_img } = this.postData || {}
     return `
       <div>
         <div class="input-title">제목*</div>
@@ -75,9 +77,21 @@ class postFormElement extends HTMLElement {
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
-        <div class="input-file-wrap"><input id="input-nickname" type="file" class="input-value-file"/>
-        <label for="input-nickname" class="input-file-label">파일 선택</label>
-        <span class="input-file-span">파일을 선택해주세요.</span>
+        <div class="input-file-wrap">
+          <input id="imageUpload" type="file" class="input-value-file"/>
+          <label for="imageUpload" class="input-file-label">파일 선택</label>
+        ${
+          post_img
+            ? this.isMakePostPage
+              ? `
+                <span class="input-file-span">${post_img}</span>
+              `
+              : `<span id="input-file-span" class="input-file-span">${post_img}</span>`
+            : `
+                <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
+
+              `
+        }
       </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
@@ -89,6 +103,26 @@ class postFormElement extends HTMLElement {
     const inputContents = this.shadowRoot.getElementById('input-contents')
     const submit = this.shadowRoot.getElementById('submit')
 
+    const imageUpload = this.shadowRoot.getElementById('imageUpload')
+    const imageSpan = this.shadowRoot.getElementById('input-file-span')
+
+    if (imageUpload) {
+      imageUpload.addEventListener('change', (event) => {
+        console.log(event.target.files[0])
+        imageSpan.innerText = event.target.files[0].name
+        const file = event.target.files[0]
+        if (file) {
+          if (this.validateImageFile(file)) {
+            this.handleImageUpload(file)
+          } else {
+            console.log(
+              '이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)',
+            )
+          }
+        }
+      })
+    }
+
     if (inputTitle) {
       inputTitle.addEventListener('input', () => this.validateForm())
     }
@@ -98,35 +132,54 @@ class postFormElement extends HTMLElement {
     }
 
     if (submit) {
-      submit.addEventListener('click', (event) => {
+      submit.addEventListener('click', async (event) => {
         event.preventDefault()
         if (!this.isMakePostPage) {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
-          patchPost(
+          await patchPost(
             this.postId,
             titleValue,
             contentsValue,
             formatDate(Date.now()),
+            this.postImg,
           )
           handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'posts') {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
           this.saveDataInLocalStorage(titleValue, contentsValue)
-          uploadPost(
+          await uploadPost(
             titleValue,
-            this.storedData.user_name,
+            this.storedData.email,
             formatDate(Date.now()),
             contentsValue,
             0,
             0,
             0,
+            this.postImg,
           )
           handleNavigation('/html/Posts.html')
         }
       })
     }
+  }
+
+  validateImageFile(file) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+    return validTypes.includes(file.type)
+  }
+
+  handleImageUpload(file) {
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      this.postImg = e.target.result
+      // console.log(this.postImg)
+      //this.newImageData = file
+    }
+
+    reader.readAsDataURL(file)
   }
 
   validateForm() {
@@ -216,20 +269,6 @@ class postFormElement extends HTMLElement {
     }
 
     this.postData = await getPostDetail(this.postId)
-    this.renderPost()
-  }
-
-  renderPost() {
-    const inputTitle = this.shadowRoot.getElementById('input-title')
-    const inputContents = this.shadowRoot.getElementById('input-contents')
-
-    if (inputTitle) {
-      inputTitle.value = this.postData.post_title
-    }
-
-    if (inputContents) {
-      inputContents.value = this.postData.post_contents
-    }
   }
 }
 
