@@ -91,6 +91,7 @@ textarea {
   border-radius: 100%;
   cursor: pointer;
   visibility: visible;
+  object-fit: cover;
 }
 
 .profile-dropdown {
