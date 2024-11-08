@@ -8,23 +8,28 @@ export async function uploadPost(
   likes,
   views,
   comments,
+  postImg,
 ) {
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('writer', writer)
+  formData.append('updatedAt', updatedAt)
+  formData.append('contents', contents)
+  formData.append('likes', likes)
+  formData.append('views', views)
+  formData.append('comments', comments)
+
+  if (postImg) {
+    const base64Data = postImg.split(',')[1]
+    const blob = await fetch(postImg).then((res) => res.blob())
+    formData.append('postImg', blob, 'postImg.jpg')
+  }
+
   try {
     const response = await fetch(`${baseUrl}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       credentials: 'include',
-      body: JSON.stringify({
-        title,
-        writer,
-        updatedAt,
-        contents,
-        likes,
-        views,
-        comments,
-      }),
+      body: formData,
     })
 
     const data = await response.json()

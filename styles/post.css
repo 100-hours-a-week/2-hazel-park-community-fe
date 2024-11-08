@@ -86,6 +86,11 @@
   background-color: #d9d9d9;
 }
 
+.post-img {
+  width: 28.333vw;
+  height: 28.333vh;
+}
+
 .post-contents {
   margin-top: 2.222vh;
   width: 28.333vw;

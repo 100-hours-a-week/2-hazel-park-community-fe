@@ -39,6 +39,7 @@ class PostListElement extends HTMLElement {
           <link rel="stylesheet" href="../styles/Posts.css" />
           <div class="post-list">
             ${posts
+              .reverse()
               .map(
                 (post) => `
                   <div class="post-item">
