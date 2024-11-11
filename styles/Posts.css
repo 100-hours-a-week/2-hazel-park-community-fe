@@ -126,3 +126,11 @@
   border-radius: 100%;
   object-fit: cover;
 }
+
+.loading-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+}

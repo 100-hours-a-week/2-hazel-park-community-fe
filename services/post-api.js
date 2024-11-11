@@ -40,14 +40,18 @@ export async function uploadPost(
   }
 }
 
-export async function getPosts() {
+export async function getPosts({ page = 0, limit = 4 } = {}) {
   try {
-    const response = await fetch(`${baseUrl}/`, {
+    const response = await fetch(`${baseUrl}?page=${page}&limit=${limit}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     })
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`)
+    }
 
     const data = await response.json()
     return data
