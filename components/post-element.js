@@ -137,7 +137,7 @@ class PostElement extends HTMLElement {
     const likes = this.shadowRoot.getElementById('post-interaction-likes')
 
     deletePost?.addEventListener('click', () => {
-      if (!this.isLogin || this.storedData.email !== this.post.post_writer) {
+      if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
         alert('게시글 작성자만 이용할 수 있는 기능입니다.')
         return
       } else {
@@ -145,7 +145,7 @@ class PostElement extends HTMLElement {
       }
     })
     updatePost?.addEventListener('click', () => {
-      if (!this.isLogin || this.storedData.email !== this.post.post_writer) {
+      if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
         alert('게시글 작성자만 이용할 수 있는 기능입니다.')
         return
       } else {
