@@ -13,6 +13,7 @@ class CommentListElement extends HTMLElement {
     this.postId = null
     this.storedData = JSON.parse(localStorage.getItem('user'))
     this.isEditing = false
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
   }
 
   async connectedCallback() {
@@ -98,9 +99,18 @@ class CommentListElement extends HTMLElement {
     const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
 
     updateButtons.forEach((button, index) => {
-      button.addEventListener('click', () =>
-        this.handleUpdate(comments[index].id, comments[index].content),
-      )
+      button.addEventListener('click', () => {
+        if (
+          !this.isLogin ||
+          this.storedData.nickname !== comments[index].writer
+        ) {
+          //alert(comments[index].writer)
+          alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+          return
+        } else {
+          this.handleUpdate(comments[index].id, comments[index].content)
+        }
+      })
     })
   }
 
@@ -108,7 +118,17 @@ class CommentListElement extends HTMLElement {
     const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
     deleteButtons.forEach((button, index) => {
-      button.addEventListener('click', () => this.openModal(comments[index].id))
+      button.addEventListener('click', () => {
+        if (
+          !this.isLogin ||
+          this.storedData.nickname !== comments[index].writer
+        ) {
+          alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+          return
+        } else {
+          this.openModal(comments[index].id)
+        }
+      })
     })
   }
 
