@@ -92,7 +92,7 @@ class PostListElement extends HTMLElement {
           }
         },
         {
-          rootMargin: '20px',
+          rootMargin: '8px',
           threshold: 0.1,
         },
       )
