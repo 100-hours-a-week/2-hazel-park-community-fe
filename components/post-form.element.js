@@ -14,6 +14,13 @@ class postFormElement extends HTMLElement {
   }
 
   async connectedCallback() {
+    const isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    if (!isLogin) {
+      alert('로그인 후 작성할 수 있습니다.')
+      handleNavigation('/html/Log-in.html')
+
+      return
+    }
     this.checkLocation()
     if (!this.isMakePostPage) {
       await this.loadPostData()
