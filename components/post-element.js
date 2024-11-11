@@ -6,6 +6,8 @@ class PostElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
     this.post = null
     this.postId = null
     this.isLiked = false
@@ -31,9 +33,8 @@ class PostElement extends HTMLElement {
   }
 
   async updateLikes() {
-    const isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
-    if (!isLogin) {
-      alert('로그인 후 좋아요를 누를 수 있습니다.')
+    if (!this.isLogin) {
+      alert('로그인 후 이용할 수 있습니다.')
       return
     }
 
@@ -135,8 +136,23 @@ class PostElement extends HTMLElement {
     const updatePost = this.shadowRoot.getElementById('button-update')
     const likes = this.shadowRoot.getElementById('post-interaction-likes')
 
-    deletePost?.addEventListener('click', () => this.openModal())
-    updatePost?.addEventListener('click', () => this.navigateToEditPage())
+    deletePost?.addEventListener('click', () => {
+      if (!this.isLogin || this.storedData.email !== this.post.post_writer) {
+        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+        return
+      } else {
+        this.openModal()
+      }
+    })
+    updatePost?.addEventListener('click', () => {
+      if (!this.isLogin || this.storedData.email !== this.post.post_writer) {
+        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+        return
+      } else {
+        this.openModal()
+      }
+      this.navigateToEditPage()
+    })
     likes?.addEventListener('click', async () => this.updateLikes())
   }
 
