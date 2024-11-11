@@ -13,6 +13,7 @@ class CommentListElement extends HTMLElement {
     this.postId = null
     this.storedData = JSON.parse(localStorage.getItem('user'))
     this.isEditing = false
+    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
   }
 
   async connectedCallback() {
@@ -101,8 +102,9 @@ class CommentListElement extends HTMLElement {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||
-          this.storedData.nickname !== this.post.post_writer
+          this.storedData.nickname !== comments[index].writer
         ) {
+          //alert(comments[index].writer)
           alert('게시글 작성자만 이용할 수 있는 기능입니다.')
           return
         } else {
@@ -119,7 +121,7 @@ class CommentListElement extends HTMLElement {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||
-          this.storedData.nickname !== this.post.post_writer
+          this.storedData.nickname !== comments[index].writer
         ) {
           alert('게시글 작성자만 이용할 수 있는 기능입니다.')
           return
