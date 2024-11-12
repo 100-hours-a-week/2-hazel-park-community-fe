@@ -1,23 +1,11 @@
 const baseUrl = 'http://localhost:3000/api/posts'
 
-export async function uploadPost(
-  title,
-  writer,
-  updatedAt,
-  contents,
-  likes,
-  views,
-  comments,
-  postImg,
-) {
+export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
   formData.append('title', title)
   formData.append('writer', writer)
   formData.append('updatedAt', updatedAt)
   formData.append('contents', contents)
-  formData.append('likes', likes)
-  formData.append('views', views)
-  formData.append('comments', comments)
 
   if (postImg) {
     const base64Data = postImg.split(',')[1]

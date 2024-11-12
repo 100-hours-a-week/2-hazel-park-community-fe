@@ -161,9 +161,6 @@ class postFormElement extends HTMLElement {
             this.storedData.email,
             formatDate(Date.now()),
             contentsValue,
-            0,
-            0,
-            0,
             this.postImg,
           )
           handleNavigation('/html/Posts.html')
