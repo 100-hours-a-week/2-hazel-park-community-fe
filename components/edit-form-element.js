@@ -322,7 +322,9 @@ class EditFormElement extends HTMLElement {
   }
 
   async deleteUser() {
-    deleteUser(this.storedData.user_email)
+    const response = await deleteUser(this.storedData.email)
+    console.log(response)
+    alert(response)
     this.isLogin = false
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')

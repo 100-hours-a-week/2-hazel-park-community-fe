@@ -1,8 +1,9 @@
 const baseUrl = 'http://localhost:3000/api/users'
+const authUrl = 'http://localhost:3000/api/auth'
 
 export async function loginUser(email, password) {
   try {
-    const response = await fetch(`${baseUrl}/login`, {
+    const response = await fetch(`${authUrl}/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -95,18 +96,15 @@ export async function patchUserPw(email, password) {
 
 export async function deleteUser(email) {
   try {
-    const response = await fetch(`${baseUrl}/delete`, {
+    const response = await fetch(`${baseUrl}/${email}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-      }),
     })
 
     const data = await response.json()
-    console.log(data.message)
+    return data.message
   } catch (error) {
     alert(error.message)
   }
@@ -114,7 +112,7 @@ export async function deleteUser(email) {
 
 export async function logoutUser() {
   try {
-    const response = await fetch(`${baseUrl}/logout`, {
+    const response = await fetch(`${authUrl}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
