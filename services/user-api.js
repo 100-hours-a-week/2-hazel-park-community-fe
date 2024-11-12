@@ -34,7 +34,7 @@ export async function registerUser(email, password, nickname, profilePic) {
   if (profilePic) {
     const base64Data = profilePic.split(',')[1]
     const blob = await fetch(profilePic).then((res) => res.blob())
-    formData.append('profilePic', blob, 'profile.jpg')
+    formData.append('profile_pic', blob, 'profile.jpg')
   }
 
   try {
@@ -59,7 +59,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
   if (newImageData) {
     const base64Data = newImageData.split(',')[1]
     const blob = await fetch(newImageData).then((res) => res.blob())
-    formData.append('newProfileImg', blob, 'newProfile.jpg')
+    formData.append('new_profile_img', blob, 'newProfile.jpg')
   }
 
   try {

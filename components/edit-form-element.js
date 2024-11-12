@@ -42,12 +42,12 @@ class EditFormElement extends HTMLElement {
         <div class="input-title">프로필 사진*</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profilePicture
+        this.storedData.profile_picture
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
                 <input type="file" id="imageUpload" style="display: none;" accept="image/*" />
-                <img id="profileImage" src="${this.storedData.profilePicture}" class="profile-img" />
+                <img id="profileImage" src="${this.storedData.profile_picture}" class="profile-img" />
               </div>
             `
           : `
@@ -136,7 +136,7 @@ class EditFormElement extends HTMLElement {
       const validationResult = this.validateForm()
       if (validationResult === 'nickname') {
         if (this.newImageData) {
-          this.storedData.profilePicture = this.newImageData
+          this.storedData.profile_picture = this.newImageData
         }
 
         const nickname = inputNickname.value.trim()

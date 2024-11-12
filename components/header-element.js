@@ -134,7 +134,7 @@ class headerElement extends HTMLElement {
     dropdownLogout.style.display = this.isLogin ? 'block' : 'none'
 
     const user = JSON.parse(localStorage.getItem('user'))
-    profileImg.src = user?.profilePicture || '../assets/pre-profile.png'
+    profileImg.src = user?.profile_picture || '../assets/pre-profile.png'
   }
 
   hideProfile() {
