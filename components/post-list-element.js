@@ -152,7 +152,7 @@ class PostListElement extends HTMLElement {
                               <div class="post-views">조회수 ${checkCount(post.post_views)}</div>                        
                           </div>
                       </div>
-                      <div class="post-updateAt">${post.post_updatedAt.toLocaleString()}</div>
+                      <div class="post-updateAt">${post.post_updated_at.toLocaleString()}</div>
                   </div>
                   <div class="post-writer-wrap">
                   ${

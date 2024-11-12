@@ -253,7 +253,7 @@ class postFormElement extends HTMLElement {
       post_id: 1,
       post_title: titleValue,
       post_writer: storedData.user_name,
-      post_updatedAt: new Date().toISOString(),
+      post_updated_at: new Date().toISOString(),
       post_contents: contentsValue,
       post_likes: 0,
       post_views: 0,

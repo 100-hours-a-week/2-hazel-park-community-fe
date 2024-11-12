@@ -4,13 +4,13 @@ export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
   formData.append('title', title)
   formData.append('writer', writer)
-  formData.append('updatedAt', updatedAt)
+  formData.append('updated_at', updatedAt)
   formData.append('contents', contents)
 
   if (postImg) {
     const base64Data = postImg.split(',')[1]
     const blob = await fetch(postImg).then((res) => res.blob())
-    formData.append('postImg', blob, 'postImg.jpg')
+    formData.append('post_img', blob, 'postImg.jpg')
   }
 
   try {
@@ -70,12 +70,12 @@ export async function patchPost(postId, title, content, updatedAt, postImg) {
   const formData = new FormData()
   formData.append('title', title)
   formData.append('content', content)
-  formData.append('updatedAt', updatedAt)
+  formData.append('updated_at', updatedAt)
 
   if (postImg) {
     const base64Data = postImg.split(',')[1]
     const blob = await fetch(postImg).then((res) => res.blob())
-    formData.append('postImg', blob, 'postImg.jpg')
+    formData.append('post_img', blob, 'postImg.jpg')
   }
 
   try {
@@ -109,7 +109,7 @@ export async function deletePost(postId) {
   }
 }
 
-export async function likes(postId, isLiked) {
+export async function likes(postId, is_liked) {
   try {
     const response = await fetch(`${baseUrl}/${postId}/likes`, {
       method: 'PATCH',
@@ -117,7 +117,7 @@ export async function likes(postId, isLiked) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        isLiked,
+        is_liked,
       }),
     })
 
