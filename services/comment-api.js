@@ -64,14 +64,11 @@ export async function editComments(postId, commentId, content, updatedAt) {
 
 export async function deleteComments(postId, commentId) {
   try {
-    const response = await fetch(`${baseUrl}/${commentId}`, {
+    const response = await fetch(`${postUrl}/${postId}/${commentId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        postId,
-      }),
     })
 
     const data = await response.json()
