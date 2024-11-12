@@ -140,7 +140,7 @@ class EditFormElement extends HTMLElement {
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.user_name = nickname
+        this.storedData.name = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
         console.log(this.newImageData)
 
@@ -164,7 +164,7 @@ class EditFormElement extends HTMLElement {
         const password = inputPassword.value.trim()
         this.storedData.user_pw = password
         localStorage.setItem('user', JSON.stringify(this.storedData))
-        await patchUserPw(this.storedData.user_email, password)
+        await patchUserPw(this.storedData.email, password)
         toastMsg.style.visibility = 'visible'
       }
     })

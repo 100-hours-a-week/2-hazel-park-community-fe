@@ -63,7 +63,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
   }
 
   try {
-    const response = await fetch(`${baseUrl}/userInfo`, {
+    const response = await fetch(`${baseUrl}/info`, {
       method: 'PATCH',
       body: formData,
     })
@@ -76,7 +76,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
 
 export async function patchUserPw(email, password) {
   try {
-    const response = await fetch(`${baseUrl}/patchPw`, {
+    const response = await fetch(`${baseUrl}/password`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
