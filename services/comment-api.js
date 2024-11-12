@@ -19,7 +19,7 @@ export async function getComments(postId) {
   }
 }
 
-export async function uploadComment(postId, writer, updatedAt, content) {
+export async function uploadComment(postId, writer, updated_at, content) {
   try {
     const response = await fetch(`${postUrl}/${postId}/comment`, {
       method: 'POST',
@@ -28,7 +28,7 @@ export async function uploadComment(postId, writer, updatedAt, content) {
       },
       body: JSON.stringify({
         writer,
-        updatedAt,
+        updated_at,
         content,
       }),
     })
@@ -40,7 +40,7 @@ export async function uploadComment(postId, writer, updatedAt, content) {
   }
 }
 
-export async function editComments(postId, commentId, content, updatedAt) {
+export async function editComments(postId, commentId, content, updated_at) {
   try {
     const response = await fetch(`${baseUrl}/${commentId}`, {
       method: 'PATCH',
@@ -50,7 +50,7 @@ export async function editComments(postId, commentId, content, updatedAt) {
       body: JSON.stringify({
         postId,
         content,
-        updatedAt,
+        updated_at,
       }),
     })
 
