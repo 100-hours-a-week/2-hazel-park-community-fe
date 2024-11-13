@@ -101,9 +101,6 @@ export async function deletePost(postId) {
       },
       credentials: 'include',
     })
-
-    const data = await response.json()
-    console.log(data.message)
   } catch (error) {
     alert(error.message)
   }
