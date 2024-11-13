@@ -42,12 +42,12 @@ class EditFormElement extends HTMLElement {
         <div class="input-title">프로필 사진*</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profilePicture
+        this.storedData.profile_picture
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
                 <input type="file" id="imageUpload" style="display: none;" accept="image/*" />
-                <img id="profileImage" src="${this.storedData.profilePicture}" class="profile-img" />
+                <img id="profileImage" src="${this.storedData.profile_picture}" class="profile-img" />
               </div>
             `
           : `
@@ -136,11 +136,11 @@ class EditFormElement extends HTMLElement {
       const validationResult = this.validateForm()
       if (validationResult === 'nickname') {
         if (this.newImageData) {
-          this.storedData.profilePicture = this.newImageData
+          this.storedData.profile_picture = this.newImageData
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.user_name = nickname
+        this.storedData.name = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
         console.log(this.newImageData)
 
@@ -164,7 +164,7 @@ class EditFormElement extends HTMLElement {
         const password = inputPassword.value.trim()
         this.storedData.user_pw = password
         localStorage.setItem('user', JSON.stringify(this.storedData))
-        await patchUserPw(this.storedData.user_email, password)
+        await patchUserPw(this.storedData.email, password)
         toastMsg.style.visibility = 'visible'
       }
     })
@@ -322,7 +322,7 @@ class EditFormElement extends HTMLElement {
   }
 
   async deleteUser() {
-    deleteUser(this.storedData.user_email)
+    await deleteUser(this.storedData.email)
     this.isLogin = false
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')
