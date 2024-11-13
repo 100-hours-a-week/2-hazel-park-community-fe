@@ -73,9 +73,7 @@ export async function deleteComments(postId, commentId) {
         'Content-Type': 'application/json',
       },
     })
-
-    const data = await response.json()
-    console.log(data.message)
+    alert('댓글 삭제 성공')
   } catch (error) {
     console.log(error.message)
   }

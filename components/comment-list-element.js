@@ -356,8 +356,8 @@ class CommentListElement extends HTMLElement {
     if (modal) modal.remove()
   }
 
-  deleteContirm(commentId) {
-    deleteComments(this.postId, commentId)
+  async deleteContirm(commentId) {
+    await deleteComments(this.postId, commentId)
 
     location.reload()
   }
