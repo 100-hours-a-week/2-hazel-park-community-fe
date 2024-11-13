@@ -101,6 +101,7 @@ export async function deletePost(postId) {
       },
       credentials: 'include',
     })
+    alert('게시글이 삭제되었습니다.')
   } catch (error) {
     alert(error.message)
   }

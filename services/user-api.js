@@ -102,6 +102,7 @@ export async function deleteUser(email) {
         'Content-Type': 'application/json',
       },
     })
+    alert('회원 탈퇴에 성공하였습니다.')
   } catch (error) {
     alert(error.message)
   }
