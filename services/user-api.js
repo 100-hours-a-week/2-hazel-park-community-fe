@@ -102,9 +102,6 @@ export async function deleteUser(email) {
         'Content-Type': 'application/json',
       },
     })
-
-    const data = await response.json()
-    return data.message
   } catch (error) {
     alert(error.message)
   }

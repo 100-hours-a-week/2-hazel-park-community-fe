@@ -322,9 +322,8 @@ class EditFormElement extends HTMLElement {
   }
 
   async deleteUser() {
-    const response = await deleteUser(this.storedData.email)
-    console.log(response)
-    alert(response)
+    await deleteUser(this.storedData.email)
+    alert('회원 탈퇴에 성공하였습니다.')
     this.isLogin = false
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')
