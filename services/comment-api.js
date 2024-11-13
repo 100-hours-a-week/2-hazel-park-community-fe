@@ -1,14 +1,17 @@
 const baseUrl = 'http://localhost:3000/api/comments'
 const postUrl = 'http://localhost:3000/api/posts'
 
-export async function getComments(postId) {
+export async function getComments({ postId, page = 0, limit = 2 } = {}) {
   try {
-    const response = await fetch(`${postUrl}/${postId}/comments`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${postUrl}/${postId}/comments?page=${page}&limit=${limit}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    })
+    )
 
     const data = await response.json()
     console.log(data.message)
