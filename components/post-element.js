@@ -10,7 +10,7 @@ class PostElement extends HTMLElement {
     this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
     this.post = null
     this.postId = null
-    this.isLiked = false
+    this.is_liked = false
     this.likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {}
   }
 
@@ -20,11 +20,11 @@ class PostElement extends HTMLElement {
   }
 
   loadLikeState() {
-    this.isLiked = this.likedPosts[this.postId] === true
+    this.is_liked = this.likedPosts[this.postId] === true
   }
 
   async saveLikeState() {
-    if (this.isLiked) {
+    if (this.is_liked) {
       this.likedPosts[this.postId] = true
     } else {
       delete this.likedPosts[this.postId]
@@ -39,20 +39,20 @@ class PostElement extends HTMLElement {
     }
 
     try {
-      this.isLiked = !this.isLiked
+      this.is_liked = !this.is_liked
 
-      this.post.post_likes += this.isLiked ? 1 : -1
+      this.post.post_likes += this.is_liked ? 1 : -1
       this.renderPost()
 
-      const updatedLikes = await likes(this.postId, this.isLiked)
+      const updatedLikes = await likes(this.postId, this.is_liked)
 
       this.post.post_likes = updatedLikes
       await this.saveLikeState()
       this.renderPost()
     } catch (error) {
       console.error('Failed to update likes:', error)
-      this.isLiked = !this.isLiked
-      this.post.post_likes += this.isLiked ? 1 : -1
+      this.is_liked = !this.is_liked
+      this.post.post_likes += this.is_liked ? 1 : -1
       this.renderPost()
     }
   }
@@ -70,7 +70,7 @@ class PostElement extends HTMLElement {
     const {
       post_title,
       post_writer,
-      post_updatedAt,
+      post_updated_at,
       post_contents,
       post_likes,
       post_views,
@@ -94,7 +94,7 @@ class PostElement extends HTMLElement {
                   `
             }
               <div class="post-writer-name">${post_writer}</div>
-              <div class="post-updateAt">${post_updatedAt}</div>
+              <div class="post-updateAt">${post_updated_at}</div>
               <div class="post-controll-button">
                 <button id="button-update" class="post-controll-button-detail">수정</button>
                 <button id="button-delete" class="post-controll-button-detail">삭제</button>
@@ -185,8 +185,7 @@ class PostElement extends HTMLElement {
   }
 
   async deleteContirm() {
-    deletePost(this.postId)
-    alert('게시글이 삭제되었습니다.')
+    await deletePost(this.postId)
     handleNavigation('/html/Posts.html')
   }
 

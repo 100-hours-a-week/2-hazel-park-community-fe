@@ -1,8 +1,9 @@
 const baseUrl = 'http://localhost:3000/api/users'
+const authUrl = 'http://localhost:3000/api/auth'
 
 export async function loginUser(email, password) {
   try {
-    const response = await fetch(`${baseUrl}/login`, {
+    const response = await fetch(`${authUrl}/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -33,7 +34,7 @@ export async function registerUser(email, password, nickname, profilePic) {
   if (profilePic) {
     const base64Data = profilePic.split(',')[1]
     const blob = await fetch(profilePic).then((res) => res.blob())
-    formData.append('profilePic', blob, 'profile.jpg')
+    formData.append('profile_pic', blob, 'profile.jpg')
   }
 
   try {
@@ -58,11 +59,11 @@ export async function patchUserNickname(email, nickname, newImageData) {
   if (newImageData) {
     const base64Data = newImageData.split(',')[1]
     const blob = await fetch(newImageData).then((res) => res.blob())
-    formData.append('newProfileImg', blob, 'newProfile.jpg')
+    formData.append('new_profile_img', blob, 'newProfile.jpg')
   }
 
   try {
-    const response = await fetch(`${baseUrl}/userInfo`, {
+    const response = await fetch(`${baseUrl}/info`, {
       method: 'PATCH',
       body: formData,
     })
@@ -75,7 +76,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
 
 export async function patchUserPw(email, password) {
   try {
-    const response = await fetch(`${baseUrl}/patchPw`, {
+    const response = await fetch(`${baseUrl}/password`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -95,18 +96,13 @@ export async function patchUserPw(email, password) {
 
 export async function deleteUser(email) {
   try {
-    const response = await fetch(`${baseUrl}/delete`, {
+    const response = await fetch(`${baseUrl}/${email}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-      }),
     })
-
-    const data = await response.json()
-    console.log(data.message)
+    alert('회원 탈퇴에 성공하였습니다.')
   } catch (error) {
     alert(error.message)
   }
@@ -114,7 +110,7 @@ export async function deleteUser(email) {
 
 export async function logoutUser() {
   try {
-    const response = await fetch(`${baseUrl}/logout`, {
+    const response = await fetch(`${authUrl}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

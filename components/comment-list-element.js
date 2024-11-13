@@ -14,33 +14,143 @@ class CommentListElement extends HTMLElement {
     this.storedData = JSON.parse(localStorage.getItem('user'))
     this.isEditing = false
     this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    this.page = 0
+    this.allCommentsLoaded = false
+    this.comments = []
   }
 
   async connectedCallback() {
+    await this.loadLottieScript()
     const urlParams = new URLSearchParams(window.location.search)
     this.postId = Number(urlParams.get('id'))
 
-    if (this.postId) {
-      console.log(this.postId)
-      let comments = await getComments(this.postId)
-
-      comments = Array.isArray(comments) ? comments : []
-
-      this.shadowRoot.innerHTML = this.template(comments)
-      this.addEventListener(comments)
-    } else {
+    if (!this.postId) {
       console.error('postId를 찾을 수 없습니다.')
+      return
+    }
+
+    this.shadowRoot.innerHTML = this.template(this.comments)
+
+    await this.loadCommentsData()
+
+    this.initInfiniteScroll()
+
+    this.addEventListener(this.comments)
+  }
+
+  async loadLottieScript() {
+    if (!document.querySelector('script[src*="dotlottie-player"]')) {
+      const script = document.createElement('script')
+      script.src =
+        'https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs'
+      script.type = 'module'
+      document.head.appendChild(script)
+    }
+  }
+  async loadCommentsData() {
+    if (this.allCommentsLoaded) return
+
+    try {
+      this.isLoading = true
+      let newComments
+      if (this.page === 0) {
+        newComments = await getComments({
+          postId: this.postId,
+          page: this.page,
+          limit: 2,
+        })
+      } else {
+        this.showLoadingAnimation()
+        const [commentsData] = await Promise.all([
+          getComments({
+            postId: this.postId,
+            page: this.page,
+            limit: 2,
+          }),
+          new Promise((resolve) => setTimeout(resolve, 1000)),
+        ])
+        newComments = commentsData
+      }
+
+      if (Array.isArray(newComments)) {
+        this.comments = [...this.comments, ...newComments]
+        this.page += 1
+
+        if (newComments.length < 2) {
+          this.allCommentsLoaded = true
+          this.stopInfiniteScroll()
+        }
+
+        this.shadowRoot.innerHTML = this.template(this.comments)
+        this.addEventListener(this.comments)
+      }
+    } catch (error) {
+      console.error('댓글을 불러오는 데 실패했습니다:', error)
+    } finally {
+      this.hideLoadingAnimation()
+      this.isLoading = false
     }
   }
 
-  async fetchComments(postId) {
-    try {
-      const response = await fetch('../data/comments.json')
-      const data = await response.json()
-      return data.comments[postId] || []
-    } catch (error) {
-      console.error('댓글을 불러오는 데 실패했습니다:', error)
-      return []
+  initInfiniteScroll() {
+    setTimeout(() => {
+      const sentinel = this.shadowRoot.querySelector('.scroll-sentinel')
+      if (!sentinel) {
+        console.error('Scroll sentinel element not found')
+        return
+      }
+
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (
+            entries[0].isIntersecting &&
+            !this.allCommentsLoaded &&
+            !this.isLoading
+          ) {
+            this.loadCommentsData()
+          }
+        },
+        {
+          rootMargin: '10px',
+          threshold: 0.1,
+        },
+      )
+
+      this.observer.observe(sentinel)
+    }, 100)
+  }
+
+  stopInfiniteScroll() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+  }
+
+  showLoadingAnimation() {
+    const loaderContainer = document.createElement('div')
+    loaderContainer.classList.add('loading-animation')
+
+    const lottieHtml = `
+      <dotlottie-player
+        src="https://lottie.host/c956f1a0-cebe-4833-9fc2-fa838c2c1731/zJVQAx5Siv.json"
+        background="transparent"
+        speed="1"
+        style="width: 4.167vw; height: 7.407vh"
+        direction="1"
+        playMode="normal"
+        loop
+        autoplay
+      ></dotlottie-player>
+    `
+    loaderContainer.innerHTML = lottieHtml
+
+    this.shadowRoot.appendChild(loaderContainer)
+  }
+
+  hideLoadingAnimation() {
+    const loaderContainer = this.shadowRoot.querySelector('.loading-animation')
+    if (loaderContainer) {
+      loaderContainer.remove()
     }
   }
 
@@ -65,7 +175,7 @@ class CommentListElement extends HTMLElement {
                       `
                 }
                   <div class="post-writer-name">${comment.writer}</div>
-                  <div class="post-updateAt">${comment.updateAt}</div>
+                  <div class="post-updateAt">${comment.updated_at}</div>
                 </div>
                 <div class="comment-contents">${comment.content}</div>
               </div>
@@ -78,6 +188,7 @@ class CommentListElement extends HTMLElement {
           )
           .join('')}
       </div>
+      <div class="scroll-sentinel"></div>
     `
   }
 
@@ -104,7 +215,6 @@ class CommentListElement extends HTMLElement {
           !this.isLogin ||
           this.storedData.nickname !== comments[index].writer
         ) {
-          //alert(comments[index].writer)
           alert('게시글 작성자만 이용할 수 있는 기능입니다.')
           return
         } else {
@@ -246,8 +356,8 @@ class CommentListElement extends HTMLElement {
     if (modal) modal.remove()
   }
 
-  deleteContirm(commentId) {
-    deleteComments(this.postId, commentId)
+  async deleteContirm(commentId) {
+    await deleteComments(this.postId, commentId)
 
     location.reload()
   }

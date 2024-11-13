@@ -1,28 +1,16 @@
 const baseUrl = 'http://localhost:3000/api/posts'
 
-export async function uploadPost(
-  title,
-  writer,
-  updatedAt,
-  contents,
-  likes,
-  views,
-  comments,
-  postImg,
-) {
+export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
   formData.append('title', title)
   formData.append('writer', writer)
-  formData.append('updatedAt', updatedAt)
+  formData.append('updated_at', updatedAt)
   formData.append('contents', contents)
-  formData.append('likes', likes)
-  formData.append('views', views)
-  formData.append('comments', comments)
 
   if (postImg) {
     const base64Data = postImg.split(',')[1]
     const blob = await fetch(postImg).then((res) => res.blob())
-    formData.append('postImg', blob, 'postImg.jpg')
+    formData.append('post_img', blob, 'postImg.jpg')
   }
 
   try {
@@ -82,12 +70,12 @@ export async function patchPost(postId, title, content, updatedAt, postImg) {
   const formData = new FormData()
   formData.append('title', title)
   formData.append('content', content)
-  formData.append('updatedAt', updatedAt)
+  formData.append('updated_at', updatedAt)
 
   if (postImg) {
     const base64Data = postImg.split(',')[1]
     const blob = await fetch(postImg).then((res) => res.blob())
-    formData.append('postImg', blob, 'postImg.jpg')
+    formData.append('post_img', blob, 'postImg.jpg')
   }
 
   try {
@@ -113,15 +101,13 @@ export async function deletePost(postId) {
       },
       credentials: 'include',
     })
-
-    const data = await response.json()
-    console.log(data.message)
+    alert('게시글이 삭제되었습니다.')
   } catch (error) {
     alert(error.message)
   }
 }
 
-export async function likes(postId, isLiked) {
+export async function likes(postId, is_liked) {
   try {
     const response = await fetch(`${baseUrl}/${postId}/likes`, {
       method: 'PATCH',
@@ -129,7 +115,7 @@ export async function likes(postId, isLiked) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        isLiked,
+        is_liked,
       }),
     })
 
