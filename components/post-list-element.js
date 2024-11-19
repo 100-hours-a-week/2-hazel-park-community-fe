@@ -1,6 +1,7 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
 import { getPosts } from '../services/post-api.js'
+import { formatDate } from '../utils/format-date.js'
 
 class PostListElement extends HTMLElement {
   constructor() {
@@ -69,7 +70,7 @@ class PostListElement extends HTMLElement {
 
     const postItems = this.shadowRoot.querySelectorAll('.post-item')
     postItems.forEach((item, index) => {
-      const postId = posts[index].post_id
+      const postId = posts[index].id
       item.dataset.id = postId
       item.addEventListener('click', () => {
         sessionStorage.setItem('scrollPosition', window.scrollY)
@@ -154,11 +155,7 @@ class PostListElement extends HTMLElement {
                           </div>
                       </div>
                       <div class="post-updateAt">
-                        ${
-                          post.updated_at
-                            ? new Date(post.updated_at).toLocaleString()
-                            : '날짜 정보 없음'
-                        }
+                        ${post.updated_at ? formatDate(post.updated_at) : '날짜 정보 없음'}
                       </div>
                   </div>
                   <div class="post-writer-wrap">
