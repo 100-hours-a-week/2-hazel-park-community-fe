@@ -175,7 +175,7 @@ class CommentListElement extends HTMLElement {
                       `
                 }
                   <div class="post-writer-name">${comment.writer}</div>
-                  <div class="post-updateAt">${comment.updated_at}</div>
+                  <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
                 </div>
                 <div class="comment-contents">${comment.content}</div>
               </div>
