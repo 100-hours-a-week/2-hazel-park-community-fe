@@ -16,7 +16,11 @@ class CommentListElement extends HTMLElement {
     this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
     this.page = 0
     this.allCommentsLoaded = false
+    this.COMMENTS_PER_PAGE = 2
     this.comments = []
+    this.isLoading = false
+    // 댓글 등록 버튼을 비활성화하여 중복 클릭을 방지
+    this.isRequestInProgress = false
   }
 
   async connectedCallback() {
@@ -57,7 +61,7 @@ class CommentListElement extends HTMLElement {
         newComments = await getComments({
           postId: this.postId,
           page: this.page,
-          limit: 2,
+          limit: this.COMMENTS_PER_PAGE,
         })
       } else {
         this.showLoadingAnimation()
@@ -65,7 +69,7 @@ class CommentListElement extends HTMLElement {
           getComments({
             postId: this.postId,
             page: this.page,
-            limit: 2,
+            limit: this.COMMENTS_PER_PAGE,
           }),
           new Promise((resolve) => setTimeout(resolve, 1000)),
         ])
@@ -73,16 +77,23 @@ class CommentListElement extends HTMLElement {
       }
 
       if (Array.isArray(newComments)) {
-        this.comments = [...this.comments, ...newComments]
+        // 중복된 댓글을 방지하기 위해, 기존 댓글에 없는 댓글만 추가
+        this.comments = [
+          ...this.comments.filter((existingComment) =>
+            newComments.every(
+              (newComment) => newComment.id !== existingComment.id,
+            ),
+          ),
+          ...newComments,
+        ]
         this.page += 1
 
-        if (newComments.length < 2) {
+        if (newComments.length < this.COMMENTS_PER_PAGE) {
           this.allCommentsLoaded = true
           this.stopInfiniteScroll()
         }
 
-        this.shadowRoot.innerHTML = this.template(this.comments)
-        this.addEventListener(this.comments)
+        this.renderComments()
       }
     } catch (error) {
       console.error('댓글을 불러오는 데 실패했습니다:', error)
@@ -90,6 +101,11 @@ class CommentListElement extends HTMLElement {
       this.hideLoadingAnimation()
       this.isLoading = false
     }
+  }
+
+  renderComments() {
+    this.shadowRoot.innerHTML = this.template(this.comments)
+    this.addEventListener(this.comments)
   }
 
   initInfiniteScroll() {
@@ -202,6 +218,8 @@ class CommentListElement extends HTMLElement {
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
+    console.log('registerComment called')
+
     this.checkCommentInput(commentArea)
     this.ConfirmComment(commentArea, commentButton)
   }
@@ -247,27 +265,38 @@ class CommentListElement extends HTMLElement {
   }
 
   ConfirmComment(commentArea, commentButton) {
+    console.log('ConfirmComment called') // 추가
+
     if (
       commentButton.innerText === '댓글 등록' &&
       commentButton.innerText !== '댓글 수정'
     ) {
+      console.log('Adding click event listener') // 추가
+
       commentButton.addEventListener(
         'click',
         async () => {
+          console.log('Comment button clicked') // 추가
+
           if (this.validateForm()) {
             const updatedContent = commentArea.value.trim()
-            if (!this.isEditing) {
+            console.log('Attempting to upload comment:', updatedContent) // 추가
+
+            if (!this.isEditing && !this.isRequestInProgress) {
+              this.isRequestInProgress = true // 요청 진행 중 상태 설정
               await uploadComment(
                 this.postId,
                 this.storedData.email,
                 formatDate(Date.now()),
                 updatedContent,
               )
+              alert('댓글이 등록되었습니다.') // 추가
+              this.isRequestInProgress = false // 요청 완료 후 상태 리셋
+              // 페이지 새로 고침 대신, 댓글을 리스트에 추가
+              commentArea.value = ''
+              await this.loadCommentsData() // 새로운 댓글 데이터를 불러옵니다.
               location.reload()
-              console.log('댓글 등록 완료')
             }
-          } else {
-            console.log('등록 실패')
           }
         },
         { once: true },
