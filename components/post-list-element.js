@@ -1,6 +1,7 @@
 import checkCount from '../utils/check-count.js'
 import handleNavigation from '../utils/navigation.js'
 import { getPosts } from '../services/post-api.js'
+import { formatDate } from '../utils/format-date.js'
 
 class PostListElement extends HTMLElement {
   constructor() {
@@ -37,6 +38,7 @@ class PostListElement extends HTMLElement {
 
       if (this.page === 0) {
         newPosts = await getPosts({ page: this.page, limit: 4 })
+        console.log(newPosts)
       } else {
         this.showLoadingAnimation()
         const [postsData] = await Promise.all([
@@ -68,7 +70,7 @@ class PostListElement extends HTMLElement {
 
     const postItems = this.shadowRoot.querySelectorAll('.post-item')
     postItems.forEach((item, index) => {
-      const postId = posts[index].post_id
+      const postId = posts[index].id
       item.dataset.id = postId
       item.addEventListener('click', () => {
         sessionStorage.setItem('scrollPosition', window.scrollY)
@@ -145,22 +147,24 @@ class PostListElement extends HTMLElement {
               <div class="post-item">
                   <div class="post-info-wrap">
                       <div class="post-info-wrap-left">
-                          <div class="post-title">${post.post_title}</div>
+                          <div class="post-title">${post.title}</div>
                           <div class="post-wrap-detail">
-                              <div class="post-likes">좋아요 ${checkCount(post.post_likes)}</div>
-                              <div class="post-comment">댓글 ${checkCount(post.post_comments)}</div>
-                              <div class="post-views">조회수 ${checkCount(post.post_views)}</div>                        
+                              <div class="post-likes">좋아요 ${checkCount(post.likes)}</div>
+                              <div class="post-comment">댓글 ${checkCount(post.comments)}</div>
+                              <div class="post-views">조회수 ${checkCount(post.views)}</div>                        
                           </div>
                       </div>
-                      <div class="post-updateAt">${post.post_updated_at.toLocaleString()}</div>
+                      <div class="post-updateAt">
+                        ${post.updated_at ? formatDate(post.updated_at) : '날짜 정보 없음'}
+                      </div>
                   </div>
                   <div class="post-writer-wrap">
                   ${
-                    post.author_profile_picture
-                      ? `<img id="post-writer-img" src="${post.author_profile_picture}" class="post-writer-profile" />`
+                    post.img
+                      ? `<img id="post-writer-img" src="${post.img}" class="post-writer-profile" />`
                       : `<div id="post-writer-div" class="post-writer-img"></div>`
                   }
-                    <div class="post-writer">${post.post_writer}</div>                  
+                    <div class="post-writer">${post.writer}</div>                  
                   </div>
               </div>
             `,

@@ -42,7 +42,8 @@ export async function getPosts({ page = 0, limit = 4 } = {}) {
     }
 
     const data = await response.json()
-    return data
+    console.log(data.posts)
+    return data.posts
   } catch (error) {
     alert(error.message)
     return []
