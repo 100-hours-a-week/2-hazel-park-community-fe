@@ -233,7 +233,7 @@ class CommentListElement extends HTMLElement {
           !this.isLogin ||
           this.storedData.nickname !== comments[index].writer
         ) {
-          alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
           return
         } else {
           this.handleUpdate(comments[index].id, comments[index].content)
@@ -251,7 +251,7 @@ class CommentListElement extends HTMLElement {
           !this.isLogin ||
           this.storedData.nickname !== comments[index].writer
         ) {
-          alert('게시글 작성자만 이용할 수 있는 기능입니다.')
+          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
           return
         } else {
           this.openModal(comments[index].id)
