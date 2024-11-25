@@ -172,8 +172,8 @@ class CommentListElement extends HTMLElement {
 
   template(comments) {
     return `
-      <link rel="stylesheet" href=/styles/global.css" >
-      <link rel="stylesheet" href=/styles/post.css" >
+      <link rel="stylesheet" href=/styles/global.css">
+      <link rel="stylesheet" href=/styles/post.css">
       <div>
         ${comments
           .map(
