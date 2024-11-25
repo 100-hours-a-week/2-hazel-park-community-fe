@@ -1,6 +1,6 @@
-import handleNavigation from '../utils/navigation.js'
-import { uploadPost, getPostDetail, patchPost } from '../services/post-api.js'
-import { formatDate } from '../utils/format-date.js'
+import handleNavigation from '/utils/navigation.js'
+import { uploadPost, getPostDetail, patchPost } from '/services/post-api.js'
+import { formatDate } from '/utils/format-date.js'
 
 class postFormElement extends HTMLElement {
   constructor() {
@@ -31,10 +31,10 @@ class postFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/global.css" />
-        <link rel="stylesheet" href="../styles/Sign-in.css" />
-        <link rel="stylesheet" href="../styles/edit-profile.css" />
-        <link rel="stylesheet" href="../styles/make-post.css" />
+        <link rel="stylesheet" href="/styles/global.css" />
+        <link rel="stylesheet" href="/styles/Sign-in.css" />
+        <link rel="stylesheet" href="/styles/edit-profile.css" />
+        <link rel="stylesheet" href="/styles/make-post.css" />
         <div class="post-form-wrap">
             <form class="post-form">
               ${

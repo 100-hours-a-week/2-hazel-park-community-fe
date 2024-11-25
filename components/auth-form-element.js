@@ -1,5 +1,5 @@
-import handleNavigation from '../utils/navigation.js'
-import { loginUser, registerUser } from '../services/user-api.js'
+import handleNavigation from '/utils/navigation.js'
+import { loginUser, registerUser } from '/services/user-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -19,8 +19,8 @@ class AuthFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/Log-in.css" />
-        <link rel="stylesheet" href="../styles/Sign-in.css" />
+        <link rel="stylesheet" href="/styles/Log-in.css" />
+        <link rel="stylesheet" href="/styles/Sign-in.css" />
         <div class="login-form-wrap">
             <form class="login-form">
               ${!this.isLoginPage ? this.rendingProfileImg() : ''}
@@ -57,7 +57,7 @@ class AuthFormElement extends HTMLElement {
         <div class="input-title">프로필 사진</div>
           <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
           <label for="input-profile-img" class="input-profile-img-label">
-          <img id="profile-plus-icon" src="../assets/plus.svg" class="plus-icon" />
+          <img id="profile-plus-icon" src="/assets/plus.svg" class="plus-icon" />
           <img id="profile-img-preview" class="preview-profile-img" />
           </label>
         <input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />

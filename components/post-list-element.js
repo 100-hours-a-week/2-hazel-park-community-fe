@@ -1,7 +1,7 @@
-import checkCount from '../utils/check-count.js'
-import handleNavigation from '../utils/navigation.js'
-import { getPosts } from '../services/post-api.js'
-import { formatDate } from '../utils/format-date.js'
+import checkCount from '/utils/check-count.js'
+import handleNavigation from '/utils/navigation.js'
+import { getPosts } from '/services/post-api.js'
+import { formatDate } from '/utils/format-date.js'
 
 class PostListElement extends HTMLElement {
   constructor() {
@@ -139,7 +139,7 @@ class PostListElement extends HTMLElement {
 
   template(posts) {
     return `
-      <link rel="stylesheet" href="../styles/Posts.css" />
+      <link rel="stylesheet" href="/styles/Posts.css" />
       <div class="post-list">
         ${posts
           .map(

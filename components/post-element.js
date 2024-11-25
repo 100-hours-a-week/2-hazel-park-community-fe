@@ -1,7 +1,7 @@
-import checkCount from '../utils/check-count.js'
-import handleNavigation from '../utils/navigation.js'
-import { getPostDetail, deletePost, likes } from '../services/post-api.js'
-import { formatDate } from '../utils/format-date.js'
+import checkCount from '/utils/check-count.js'
+import handleNavigation from '/utils/navigation.js'
+import { getPostDetail, deletePost, likes } from '/services/post-api.js'
+import { formatDate } from '/utils/format-date.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -80,7 +80,7 @@ class PostElement extends HTMLElement {
       post_img,
     } = this.post
     return `
-      <link rel="stylesheet" href="../styles/post.css" />
+      <link rel="stylesheet" href="/styles/post.css" />
       <section class="post">
           <article class="post-detail-top">
             <div class="post-title">${post_title}</div>

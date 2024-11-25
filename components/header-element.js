@@ -1,5 +1,5 @@
-import handleNavigation from '../utils/navigation.js'
-import { logoutUser } from '../services/user-api.js'
+import handleNavigation from '/utils/navigation.js'
+import { logoutUser } from '/services/user-api.js'
 
 class headerElement extends HTMLElement {
   constructor() {
@@ -18,10 +18,10 @@ class headerElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/global.css" />
+        <link rel="stylesheet" href="/styles/global.css" />
         <header>
           <div id="header-wrap" class="header-wrap">
-            <img id="header-back" src='../assets/back.svg' class='header-back' />
+            <img id="header-back" src='/assets/back.svg' class='header-back' />
             <p id="header-text" class="header-text">아무 말 대잔치</p>
             <div id="profile-wrap" class="profile-wrap">
               <img
@@ -134,7 +134,7 @@ class headerElement extends HTMLElement {
     dropdownLogout.style.display = this.isLogin ? 'block' : 'none'
 
     const user = JSON.parse(localStorage.getItem('user'))
-    profileImg.src = user?.profile_picture || '../assets/pre-profile.png'
+    profileImg.src = user?.profile_picture || '/assets/pre-profile.png'
   }
 
   hideProfile() {

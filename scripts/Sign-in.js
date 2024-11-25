@@ -1,4 +1,4 @@
-import handleNavigation from '../utils/navigation.js'
+import handleNavigation from '/utils/navigation.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   const logInTxt = document.getElementById('log-in')

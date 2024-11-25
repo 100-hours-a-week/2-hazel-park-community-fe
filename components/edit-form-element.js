@@ -1,9 +1,9 @@
-import handleNavigation from '../utils/navigation.js'
+import handleNavigation from '/utils/navigation.js'
 import {
   patchUserNickname,
   patchUserPw,
   deleteUser,
-} from '../services/user-api.js'
+} from '/services/user-api.js'
 
 class EditFormElement extends HTMLElement {
   constructor() {
@@ -22,9 +22,9 @@ class EditFormElement extends HTMLElement {
 
   template() {
     return `
-    <link rel="stylesheet" href="../styles/Log-in.css" />
-    <link rel="stylesheet" href="../styles/Sign-in.css" />
-    <link rel="stylesheet" href="../styles/edit-profile.css" />
+    <link rel="stylesheet" href=/styles/Log-in.css" />
+    <link rel="stylesheet" href=/styles/Sign-in.css" />
+    <link rel="stylesheet" href=/styles/edit-profile.css" />
     <div class="edit-form-wrap">
         <form class="edit-form">
           ${
@@ -53,7 +53,7 @@ class EditFormElement extends HTMLElement {
           : `
               <div class="wrap-profile-img">
                 <label for="imageUpload" class="input-profile-img-label">
-                  <img src="../assets/plus.svg" class="plus-icon" />
+                  <img src="/assets/plus.svg" class="plus-icon" />
                 </label>
                 <input id="imageUpload" type="file" class="input-profile-img" accept="image/*" style="display: none;" />
                 <img id="profileImage" style="display: none;" class="profile-img" />

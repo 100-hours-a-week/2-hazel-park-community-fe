@@ -3,8 +3,8 @@ import {
   uploadComment,
   editComments,
   deleteComments,
-} from '../services/comment-api.js'
-import { formatDate } from '../utils/format-date.js'
+} from '/services/comment-api.js'
+import { formatDate } from '/utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
   constructor() {
@@ -172,8 +172,8 @@ class CommentListElement extends HTMLElement {
 
   template(comments) {
     return `
-      <link rel="stylesheet" href="../styles/global.css" />
-      <link rel="stylesheet" href="../styles/post.css" />
+      <link rel="stylesheet" href=/styles/global.css" />
+      <link rel="stylesheet" href=/styles/post.css" />
       <div>
         ${comments
           .map(
