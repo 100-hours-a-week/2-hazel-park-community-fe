@@ -22,9 +22,9 @@ class EditFormElement extends HTMLElement {
 
   template() {
     return `
-    <link rel="stylesheet" href=/styles/Log-in.css" />
-    <link rel="stylesheet" href=/styles/Sign-in.css" />
-    <link rel="stylesheet" href=/styles/edit-profile.css" />
+    <link rel="stylesheet" href=/styles/Log-in.css" >
+    <link rel="stylesheet" href=/styles/Sign-in.css" >
+    <link rel="stylesheet" href=/styles/edit-profile.css" >
     <div class="edit-form-wrap">
         <form class="edit-form">
           ${

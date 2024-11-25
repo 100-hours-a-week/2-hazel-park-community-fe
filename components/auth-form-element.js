@@ -19,8 +19,8 @@ class AuthFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="/styles/Log-in.css" />
-        <link rel="stylesheet" href="/styles/Sign-in.css" />
+        <link rel="stylesheet" href="/styles/Log-in.css">
+        <link rel="stylesheet" href="/styles/Sign-in.css">
         <div class="login-form-wrap">
             <form class="login-form">
               ${!this.isLoginPage ? this.rendingProfileImg() : ''}

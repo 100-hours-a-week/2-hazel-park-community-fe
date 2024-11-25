@@ -18,7 +18,7 @@ class headerElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href='/styles/global.css' />
+        <link rel="stylesheet" href='/styles/global.css' >
         <header>
           <div id="header-wrap" class="header-wrap">
             <img id="header-back" src='/assets/back.svg' class='header-back' />

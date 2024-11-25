@@ -80,7 +80,7 @@ class PostElement extends HTMLElement {
       post_img,
     } = this.post
     return `
-      <link rel="stylesheet" href="/styles/post.css" />
+      <link rel="stylesheet" href="/styles/post.css" >
       <section class="post">
           <article class="post-detail-top">
             <div class="post-title">${post_title}</div>

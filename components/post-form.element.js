@@ -31,10 +31,10 @@ class postFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="/styles/global.css" />
-        <link rel="stylesheet" href="/styles/Sign-in.css" />
-        <link rel="stylesheet" href="/styles/edit-profile.css" />
-        <link rel="stylesheet" href="/styles/make-post.css" />
+        <link rel="stylesheet" href="/styles/global.css" >
+        <link rel="stylesheet" href="/styles/Sign-in.css" >
+        <link rel="stylesheet" href="/styles/edit-profile.css" >
+        <link rel="stylesheet" href="/styles/make-post.css" >
         <div class="post-form-wrap">
             <form class="post-form">
               ${

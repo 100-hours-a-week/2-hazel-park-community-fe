@@ -139,7 +139,7 @@ class PostListElement extends HTMLElement {
 
   template(posts) {
     return `
-      <link rel="stylesheet" href="/styles/Posts.css" />
+      <link rel="stylesheet" href="/styles/Posts.css" >
       <div class="post-list">
         ${posts
           .map(
