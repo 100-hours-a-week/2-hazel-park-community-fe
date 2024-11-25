@@ -1,9 +1,5 @@
-import dotnet from 'dotenv'
-
-dotnet.config()
-
-const baseUrl = process.env.USER_URL
-const authUrl = process.env.AUTH_URL
+const baseUrl = 'http://43.202.43.192:3000/api/users'
+const authUrl = 'http://43.202.43.192:3000/api/auth'
 
 export async function loginUser(email, password) {
   try {

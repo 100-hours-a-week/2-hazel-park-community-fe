@@ -1,9 +1,5 @@
-import dotnet from 'dotenv'
-
-dotnet.config()
-
-const baseUrl = process.env.COMMENT_URL
-const postUrl = process.env.POST_URL
+const baseUrl = 'http://43.202.43.192:3000/api/comments'
+const postUrl = 'http://43.202.43.192:3000/api/posts'
 
 export async function getComments({ postId, page = 0, limit = 2 } = {}) {
   try {
