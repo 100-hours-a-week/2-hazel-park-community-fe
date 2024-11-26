@@ -4,7 +4,7 @@ import {
   editComments,
   deleteComments,
 } from '/services/comment-api.js'
-import { formatCommentDate } from '/utils/format-date.js'
+import { formatDate, formatCommentDate } from '/utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
   constructor() {
