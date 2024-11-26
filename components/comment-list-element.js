@@ -52,7 +52,7 @@ class CommentListElement extends HTMLElement {
     }
   }
   async loadCommentsData() {
-    if (this.allCommentsLoaded) return
+    if (this.isLoading || this.allCommentsLoaded) return
 
     try {
       this.isLoading = true

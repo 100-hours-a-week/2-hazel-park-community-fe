@@ -30,7 +30,7 @@ class PostListElement extends HTMLElement {
   }
 
   async loadPostsData() {
-    if (this.allPostsLoaded) return
+    if (this.isLoading || this.allPostsLoaded) return
 
     try {
       this.isLoading = true
@@ -60,6 +60,7 @@ class PostListElement extends HTMLElement {
     } catch (error) {
       console.error('Error loading posts:', error)
     } finally {
+      this.isLoading = false
       this.hideLoadingAnimation()
     }
   }
