@@ -4,7 +4,7 @@ import {
   editComments,
   deleteComments,
 } from '/services/comment-api.js'
-import { formatDate } from '/utils/format-date.js'
+import { formatCommentDate } from '/utils/format-date.js'
 
 class CommentListElement extends HTMLElement {
   constructor() {
@@ -191,7 +191,7 @@ class CommentListElement extends HTMLElement {
                       `
                 }
                   <div class="post-writer-name">${comment.writer}</div>
-                  <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
+                  <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
                 </div>
                 <div class="comment-contents">${comment.content}</div>
               </div>
