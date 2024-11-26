@@ -1,7 +1,7 @@
 import checkCount from '/utils/check-count.js'
 import handleNavigation from '/utils/navigation.js'
 import { getPosts } from '/services/post-api.js'
-import { formatDate } from '/utils/format-date.js'
+import { formatCommentDate } from '/utils/format-date.js'
 
 class PostListElement extends HTMLElement {
   constructor() {
@@ -156,7 +156,7 @@ class PostListElement extends HTMLElement {
                           </div>
                       </div>
                       <div class="post-updateAt">
-                        ${post.updated_at ? formatDate(post.updated_at) : '날짜 정보 없음'}
+                        ${post.updated_at ? formatCommentDate(post.updated_at) : '날짜 정보 없음'}
                       </div>
                   </div>
                   <div class="post-writer-wrap">
