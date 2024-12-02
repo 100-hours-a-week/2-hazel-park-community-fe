@@ -1,5 +1,5 @@
-const baseUrl = 'http://43.202.43.192:3000/api/comments'
-const postUrl = 'http://43.202.43.192:3000/api/posts'
+const baseUrl = 'http://3.35.112.49:3000/api/comments'
+const postUrl = 'http://3.35.112.49:3000/api/posts'
 
 export async function getComments({ postId, page = 0, limit = 2 } = {}) {
   try {
