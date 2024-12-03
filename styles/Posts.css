@@ -1,11 +1,11 @@
 .title {
+  display: flex;
   margin-top: 2.5rem;
+  justify-content: center;
   text-align: center;
 }
 
 .title-wrap {
-  padding-right: 40.677vw;
-  padding-left: 40.625vw;
   text-align: center;
 }
 
@@ -16,16 +16,19 @@
 }
 
 .button {
+  display: flex;
   margin-top: 1.5rem;
+  justify-content: center;
 }
 
 .button-wrap {
-  padding-right: 34.583vw;
-  padding-left: 58.229vw;
+  display: flex;
+  width: 592.02px;
+  justify-content: end;
 }
 
 .add-post-button {
-  width: 100%;
+  width: 138px;
   height: 2.4375rem;
   padding: 0.25rem;
   background-color: #aea0eb;
@@ -48,11 +51,11 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding-left: 34.583vw;
-  padding-right: 34.583vw;
+  align-items: center;
 }
 
 .post-item {
+  width: 592.02px;
   padding-top: 1.5em;
   display: flex;
   flex-direction: column;

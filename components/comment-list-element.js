@@ -218,7 +218,6 @@ class CommentListElement extends HTMLElement {
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
-
     this.checkCommentInput(commentArea)
     this.ConfirmComment(commentArea, commentButton)
   }
@@ -264,16 +263,13 @@ class CommentListElement extends HTMLElement {
   }
 
   ConfirmComment(commentArea, commentButton) {
-
     if (
       commentButton.innerText === '댓글 등록' &&
       commentButton.innerText !== '댓글 수정'
     ) {
-
       commentButton.addEventListener(
         'click',
         async () => {
-
           if (this.validateForm()) {
             const updatedContent = commentArea.value.trim()
 
@@ -300,7 +296,6 @@ class CommentListElement extends HTMLElement {
   }
 
   async handleUpdate(id, content) {
-
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
@@ -314,7 +309,7 @@ class CommentListElement extends HTMLElement {
       commentButton.dataset.commentId = id
       this.isEditing = true
 
-      commentButton.onclick = async () => {
+      commentButton.addEventListener('click', async () => {
         const updatedContent = commentArea.value.trim()
         if (updatedContent) {
           await editComments(
@@ -326,8 +321,9 @@ class CommentListElement extends HTMLElement {
           location.reload()
           this.isEditing = false
         } else {
+          alert('수정할 내용을 입력하세요.')
         }
-      }
+      })
     }
   }
 
