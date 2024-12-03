@@ -107,7 +107,6 @@ class AuthFormElement extends HTMLElement {
         this.login(email, password)
       } else if (validationResult === 'login') {
         const nickname = inputNickname.value.trim()
-        console.log('in addEventListeners: ', this.profileImageData)
         this.register(email, password, nickname, this.profileImageData)
       }
     })
@@ -298,8 +297,6 @@ class AuthFormElement extends HTMLElement {
           profileImgPreview.src = reader.result
           profileImgPreview.style.display = 'block'
           this.profileImageData = reader.result
-          //console.log(profileImgPreview)
-          console.log(this.profileImageData)
         }
       }
 

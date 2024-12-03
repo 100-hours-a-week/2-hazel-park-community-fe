@@ -21,8 +21,6 @@ export async function uploadPost(title, writer, updatedAt, contents, postImg) {
     })
 
     const data = await response.json()
-    console.log(data.message)
-    console.log(data.user)
   } catch (error) {
     alert(error.message)
   }
@@ -42,7 +40,6 @@ export async function getPosts({ page = 0, limit = 4 } = {}) {
     }
 
     const data = await response.json()
-    console.log(data.posts)
     return data.posts
   } catch (error) {
     alert(error.message)
@@ -87,7 +84,6 @@ export async function patchPost(postId, title, content, updatedAt, postImg) {
     })
 
     const data = await response.json()
-    console.log(data.message)
   } catch (error) {
     alert(error.message)
   }
@@ -121,7 +117,6 @@ export async function likes(postId, is_liked) {
     })
 
     const data = await response.json()
-    console.log(data.message)
     return data.post_likes
   } catch (error) {
     alert(error.message)

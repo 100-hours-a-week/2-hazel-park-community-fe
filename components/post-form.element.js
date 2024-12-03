@@ -115,16 +115,13 @@ class postFormElement extends HTMLElement {
 
     if (imageUpload) {
       imageUpload.addEventListener('change', (event) => {
-        console.log(event.target.files[0])
         imageSpan.innerText = event.target.files[0].name
         const file = event.target.files[0]
         if (file) {
           if (this.validateImageFile(file)) {
             this.handleImageUpload(file)
           } else {
-            console.log(
-              '이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)',
-            )
+            alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)')
           }
         }
       })
@@ -179,8 +176,6 @@ class postFormElement extends HTMLElement {
 
     reader.onload = (e) => {
       this.postImg = e.target.result
-      // console.log(this.postImg)
-      //this.newImageData = file
     }
 
     reader.readAsDataURL(file)
