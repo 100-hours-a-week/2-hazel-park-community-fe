@@ -1,5 +1,5 @@
-const baseUrl = 'http://3.35.112.49:3000/api/users'
-const authUrl = 'http://3.35.112.49:3000/api/auth'
+const baseUrl = 'http://3.35.112.49/api/users'
+const authUrl = 'http://3.35.112.49/api/auth'
 
 export async function loginUser(email, password) {
   try {
