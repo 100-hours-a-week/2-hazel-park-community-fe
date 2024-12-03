@@ -148,8 +148,11 @@ class headerElement extends HTMLElement {
       profileWrap.style.display = 'none'
     } else if (currentPath === '/html/Sign-in.html') {
       profileWrap.style.display = 'none'
-      headerWrap.style.paddingLeft = '36.349vw'
-      headerWrap.style.paddingRight = '44.635vw'
+      headerWrap.style.justifyContent = 'start'
+      headerWrap.style.paddingLeft = '0px'
+      headerWrap.style.gap = '193px'
+      // headerWrap.style.paddingLeft = '36.349vw'
+      // headerWrap.style.paddingRight = '44.635vw'
     } else if (
       currentPath === '/html/Posts.html' ||
       currentPath === '/html/edit-profile.html' ||
@@ -157,7 +160,8 @@ class headerElement extends HTMLElement {
     ) {
       backIcon.style.display = 'none'
     } else {
-      headerWrap.style.paddingLeft = '35.625vw'
+      headerWrap.style.paddingLeft = '0px'
+      //headerWrap.style.paddingLeft = '35.625vw'
     }
   }
 }
