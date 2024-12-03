@@ -225,7 +225,13 @@ class CommentListElement extends HTMLElement {
   updateComment(comments) {
     const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
 
-    updateButtons.forEach((button, index) => {
+    updateButtons.forEach((button) => {
+      const oldButton = button.cloneNode(true)
+      button.parentNode.replaceChild(oldButton, button)
+    })
+
+    const newUpdateButtons = this.shadowRoot.querySelectorAll('#button-update')
+    newUpdateButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||
@@ -243,7 +249,13 @@ class CommentListElement extends HTMLElement {
   deleteComments(comments) {
     const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
-    deleteButtons.forEach((button, index) => {
+    deleteButtons.forEach((button) => {
+      const oldButton = button.cloneNode(true)
+      button.parentNode.replaceChild(oldButton, button)
+    })
+
+    const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
+    newDeleteButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||

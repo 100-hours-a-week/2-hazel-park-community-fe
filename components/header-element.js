@@ -151,8 +151,6 @@ class headerElement extends HTMLElement {
       headerWrap.style.justifyContent = 'start'
       headerWrap.style.paddingLeft = '0px'
       headerWrap.style.gap = '193px'
-      // headerWrap.style.paddingLeft = '36.349vw'
-      // headerWrap.style.paddingRight = '44.635vw'
     } else if (
       currentPath === '/html/Posts.html' ||
       currentPath === '/html/edit-profile.html' ||
@@ -161,7 +159,6 @@ class headerElement extends HTMLElement {
       backIcon.style.display = 'none'
     } else {
       headerWrap.style.paddingLeft = '0px'
-      //headerWrap.style.paddingLeft = '35.625vw'
     }
   }
 }
