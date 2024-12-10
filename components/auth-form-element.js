@@ -12,9 +12,6 @@ class AuthFormElement extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!isLogin) {
-      handleNavigation('/html/Login.html')
-    }
     this.checkLocation()
     this.shadowRoot.innerHTML = this.template()
     this.addEventListeners()

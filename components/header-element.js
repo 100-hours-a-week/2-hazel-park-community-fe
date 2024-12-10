@@ -96,6 +96,7 @@ class headerElement extends HTMLElement {
       this.isLogin = false
       localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()
+      handleNavigation('/html/Log-in.html')
     })
 
     backIcon?.addEventListener('click', () => window.history.back())
