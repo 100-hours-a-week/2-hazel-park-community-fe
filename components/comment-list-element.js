@@ -218,8 +218,6 @@ class CommentListElement extends HTMLElement {
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
-    console.log('registerComment called')
-
     this.checkCommentInput(commentArea)
     this.ConfirmComment(commentArea, commentButton)
   }
@@ -227,7 +225,13 @@ class CommentListElement extends HTMLElement {
   updateComment(comments) {
     const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
 
-    updateButtons.forEach((button, index) => {
+    updateButtons.forEach((button) => {
+      const oldButton = button.cloneNode(true)
+      button.parentNode.replaceChild(oldButton, button)
+    })
+
+    const newUpdateButtons = this.shadowRoot.querySelectorAll('#button-update')
+    newUpdateButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||
@@ -245,7 +249,13 @@ class CommentListElement extends HTMLElement {
   deleteComments(comments) {
     const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
-    deleteButtons.forEach((button, index) => {
+    deleteButtons.forEach((button) => {
+      const oldButton = button.cloneNode(true)
+      button.parentNode.replaceChild(oldButton, button)
+    })
+
+    const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
+    newDeleteButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         if (
           !this.isLogin ||
@@ -265,22 +275,15 @@ class CommentListElement extends HTMLElement {
   }
 
   ConfirmComment(commentArea, commentButton) {
-    console.log('ConfirmComment called') // 추가
-
     if (
       commentButton.innerText === '댓글 등록' &&
       commentButton.innerText !== '댓글 수정'
     ) {
-      console.log('Adding click event listener') // 추가
-
       commentButton.addEventListener(
         'click',
         async () => {
-          console.log('Comment button clicked') // 추가
-
           if (this.validateForm()) {
             const updatedContent = commentArea.value.trim()
-            console.log('Attempting to upload comment:', updatedContent) // 추가
 
             if (!this.isEditing && !this.isRequestInProgress) {
               this.isRequestInProgress = true // 요청 진행 중 상태 설정
@@ -305,8 +308,6 @@ class CommentListElement extends HTMLElement {
   }
 
   async handleUpdate(id, content) {
-    console.log(`댓글 ${id} 수정`)
-
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
@@ -320,7 +321,7 @@ class CommentListElement extends HTMLElement {
       commentButton.dataset.commentId = id
       this.isEditing = true
 
-      commentButton.onclick = async () => {
+      commentButton.addEventListener('click', async () => {
         const updatedContent = commentArea.value.trim()
         if (updatedContent) {
           await editComments(
@@ -329,13 +330,12 @@ class CommentListElement extends HTMLElement {
             updatedContent,
             formatDate(Date.now()),
           )
-          console.log('댓글 수정 완료')
           location.reload()
           this.isEditing = false
         } else {
-          console.log('수정할 내용이 없습니다.')
+          alert('수정할 내용을 입력하세요.')
         }
-      }
+      })
     }
   }
 
@@ -375,7 +375,6 @@ class CommentListElement extends HTMLElement {
 
     modal.onConfirm = () => this.deleteContirm(id)
     modalBackground.addEventListener('click', () => this.closeModal())
-    console.log(`${id}번째 댓글이 삭제되었습니다.`)
   }
 
   closeModal() {

@@ -1,11 +1,11 @@
 .post {
-  margin-left: 34.583vw;
-  margin-right: 34.583vw;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .post-detail-top {
+  width: 592px;
   padding: 2.222vh 1.25vw 2.222vh 1.25vw;
   border-bottom: 1px solid rgba(0, 0, 0, 0.16);
 }
@@ -81,20 +81,20 @@
 }
 
 .post-contents-img {
-  width: 28.333vw;
-  height: 28.333vh;
+  width: 544px;
+  height: 306px;
   background-color: #d9d9d9;
 }
 
 .post-img {
-  width: 28.333vw;
-  height: 28.333vh;
+  width: 544px;
+  height: 306px;
   object-fit: cover;
 }
 
 .post-contents {
   margin-top: 2.222vh;
-  width: 28.333vw;
+  width: 544px;
   height: fit-content;
   font-weight: 400;
   font-size: 0.9375rem;
@@ -140,12 +140,15 @@
 
 .comment {
   padding-top: 2.963vh;
-  margin: 0 34.583vw 0 34.583vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .comment-write-article {
   display: flex;
   flex-direction: column;
+  width: 592px;
 }
 
 .comment-area {
@@ -188,6 +191,7 @@
 
 .comment-list-article {
   padding-top: 2.222vh;
+  width: 544px;
 }
 
 .comment-wrap {

@@ -142,7 +142,6 @@ class EditFormElement extends HTMLElement {
         const nickname = inputNickname.value.trim()
         this.storedData.name = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
-        console.log(this.newImageData)
 
         const result = await patchUserNickname(
           this.storedData.email,
@@ -314,9 +313,7 @@ class EditFormElement extends HTMLElement {
     const currentPath = window.location.pathname
     if (currentPath === '/html/edit-profile.html') {
       this.isEditProfilePage = true
-      console.log(true)
     } else {
-      console.log(false)
       this.isEditProfilePage = false
     }
   }

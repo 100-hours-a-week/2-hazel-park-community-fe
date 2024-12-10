@@ -107,7 +107,6 @@ class AuthFormElement extends HTMLElement {
         this.login(email, password)
       } else if (validationResult === 'login') {
         const nickname = inputNickname.value.trim()
-        console.log('in addEventListeners: ', this.profileImageData)
         this.register(email, password, nickname, this.profileImageData)
       }
     })
@@ -298,8 +297,6 @@ class AuthFormElement extends HTMLElement {
           profileImgPreview.src = reader.result
           profileImgPreview.style.display = 'block'
           this.profileImageData = reader.result
-          //console.log(profileImgPreview)
-          console.log(this.profileImageData)
         }
       }
 
@@ -315,15 +312,13 @@ class AuthFormElement extends HTMLElement {
 
   async login(email, password) {
     try {
-      const response = await loginUser(email, password)
+      const user = await loginUser(email, password)
+      if (!user) {
+        alert('회원 정보가 존재하지 않습니다.')
+        return
+      }
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
-      // const user = {
-      //   user_email: response.email,
-      //   user_name: response.nickname,
-      // }
-
-      // localStorage.setItem('user', JSON.stringify(user))
       handleNavigation('/html/Posts.html')
     } catch (error) {
       alert(error.message)

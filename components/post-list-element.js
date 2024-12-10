@@ -38,7 +38,6 @@ class PostListElement extends HTMLElement {
 
       if (this.page === 0) {
         newPosts = await getPosts({ page: this.page, limit: 4 })
-        console.log(newPosts)
       } else {
         this.showLoadingAnimation()
         const [postsData] = await Promise.all([

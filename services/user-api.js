@@ -1,5 +1,5 @@
-const baseUrl = 'http://3.35.112.49:3000/api/users'
-const authUrl = 'http://3.35.112.49:3000/api/auth'
+const baseUrl = 'http://3.35.112.49/api/users'
+const authUrl = 'http://3.35.112.49/api/auth'
 
 export async function loginUser(email, password) {
   try {
@@ -17,10 +17,13 @@ export async function loginUser(email, password) {
     })
 
     const data = await response.json()
-    localStorage.setItem('user', JSON.stringify(data.user))
-    return data.user
+    if (data.user) {
+      localStorage.setItem('user', JSON.stringify(data.user))
+      return data.user
+    } else {
+      return null
+    }
   } catch (error) {
-    console.log(error)
     alert(error.message)
   }
 }
@@ -44,7 +47,6 @@ export async function registerUser(email, password, nickname, profilePic) {
     })
 
     const data = await response.json()
-    console.log(data.message)
     return data.message
   } catch (error) {
     alert(error.message)
@@ -88,7 +90,6 @@ export async function patchUserPw(email, password) {
     })
 
     const data = await response.json()
-    console.log(data.message)
   } catch (error) {
     alert(error.message)
   }
@@ -118,7 +119,6 @@ export async function logoutUser() {
     })
 
     const data = await response.json()
-    console.log(data.message)
   } catch (error) {
     alert(error.message)
   }
