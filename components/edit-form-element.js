@@ -42,7 +42,8 @@ class EditFormElement extends HTMLElement {
         <div class="input-title">프로필 사진*</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profile_picture
+        this.storedData.profile_picture ||
+        this.storedData.profile_picture === null
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
