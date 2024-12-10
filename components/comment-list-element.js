@@ -232,17 +232,16 @@ class CommentListElement extends HTMLElement {
 
     const newUpdateButtons = this.shadowRoot.querySelectorAll('#button-update')
     newUpdateButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        if (
-          !this.isLogin ||
-          this.storedData.nickname !== comments[index].writer
-        ) {
-          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
-          return
-        } else {
+      if (
+        !this.isLogin ||
+        this.storedData.nickname !== comments[index].writer
+      ) {
+        button.style.visibility = 'hidden'
+      } else {
+        button.addEventListener('click', () => {
           this.handleUpdate(comments[index].id, comments[index].content)
-        }
-      })
+        })
+      }
     })
   }
 
@@ -256,17 +255,16 @@ class CommentListElement extends HTMLElement {
 
     const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
     newDeleteButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        if (
-          !this.isLogin ||
-          this.storedData.nickname !== comments[index].writer
-        ) {
-          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
-          return
-        } else {
+      if (
+        !this.isLogin ||
+        this.storedData.nickname !== comments[index].writer
+      ) {
+        button.style.visibility = 'hidden'
+      } else {
+        button.addEventListener('click', () => {
           this.openModal(comments[index].id)
-        }
-      })
+        })
+      }
     })
   }
 

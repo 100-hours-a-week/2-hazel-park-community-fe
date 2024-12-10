@@ -137,19 +137,16 @@ class PostElement extends HTMLElement {
     const updatePost = this.shadowRoot.getElementById('button-update')
     const likes = this.shadowRoot.getElementById('post-interaction-likes')
 
+    if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
+      deletePost.style.visibility = 'hidden'
+      updatePost.style.visibility = 'hidden'
+    }
+
     deletePost?.addEventListener('click', () => {
-      if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
-        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
-        return
-      } else {
-        this.openModal()
-      }
+      this.openModal()
     })
     updatePost?.addEventListener('click', () => {
       if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
-        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
-        return
-      } else {
         this.openModal()
       }
       this.navigateToEditPage()
