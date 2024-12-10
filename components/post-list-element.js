@@ -77,6 +77,13 @@ class PostListElement extends HTMLElement {
         handleNavigation(`/html/post.html?id=${postId}`)
       })
     })
+
+    if (!this.allPostsLoaded) {
+      if (this.observer) {
+        this.observer.disconnect()
+      }
+      this.initInfiniteScroll()
+    }
   }
 
   initInfiniteScroll() {
@@ -89,11 +96,16 @@ class PostListElement extends HTMLElement {
 
       this.observer = new IntersectionObserver(
         (entries) => {
-          if (entries[0].isIntersecting && !this.allPostsLoaded) {
+          if (
+            entries[0].isIntersecting &&
+            !this.allPostsLoaded &&
+            !this.isLoading
+          ) {
             this.loadPostsData()
           }
         },
         {
+          root: null,
           rootMargin: '8px',
           threshold: 0.1,
         },

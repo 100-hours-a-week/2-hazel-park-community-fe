@@ -56,45 +56,38 @@ class CommentListElement extends HTMLElement {
 
     try {
       this.isLoading = true
-      let newComments
-      if (this.page === 0) {
-        newComments = await getComments({
-          postId: this.postId,
-          page: this.page,
-          limit: this.COMMENTS_PER_PAGE,
-        })
-      } else {
-        this.showLoadingAnimation()
-        const [commentsData] = await Promise.all([
-          getComments({
-            postId: this.postId,
-            page: this.page,
-            limit: this.COMMENTS_PER_PAGE,
-          }),
-          new Promise((resolve) => setTimeout(resolve, 1000)),
-        ])
-        newComments = commentsData
-      }
+      this.showLoadingAnimation()
 
-      if (Array.isArray(newComments)) {
-        // 중복된 댓글을 방지하기 위해, 기존 댓글에 없는 댓글만 추가
-        this.comments = [
-          ...this.comments.filter((existingComment) =>
-            newComments.every(
-              (newComment) => newComment.id !== existingComment.id,
+      const newComments = await getComments({
+        postId: this.postId,
+        page: this.page,
+        limit: this.COMMENTS_PER_PAGE,
+      })
+
+      if (Array.isArray(newComments) && newComments.length > 0) {
+        // 중복 방지 및 새로운 댓글 추가
+        const filteredComments = newComments.filter(
+          (newComment) =>
+            !this.comments.some(
+              (existingComment) => existingComment.id === newComment.id,
             ),
-          ),
-          ...newComments,
-        ]
+        )
+
+        this.comments = [...this.comments, ...filteredComments]
         this.page += 1
 
+        // 만약 불러온 댓글이 COMMENTS_PER_PAGE보다 적으면 더 이상 데이터 없음
         if (newComments.length < this.COMMENTS_PER_PAGE) {
           this.allCommentsLoaded = true
-          this.stopInfiniteScroll()
+          this.stopInfiniteScroll() // 무한 스크롤 정지
         }
-
-        this.renderComments()
+      } else {
+        // 데이터가 없으면 바로 무한 스크롤 정지
+        this.allCommentsLoaded = true
+        this.stopInfiniteScroll()
       }
+
+      this.renderComments()
     } catch (error) {
       console.error('댓글을 불러오는 데 실패했습니다:', error)
     } finally {
@@ -106,6 +99,14 @@ class CommentListElement extends HTMLElement {
   renderComments() {
     this.shadowRoot.innerHTML = this.template(this.comments)
     this.addEventListener(this.comments)
+
+    // 무한 스크롤 다시 초기화
+    if (!this.allCommentsLoaded) {
+      if (this.observer) {
+        this.observer.disconnect()
+      }
+      this.initInfiniteScroll()
+    }
   }
 
   initInfiniteScroll() {
@@ -127,6 +128,7 @@ class CommentListElement extends HTMLElement {
           }
         },
         {
+          root: null,
           rootMargin: '10px',
           threshold: 0.1,
         },
