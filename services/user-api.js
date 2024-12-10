@@ -17,8 +17,12 @@ export async function loginUser(email, password) {
     })
 
     const data = await response.json()
-    localStorage.setItem('user', JSON.stringify(data.user))
-    return data.user
+    if (data.user) {
+      localStorage.setItem('user', JSON.stringify(data.user))
+      return data.user
+    } else {
+      return null
+    }
   } catch (error) {
     alert(error.message)
   }
