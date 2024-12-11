@@ -193,7 +193,7 @@ class CommentListElement extends HTMLElement {
                       `
                 }
                   <div class="post-writer-name">${comment.writer}</div>
-                  <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
+                  <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
                 </div>
                 <div class="comment-contents">${comment.content}</div>
               </div>
@@ -287,18 +287,37 @@ class CommentListElement extends HTMLElement {
 
             if (!this.isEditing && !this.isRequestInProgress) {
               this.isRequestInProgress = true // 요청 진행 중 상태 설정
-              await uploadComment(
-                this.postId,
-                this.storedData.email,
-                formatDate(Date.now()),
-                updatedContent,
-              )
-              alert('댓글이 등록되었습니다.') // 추가
-              this.isRequestInProgress = false // 요청 완료 후 상태 리셋
-              // 페이지 새로 고침 대신, 댓글을 리스트에 추가
-              commentArea.value = ''
-              await this.loadCommentsData() // 새로운 댓글 데이터를 불러옵니다.
-              location.reload()
+              try {
+                // 댓글 업로드 API 호출
+                const newComment = await uploadComment(
+                  this.postId,
+                  this.storedData.email,
+                  formatDate(Date.now()),
+                  updatedContent,
+                )
+
+                //alert('댓글이 등록되었습니다.')
+
+                // 새로운 댓글을 comments 배열의 맨 앞에 추가
+                this.comments = [...this.comments, newComment]
+
+                // 렌더링 업데이트
+                this.renderComments()
+
+                // 입력창 초기화
+                commentArea.value = ''
+
+                // 버튼 텍스트 복구 및 비활성화
+                commentButton.innerText = '댓글 등록'
+                commentButton.style.backgroundColor = '#aea0eb'
+                commentButton.style.cursor = 'not-allowed'
+                commentButton.disabled = true // 버튼 비활성화
+              } catch (error) {
+                console.error('댓글 등록에 실패했습니다:', error)
+                alert('댓글 등록 중 문제가 발생했습니다.')
+              } finally {
+                this.isRequestInProgress = false // 요청 완료 후 상태 리셋
+              }
             }
           }
         },
@@ -321,21 +340,47 @@ class CommentListElement extends HTMLElement {
       commentButton.dataset.commentId = id
       this.isEditing = true
 
-      commentButton.addEventListener('click', async () => {
-        const updatedContent = commentArea.value.trim()
-        if (updatedContent) {
-          await editComments(
-            this.postId,
-            id,
-            updatedContent,
-            formatDate(Date.now()),
-          )
-          location.reload()
-          this.isEditing = false
-        } else {
-          alert('수정할 내용을 입력하세요.')
-        }
-      })
+      commentButton.addEventListener(
+        'click',
+        async () => {
+          const updatedContent = commentArea.value.trim()
+          if (updatedContent) {
+            try {
+              const updatedComment = await editComments(
+                this.postId,
+                id,
+                updatedContent,
+                formatDate(Date.now()),
+              )
+
+              // 기존 댓글 리스트에서 수정된 댓글 업데이트
+              this.comments = this.comments.map((comment) =>
+                comment.id === id ? updatedComment : comment,
+              )
+
+              this.renderComments() // UI 재렌더링
+              this.isEditing = false
+
+              // 입력창 초기화
+              commentArea.value = ''
+
+              // 버튼 텍스트 복구 및 비활성화
+              commentButton.innerText = '댓글 등록'
+              commentButton.style.backgroundColor = '#aea0eb'
+              commentButton.style.cursor = 'not-allowed'
+              commentButton.disabled = true // 버튼 비활성화
+            } catch (error) {
+              console.log('댓글 수정에 실패했습니다:', error)
+              alert('댓글 수정 중 문제가 발생했습니다.')
+            } finally {
+              this.isRequestInProgress = false
+            }
+          } else {
+            alert('수정할 내용을 입력하세요.')
+          }
+        },
+        { once: true }, // 이벤트 중복 방지
+      )
     }
   }
 
