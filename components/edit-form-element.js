@@ -141,7 +141,7 @@ class EditFormElement extends HTMLElement {
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.name = nickname
+        this.storedData.nickname = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
 
         const result = await patchUserNickname(
