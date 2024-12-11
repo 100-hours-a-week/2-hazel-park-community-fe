@@ -72,6 +72,7 @@ class PostListElement extends HTMLElement {
     this.shadowRoot.innerHTML = this.template(posts)
 
     const postItems = this.shadowRoot.querySelectorAll('.post-item')
+
     postItems.forEach((item, index) => {
       const postId = posts[index].id
       item.dataset.id = postId
@@ -80,8 +81,6 @@ class PostListElement extends HTMLElement {
         handleNavigation(`/html/post.html?id=${postId}`)
       })
     })
-
-    this.shadowRoot.querySelector('.post-list').style.visibility = 'visible'
 
     if (!this.allPostsLoaded) {
       if (this.observer) {
