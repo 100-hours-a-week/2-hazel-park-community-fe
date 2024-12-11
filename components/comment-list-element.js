@@ -51,54 +51,45 @@ class CommentListElement extends HTMLElement {
       document.head.appendChild(script)
     }
   }
-  async loadCommentsData() {
-    if (this.isLoading || this.allCommentsLoaded) return
-
-    try {
-      this.isLoading = true
-      this.showLoadingAnimation()
-
-      const newComments = await getComments({
-        postId: this.postId,
-        page: this.page,
-        limit: this.COMMENTS_PER_PAGE,
-      })
-
-      if (Array.isArray(newComments) && newComments.length > 0) {
-        // 중복 방지 및 새로운 댓글 추가
-        const filteredComments = newComments.filter(
-          (newComment) =>
-            !this.comments.some(
-              (existingComment) => existingComment.id === newComment.id,
-            ),
-        )
-
-        this.comments = [...this.comments, ...filteredComments]
-        this.page += 1
-
-        // 만약 불러온 댓글이 COMMENTS_PER_PAGE보다 적으면 더 이상 데이터 없음
-        if (newComments.length < this.COMMENTS_PER_PAGE) {
-          this.allCommentsLoaded = true
-          this.stopInfiniteScroll() // 무한 스크롤 정지
-        }
-      } else {
-        // 데이터가 없으면 바로 무한 스크롤 정지
-        this.allCommentsLoaded = true
-        this.stopInfiniteScroll()
-      }
-
-      this.renderComments()
-    } catch (error) {
-      console.error('댓글을 불러오는 데 실패했습니다:', error)
-    } finally {
-      this.hideLoadingAnimation()
-      this.isLoading = false
-    }
-  }
 
   renderComments() {
-    this.shadowRoot.innerHTML = this.template(this.comments)
-    this.addEventListener(this.comments)
+    // 기존 댓글 컨테이너 선택
+    const commentsContainer = this.shadowRoot.querySelector('div')
+
+    // 새로운 댓글만 추가
+    const newComments = this.comments.slice(commentsContainer.children.length)
+
+    const commentsHtml = newComments
+      .map(
+        (comment) => `
+      <div class="comment-wrap">
+        <div class="comment-wrap-detail">
+          <div class="comment-writer-info">
+          ${
+            comment.author_profile_picture
+              ? `
+                  <img id="post-writer-img" src="${comment.author_profile_picture}" class="post-writer-profile" />
+                `
+              : `
+                  <div id="post-writer-div" class="post-writer-img"></div>
+                `
+          }
+            <div class="post-writer-name">${comment.writer}</div>
+            <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
+          </div>
+          <div class="comment-contents">${comment.content}</div>
+        </div>
+        <div class="post-controll-button">
+          <button id="button-update" class="post-controll-button-detail">수정</button>
+          <button id="button-delete" class="post-controll-button-detail">삭제</button>
+        </div>
+      </div>
+      `,
+      )
+      .join('')
+
+    // 새로운 댓글을 기존 컨테이너에 추가
+    commentsContainer.insertAdjacentHTML('beforeend', commentsHtml)
 
     // 무한 스크롤 다시 초기화
     if (!this.allCommentsLoaded) {
@@ -106,6 +97,76 @@ class CommentListElement extends HTMLElement {
         this.observer.disconnect()
       }
       this.initInfiniteScroll()
+    }
+
+    this.addEventListener(this.comments)
+  }
+
+  async loadCommentsData() {
+    if (this.isLoading || this.allCommentsLoaded) return
+
+    try {
+      this.isLoading = true
+
+      if (this.page === 0) {
+        const newComments = await getComments({
+          postId: this.postId,
+          page: this.page,
+          limit: this.COMMENTS_PER_PAGE,
+        })
+
+        if (Array.isArray(newComments) && newComments.length > 0) {
+          const filteredComments = newComments.filter(
+            (newComment) =>
+              !this.comments.some(
+                (existingComment) => existingComment.id === newComment.id,
+              ),
+          )
+
+          this.comments = [...this.comments, ...filteredComments]
+          this.page += 1
+        } else {
+          this.allCommentsLoaded = true
+          this.stopInfiniteScroll()
+        }
+      } else {
+        this.showLoadingAnimation()
+        const [newComments] = await Promise.all([
+          getComments({
+            postId: this.postId,
+            page: this.page,
+            limit: this.COMMENTS_PER_PAGE,
+          }),
+          new Promise((resolve) => setTimeout(resolve, 1500)),
+        ])
+
+        if (Array.isArray(newComments) && newComments.length > 0) {
+          const filteredComments = newComments.filter(
+            (newComment) =>
+              !this.comments.some(
+                (existingComment) => existingComment.id === newComment.id,
+              ),
+          )
+
+          this.comments = [...this.comments, ...filteredComments]
+          this.page += 1
+        } else {
+          this.allCommentsLoaded = true
+          this.stopInfiniteScroll()
+        }
+      }
+
+      this.renderComments()
+
+      if (this.comments.length < this.page * this.COMMENTS_PER_PAGE) {
+        this.allCommentsLoaded = true
+        this.stopInfiniteScroll()
+      }
+    } catch (error) {
+      console.error('댓글을 불러오는 데 실패했습니다:', error)
+    } finally {
+      this.hideLoadingAnimation()
+      this.isLoading = false
     }
   }
 
