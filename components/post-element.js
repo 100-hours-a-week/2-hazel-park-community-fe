@@ -102,7 +102,7 @@ class PostElement extends HTMLElement {
                   `
             }
               <div class="post-writer-name">${post_writer}</div>
-              <div class="post-updateAt">${formatDate(post_updated_at)}</div>
+              <div class="post-updateAt">${formatCommentDate(post_updated_at)}</div>
               <div class="post-controll-button">
                 <button id="button-update" class="post-controll-button-detail">수정</button>
                 <button id="button-delete" class="post-controll-button-detail">삭제</button>

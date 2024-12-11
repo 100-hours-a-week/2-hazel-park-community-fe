@@ -171,7 +171,7 @@ class PostListElement extends HTMLElement {
                           </div>
                       </div>
                       <div class="post-updateAt">
-                        ${post.updated_at ? formatDate(post.updated_at) : '날짜 정보 없음'}
+                        ${post.updated_at ? formatCommentDate(post.updated_at) : '날짜 정보 없음'}
                       </div>
                   </div>
                   <div class="post-writer-wrap">
