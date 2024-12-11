@@ -21,7 +21,10 @@ class PostListElement extends HTMLElement {
       document.head.appendChild(script)
     }
 
-    await this.render()
+    //await this.render()
+
+    this.shadowRoot.innerHTML = this.template([])
+    this.shadowRoot.querySelector('.post-list').style.visibility = 'hidden'
 
     window.scrollTo(0, sessionStorage.getItem('scrollPosition') || 0)
 
@@ -64,7 +67,7 @@ class PostListElement extends HTMLElement {
     }
   }
 
-  render() {
+  async render() {
     const posts = Array.isArray(this.posts) ? this.posts : [this.posts]
     this.shadowRoot.innerHTML = this.template(posts)
 
@@ -77,6 +80,8 @@ class PostListElement extends HTMLElement {
         handleNavigation(`/html/post.html?id=${postId}`)
       })
     })
+
+    this.shadowRoot.querySelector('.post-list').style.visibility = 'visible'
 
     if (!this.allPostsLoaded) {
       if (this.observer) {

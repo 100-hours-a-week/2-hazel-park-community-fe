@@ -43,18 +43,18 @@ class PostElement extends HTMLElement {
       this.is_liked = !this.is_liked
 
       this.post.post_likes += this.is_liked ? 1 : -1
-      this.renderPost()
+      this.updateLikesUI()
 
       const updatedLikes = await likes(this.postId, this.is_liked)
 
       this.post.post_likes = updatedLikes
       await this.saveLikeState()
-      this.renderPost()
+      this.updateLikesUI()
     } catch (error) {
       console.error('Failed to update likes:', error)
       this.is_liked = !this.is_liked
       this.post.post_likes += this.is_liked ? 1 : -1
-      this.renderPost()
+      this.updateLikesUI()
     }
   }
 
@@ -62,9 +62,16 @@ class PostElement extends HTMLElement {
     const likesElement = this.shadowRoot.getElementById(
       'post-interaction-likes',
     )
-    if (likesElement && this.likedPosts[this.postId]) {
-      likesElement.style.backgroundColor = '#e9e9e9'
+    if (!likesElement) return
+
+    const likesValueElement = likesElement.querySelector(
+      '.post-interaction-value',
+    )
+    if (likesValueElement) {
+      likesValueElement.textContent = checkCount(this.post.post_likes)
     }
+
+    likesElement.style.backgroundColor = this.is_liked ? '#e9e9e9' : '#d9d9d9'
   }
 
   template() {
@@ -190,7 +197,7 @@ class PostElement extends HTMLElement {
   renderPost() {
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
-    this.updateLikesUI()
+    //this.updateLikesUI()
   }
 }
 
