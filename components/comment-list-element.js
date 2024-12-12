@@ -87,17 +87,17 @@ class CommentListElement extends HTMLElement {
       )
       .join('')
 
-    // 업데이트된 댓글 HTML 삽입
     commentsContainer.insertAdjacentHTML('beforeend', commentsHtml)
 
-    // 이벤트 리스너 재설정
+    const commentElements = commentsContainer.querySelectorAll('.comment-wrap')
+    commentElements.forEach((element, index) => {
+      element.classList.add('visible')
+    })
+
     this.addEventListener(this.comments)
 
-    // 무한 스크롤 재초기화 (필요한 경우에만)
-    if (!this.allCommentsLoaded) {
-      if (this.observer) {
-        this.observer.disconnect()
-      }
+    if (!this.allCommentsLoaded && this.observer) {
+      this.observer.disconnect()
       this.initInfiniteScroll()
     }
   }
@@ -174,7 +174,6 @@ class CommentListElement extends HTMLElement {
     setTimeout(() => {
       const sentinel = this.shadowRoot.querySelector('.scroll-sentinel')
       if (!sentinel) {
-        console.error('Scroll sentinel element not found')
         return
       }
 
@@ -235,6 +234,14 @@ class CommentListElement extends HTMLElement {
 
   template(comments) {
     return `
+      <style>
+        .comment-wrap {
+          visibility: hidden; 
+        }
+        .comment-wrap.visible {
+          visibility: visible;
+        }
+      </style>
       <link rel="stylesheet" href="/styles/global.css">
       <link rel="stylesheet" href="/styles/post.css">
       <div>
@@ -371,7 +378,6 @@ class CommentListElement extends HTMLElement {
 
               await this.loadCommentsData()
             } catch (error) {
-              console.error('댓글 등록에 실패했습니다:', error)
               alert('댓글 등록 중 문제가 발생했습니다.')
             } finally {
               this.isRequestInProgress = false
@@ -429,7 +435,6 @@ class CommentListElement extends HTMLElement {
 
             await this.loadCommentsData() // 댓글 데이터 다시 로딩
           } catch (error) {
-            console.error('댓글 수정에 실패했습니다:', error)
             alert('댓글 수정 중 문제가 발생했습니다.')
           } finally {
             this.isRequestInProgress = false
@@ -501,7 +506,6 @@ class CommentListElement extends HTMLElement {
 
       await this.loadCommentsData() // 댓글 데이터 다시 로딩
     } catch (error) {
-      console.error('댓글 삭제에 실패했습니다:', error)
       alert('댓글 삭제 중 문제가 발생했습니다.')
     } finally {
       // 모달 및 배경 닫기
