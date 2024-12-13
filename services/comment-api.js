@@ -35,7 +35,7 @@ export async function uploadComment(postId, writer, updated_at, content) {
       }),
     })
 
-    const data = await response.json()
+    return await response.json()
   } catch (error) {}
 }
 
@@ -69,6 +69,5 @@ export async function deleteComments(postId, commentId) {
         'Content-Type': 'application/json',
       },
     })
-    alert('댓글 삭제 성공')
   } catch (error) {}
 }

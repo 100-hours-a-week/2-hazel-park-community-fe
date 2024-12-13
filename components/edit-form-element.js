@@ -39,10 +39,11 @@ class EditFormElement extends HTMLElement {
   profileForm() {
     return `
       <div style="margin-bottom: 2.87vh">
-        <div class="input-title">프로필 사진*</div>
+        <div class="input-title">프로필 사진</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profile_picture
+        this.storedData.profile_picture ||
+        this.storedData.profile_picture === null
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
@@ -66,7 +67,7 @@ class EditFormElement extends HTMLElement {
           <div id="user-email" class="user-email" />${this.storedData.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
-          <div class="input-title">닉네임</div>
+          <div class="input-title">닉네임*</div>
             <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
@@ -140,7 +141,7 @@ class EditFormElement extends HTMLElement {
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.name = nickname
+        this.storedData.nickname = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
 
         const result = await patchUserNickname(

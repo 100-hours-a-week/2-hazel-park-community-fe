@@ -51,49 +51,116 @@ class CommentListElement extends HTMLElement {
       document.head.appendChild(script)
     }
   }
+
+  renderComments() {
+    // 기존 댓글 컨테이너 비우기
+    const commentsContainer = this.shadowRoot.querySelector('div')
+    commentsContainer.innerHTML = ''
+
+    // 모든 댓글 다시 렌더링
+    const commentsHtml = this.comments
+      .map(
+        (comment) => `
+        <div class="comment-wrap">
+          <div class="comment-wrap-detail">
+            <div class="comment-writer-info">
+            ${
+              comment.author_profile_picture
+                ? `
+                    <img id="post-writer-img" src="${comment.author_profile_picture}" class="post-writer-profile" />
+                  `
+                : `
+                    <div id="post-writer-div" class="post-writer-img"></div>
+                  `
+            }
+              <div class="post-writer-name">${comment.writer}</div>
+              <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
+            </div>
+            <div class="comment-contents">${comment.content}</div>
+          </div>
+          <div class="post-controll-button">
+            <button id="button-update" class="post-controll-button-detail">수정</button>
+            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+          </div>
+        </div>
+        `,
+      )
+      .join('')
+
+    commentsContainer.insertAdjacentHTML('beforeend', commentsHtml)
+
+    const commentElements = commentsContainer.querySelectorAll('.comment-wrap')
+    commentElements.forEach((element, index) => {
+      element.classList.add('visible')
+    })
+
+    this.addEventListener(this.comments)
+
+    if (!this.allCommentsLoaded && this.observer) {
+      this.observer.disconnect()
+      this.initInfiniteScroll()
+    }
+  }
+
   async loadCommentsData() {
     if (this.isLoading || this.allCommentsLoaded) return
 
     try {
       this.isLoading = true
-      let newComments
+
       if (this.page === 0) {
-        newComments = await getComments({
+        const newComments = await getComments({
           postId: this.postId,
           page: this.page,
           limit: this.COMMENTS_PER_PAGE,
         })
+
+        if (Array.isArray(newComments) && newComments.length > 0) {
+          const filteredComments = newComments.filter(
+            (newComment) =>
+              !this.comments.some(
+                (existingComment) => existingComment.id === newComment.id,
+              ),
+          )
+
+          this.comments = [...this.comments, ...filteredComments]
+          this.page += 1
+        } else {
+          this.allCommentsLoaded = true
+          this.stopInfiniteScroll()
+        }
       } else {
         this.showLoadingAnimation()
-        const [commentsData] = await Promise.all([
+        const [newComments] = await Promise.all([
           getComments({
             postId: this.postId,
             page: this.page,
             limit: this.COMMENTS_PER_PAGE,
           }),
-          new Promise((resolve) => setTimeout(resolve, 1000)),
+          new Promise((resolve) => setTimeout(resolve, 1500)),
         ])
-        newComments = commentsData
-      }
 
-      if (Array.isArray(newComments)) {
-        // 중복된 댓글을 방지하기 위해, 기존 댓글에 없는 댓글만 추가
-        this.comments = [
-          ...this.comments.filter((existingComment) =>
-            newComments.every(
-              (newComment) => newComment.id !== existingComment.id,
-            ),
-          ),
-          ...newComments,
-        ]
-        this.page += 1
+        if (Array.isArray(newComments) && newComments.length > 0) {
+          const filteredComments = newComments.filter(
+            (newComment) =>
+              !this.comments.some(
+                (existingComment) => existingComment.id === newComment.id,
+              ),
+          )
 
-        if (newComments.length < this.COMMENTS_PER_PAGE) {
+          this.comments = [...this.comments, ...filteredComments]
+          this.page += 1
+        } else {
           this.allCommentsLoaded = true
           this.stopInfiniteScroll()
         }
+      }
 
-        this.renderComments()
+      this.renderComments()
+
+      if (this.comments.length < this.page * this.COMMENTS_PER_PAGE) {
+        this.allCommentsLoaded = true
+        this.stopInfiniteScroll()
       }
     } catch (error) {
       console.error('댓글을 불러오는 데 실패했습니다:', error)
@@ -103,16 +170,10 @@ class CommentListElement extends HTMLElement {
     }
   }
 
-  renderComments() {
-    this.shadowRoot.innerHTML = this.template(this.comments)
-    this.addEventListener(this.comments)
-  }
-
   initInfiniteScroll() {
     setTimeout(() => {
       const sentinel = this.shadowRoot.querySelector('.scroll-sentinel')
       if (!sentinel) {
-        console.error('Scroll sentinel element not found')
         return
       }
 
@@ -127,6 +188,7 @@ class CommentListElement extends HTMLElement {
           }
         },
         {
+          root: null,
           rootMargin: '10px',
           threshold: 0.1,
         },
@@ -172,6 +234,14 @@ class CommentListElement extends HTMLElement {
 
   template(comments) {
     return `
+      <style>
+        .comment-wrap {
+          visibility: hidden; 
+        }
+        .comment-wrap.visible {
+          visibility: visible;
+        }
+      </style>
       <link rel="stylesheet" href="/styles/global.css">
       <link rel="stylesheet" href="/styles/post.css">
       <div>
@@ -191,7 +261,7 @@ class CommentListElement extends HTMLElement {
                       `
                 }
                   <div class="post-writer-name">${comment.writer}</div>
-                  <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
+                  <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
                 </div>
                 <div class="comment-contents">${comment.content}</div>
               </div>
@@ -225,28 +295,28 @@ class CommentListElement extends HTMLElement {
   updateComment(comments) {
     const updateButtons = this.shadowRoot.querySelectorAll('#button-update')
 
-    updateButtons.forEach((button) => {
-      const oldButton = button.cloneNode(true)
-      button.parentNode.replaceChild(oldButton, button)
-    })
+    updateButtons.forEach((button, index) => {
+      // 기존 이벤트 리스너 제거
+      button.replaceWith(button.cloneNode(true)) // 기존 버튼을 새로운 노드로 교체
+      const newButton =
+        this.shadowRoot.querySelectorAll('#button-update')[index]
 
-    const newUpdateButtons = this.shadowRoot.querySelectorAll('#button-update')
-    newUpdateButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        if (
-          !this.isLogin ||
-          this.storedData.nickname !== comments[index].writer
-        ) {
-          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
-          return
-        } else {
-          this.handleUpdate(comments[index].id, comments[index].content)
-        }
-      })
+      // 수정 권한이 없는 사용자에 대한 처리
+      if (
+        !this.isLogin ||
+        this.storedData.nickname !== comments[index].writer
+      ) {
+        newButton.style.visibility = 'hidden'
+      } else {
+        // 새로운 이벤트 리스너 등록
+        newButton.addEventListener('click', async () => {
+          await this.handleUpdate(comments[index].id, comments[index].content)
+        })
+      }
     })
   }
 
-  deleteComments(comments) {
+  async deleteComments(comments) {
     const deleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
 
     deleteButtons.forEach((button) => {
@@ -256,17 +326,16 @@ class CommentListElement extends HTMLElement {
 
     const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
     newDeleteButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        if (
-          !this.isLogin ||
-          this.storedData.nickname !== comments[index].writer
-        ) {
-          alert('댓글 작성자만 이용할 수 있는 기능입니다.')
-          return
-        } else {
+      if (
+        !this.isLogin ||
+        this.storedData.nickname !== comments[index].writer
+      ) {
+        button.style.visibility = 'hidden'
+      } else {
+        button.addEventListener('click', async () => {
           this.openModal(comments[index].id)
-        }
-      })
+        })
+      }
     })
   }
 
@@ -275,35 +344,48 @@ class CommentListElement extends HTMLElement {
   }
 
   ConfirmComment(commentArea, commentButton) {
-    if (
-      commentButton.innerText === '댓글 등록' &&
-      commentButton.innerText !== '댓글 수정'
-    ) {
-      commentButton.addEventListener(
-        'click',
-        async () => {
-          if (this.validateForm()) {
-            const updatedContent = commentArea.value.trim()
+    if (commentButton.innerText === '댓글 등록') {
+      const newButton = commentButton.cloneNode(true)
+      commentButton.parentNode.replaceChild(newButton, commentButton)
 
-            if (!this.isEditing && !this.isRequestInProgress) {
-              this.isRequestInProgress = true // 요청 진행 중 상태 설정
+      newButton.addEventListener('click', async () => {
+        if (this.validateForm()) {
+          const updatedContent = commentArea.value.trim()
+
+          if (!this.isEditing && !this.isRequestInProgress) {
+            this.isRequestInProgress = true
+            try {
+              // 댓글 업로드 API 호출
               await uploadComment(
                 this.postId,
                 this.storedData.email,
                 formatDate(Date.now()),
                 updatedContent,
               )
-              alert('댓글이 등록되었습니다.') // 추가
-              this.isRequestInProgress = false // 요청 완료 후 상태 리셋
-              // 페이지 새로 고침 대신, 댓글을 리스트에 추가
+
+              // 입력창 초기화
               commentArea.value = ''
-              await this.loadCommentsData() // 새로운 댓글 데이터를 불러옵니다.
+
+              // 버튼 상태 초기화
+              newButton.style.backgroundColor = '#aea0eb'
+              newButton.style.cursor = 'not-allowed'
+              newButton.disabled = true
+
+              // 댓글 데이터 다시 로드
+              this.page = 0
+              this.comments = []
+              this.allCommentsLoaded = false
+
+              await this.loadCommentsData()
+            } catch (error) {
+              alert('댓글 등록 중 문제가 발생했습니다.')
+            } finally {
+              this.isRequestInProgress = false
               location.reload()
             }
           }
-        },
-        { once: true },
-      )
+        }
+      })
     }
   }
 
@@ -312,30 +394,59 @@ class CommentListElement extends HTMLElement {
     const commentButton = document.getElementById('comment-button')
 
     if (commentArea) {
-      commentArea.value = content
+      commentArea.value = content // 수정하려는 댓글 내용을 입력 필드에 넣기
       commentArea.focus()
     }
 
     if (commentButton) {
       commentButton.innerText = '댓글 수정'
-      commentButton.dataset.commentId = id
       this.isEditing = true
 
-      commentButton.addEventListener('click', async () => {
+      // 클릭 이벤트 추가
+      const updateListener = async () => {
         const updatedContent = commentArea.value.trim()
         if (updatedContent) {
-          await editComments(
-            this.postId,
-            id,
-            updatedContent,
-            formatDate(Date.now()),
-          )
-          location.reload()
-          this.isEditing = false
+          try {
+            this.isRequestInProgress = true
+
+            // 댓글 수정 API 호출
+            await editComments(
+              this.postId,
+              id,
+              updatedContent,
+              formatDate(Date.now()),
+            )
+
+            // 상태 초기화
+            this.isEditing = false
+            this.isRequestInProgress = false
+
+            commentArea.value = ''
+
+            // 댓글 데이터 다시 로드
+            this.page = 0
+            this.comments = []
+            this.allCommentsLoaded = false
+
+            commentButton.innerText = '댓글 등록' // 버튼 텍스트를 "댓글 등록"으로 변경
+            commentButton.style.backgroundColor = '#aea0eb'
+            commentButton.style.cursor = 'not-allowed'
+            //commentButton.disabled = true // 버튼 비활성화
+
+            await this.loadCommentsData() // 댓글 데이터 다시 로딩
+          } catch (error) {
+            alert('댓글 수정 중 문제가 발생했습니다.')
+          } finally {
+            this.isRequestInProgress = false
+          }
         } else {
           alert('수정할 내용을 입력하세요.')
         }
-      })
+      }
+
+      // 기존 이벤트 제거 후 재등록
+      commentButton.removeEventListener('click', updateListener) // 안전한 제거
+      commentButton.addEventListener('click', updateListener)
     }
   }
 
@@ -385,8 +496,21 @@ class CommentListElement extends HTMLElement {
   }
 
   async deleteContirm(commentId) {
-    await deleteComments(this.postId, commentId)
+    try {
+      await deleteComments(this.postId, commentId) // 댓글 삭제 API 호출
 
+      // 댓글 삭제 후 전체 데이터 다시 로드
+      this.page = 0 // 페이지 번호 초기화
+      this.comments = [] // 기존 댓글 데이터 초기화
+      this.allCommentsLoaded = false // 모든 댓글 로딩 상태 초기화
+
+      await this.loadCommentsData() // 댓글 데이터 다시 로딩
+    } catch (error) {
+      alert('댓글 삭제 중 문제가 발생했습니다.')
+    } finally {
+      // 모달 및 배경 닫기
+      this.closeModal()
+    }
     location.reload()
   }
 }
