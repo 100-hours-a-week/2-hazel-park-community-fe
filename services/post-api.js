@@ -1,4 +1,4 @@
-const baseUrl = 'http://3.35.112.49/api/posts'
+const baseUrl = 'http://52.79.154.1/api/posts'
 
 export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
