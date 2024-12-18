@@ -88,7 +88,7 @@
 
 .post-img {
   width: 544px;
-  height: 306px;
+  height: auto;
   object-fit: cover;
 }
 
