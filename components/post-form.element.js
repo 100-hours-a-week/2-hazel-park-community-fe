@@ -53,9 +53,12 @@ class postFormElement extends HTMLElement {
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-        <div class="input-title">내용*</div>
-        <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
-        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text">dfsfs</div>
+          <div class="input-title">내용*</div>
+          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
+          <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
+              0 / 1000
+          </div>
+          <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
@@ -78,9 +81,12 @@ class postFormElement extends HTMLElement {
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-        <div class="input-title">내용*</div>
-        <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
-        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+          <div class="input-title">내용*</div>
+          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
+          <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
+              ${post_contents.length} / 1000
+          </div>
+          <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
@@ -188,6 +194,9 @@ class postFormElement extends HTMLElement {
     const contentsHyperText = this.shadowRoot.getElementById(
       'contents-hyper-text',
     )
+    const charCountDisplay = this.shadowRoot.getElementById(
+      'contents-char-count',
+    )
     const submit = this.shadowRoot.getElementById('submit')
     submit.style.backgroundColor = '#aea0eb'
     submit.style.cursor = 'not-allowed'
@@ -205,7 +214,7 @@ class postFormElement extends HTMLElement {
 
     if (!inputTitle.value.trim()) {
       titleCheck = false
-      titleHyperText.innerText = '제목, 내용을 모두 작성해주세요.'
+      titleHyperText.innerText = '제목을 작성해주세요.'
       titleHyperText.style.visibility = 'visible'
     } else if (inputTitle.value.length > 26) {
       titleCheck = false
@@ -217,13 +226,24 @@ class postFormElement extends HTMLElement {
       titleHyperText.style.visibility = 'hidden'
     }
 
+    // 내용 검증 및 글자수 업데이트
     if (!inputContents.value.trim()) {
       contentsCheck = false
-      contentsHyperText.innerText = '제목, 내용을 모두 작성해주세요.'
+      contentsHyperText.innerText = '내용을 작성해주세요.'
       contentsHyperText.style.visibility = 'visible'
+    } else if (inputContents.value.length > 1000) {
+      contentsCheck = false
+      contentsHyperText.innerText = '내용은 1000자 이하로 작성해주세요.'
+      contentsHyperText.style.visibility = 'visible'
+      inputContents.value = inputContents.value.slice(0, 1000)
     } else {
       contentsCheck = true
       contentsHyperText.style.visibility = 'hidden'
+    }
+
+    // 글자수 업데이트
+    if (charCountDisplay) {
+      charCountDisplay.innerText = `${inputContents.value.length} / 1000`
     }
 
     if (titleCheck && contentsCheck) {
