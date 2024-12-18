@@ -73,8 +73,10 @@ class postFormElement extends HTMLElement {
   }
 
   editPostForm() {
-    const { post_title, post_contents, post_img } = this.postData || {}
-    return `
+    const { post_title, post_contents, post_img, post_writer } =
+      this.postData || {}
+    if (this.storedData.nickname === post_writer) {
+      return `
       <div>
         <div class="input-title">제목*</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
@@ -109,6 +111,10 @@ class postFormElement extends HTMLElement {
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
     `
+    } else {
+      alert('올바르지 않은 접근입니다.')
+      handleNavigation('/html/Posts.html')
+    }
   }
 
   addEventListener() {
