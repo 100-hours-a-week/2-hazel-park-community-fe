@@ -1,4 +1,5 @@
 const baseUrl = '/api/posts'
+import handleNavigation from '/utils/navigation.js'
 
 export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
@@ -57,6 +58,10 @@ export async function getPostDetail(postId) {
     })
 
     const data = await response.json()
+    if (data.message === '게시글이 존재하지 않습니다.') {
+      alert(data.message)
+      return handleNavigation('/html/Posts.html')
+    }
     return data
   } catch (error) {
     alert(error.message)
