@@ -1,5 +1,5 @@
-const baseUrl = 'http://52.79.154.1/api/users'
-const authUrl = 'http://52.79.154.1/api/auth'
+const baseUrl = '/api/users'
+const authUrl = '/api/auth'
 
 export async function loginUser(email, password) {
   try {
