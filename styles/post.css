@@ -222,7 +222,12 @@
   font-weight: 400;
   line-height: 1.3219rem;
   text-align: left;
+  max-width: 359.97px;
+  height: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
+
 .loading-animation {
   display: flex;
   justify-content: center;

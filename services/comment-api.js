@@ -1,5 +1,5 @@
-const baseUrl = 'http://52.79.154.1/api/comments'
-const postUrl = 'http://52.79.154.1/api/posts'
+const baseUrl = '/api/comments'
+const postUrl = '/api/posts'
 
 export async function getComments({ postId, page = 0, limit = 2 } = {}) {
   try {

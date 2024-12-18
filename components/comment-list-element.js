@@ -288,6 +288,34 @@ class CommentListElement extends HTMLElement {
     const commentArea = document.getElementById('comment')
     const commentButton = document.getElementById('comment-button')
 
+    let charCountDisplay = document.createElement('div')
+    charCountDisplay.id = 'char-count'
+    charCountDisplay.style.cssText = `
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+      text-align: right;
+    `
+    charCountDisplay.textContent = `0 / 100`
+
+    if (!document.getElementById('char-count')) {
+      commentArea.parentNode.appendChild(charCountDisplay)
+    }
+
+    // 입력 이벤트로 글자 수 체크 및 제한
+    commentArea.addEventListener('input', () => {
+      const maxLength = 100
+      const currentLength = commentArea.value.length
+
+      if (currentLength > maxLength) {
+        commentArea.value = commentArea.value.substring(0, maxLength)
+      }
+
+      charCountDisplay.textContent = `${commentArea.value.length} / ${maxLength}`
+
+      this.validateForm()
+    })
+
     this.checkCommentInput(commentArea)
     this.ConfirmComment(commentArea, commentButton)
   }
