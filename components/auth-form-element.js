@@ -60,7 +60,7 @@ class AuthFormElement extends HTMLElement {
           <img id="profile-plus-icon" src="/assets/plus.svg" class="plus-icon" />
           <img id="profile-img-preview" class="preview-profile-img" />
           </label>
-        <input id="input-profile-img" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png"  />
+        <input id="input-profile-img" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png, .gif"  />
       </div>
     `
   }

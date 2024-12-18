@@ -76,7 +76,6 @@
 }
 
 .post-info-wrap-left {
-  max-width: 16.7375em;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -89,6 +88,8 @@
   font-size: 1.5rem;
   line-height: 1.95em;
   text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .post-wrap-detail {

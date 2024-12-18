@@ -63,7 +63,7 @@ class postFormElement extends HTMLElement {
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
         <div class="input-file-wrap">
-          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png"/>
+          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
           <label for="imageUpload" class="input-file-label">파일 선택</label>
           <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
         </div>
@@ -91,7 +91,7 @@ class postFormElement extends HTMLElement {
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
         <div class="input-file-wrap">
-          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png"/>
+          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
           <label for="imageUpload" class="input-file-label">파일 선택</label>
         ${
           post_img

@@ -47,7 +47,7 @@ class EditFormElement extends HTMLElement {
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
-                <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png" />
+                <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png, .gif" />
                 <img id="profileImage" src="${this.storedData.profile_picture}" class="profile-img" />
               </div>
             `
@@ -56,7 +56,7 @@ class EditFormElement extends HTMLElement {
                 <label for="imageUpload" class="input-profile-img-label">
                   <img src="/assets/plus.svg" class="plus-icon" />
                 </label>
-                <input id="imageUpload" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png" style="display: none;" />
+                <input id="imageUpload" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png, .gif" style="display: none;" />
                 <img id="profileImage" style="display: none;" class="profile-img" />
               </div>
             `
@@ -94,9 +94,6 @@ class EditFormElement extends HTMLElement {
     const inputPassword = this.shadowRoot.getElementById('input-password')
     const inputRePassword = this.shadowRoot.getElementById('input-re-password')
     const submit = this.shadowRoot.getElementById('submit')
-
-    const toastMsg = document.getElementById('done-toast')
-    toastMsg.style.visibility = 'hidden'
 
     const deleteAccountButton = document.getElementById('delete-account')
 
@@ -158,14 +155,14 @@ class EditFormElement extends HTMLElement {
           nicknameHyperText.style.visibility = 'visible'
         } else {
           nicknameHyperText.style.visibility = 'hidden'
-          toastMsg.style.visibility = 'visible'
+          this.showToastAndRedirect()
         }
       } else if (validationResult === 'password') {
         const password = inputPassword.value.trim()
         this.storedData.user_pw = password
         localStorage.setItem('user', JSON.stringify(this.storedData))
         await patchUserPw(this.storedData.email, password)
-        toastMsg.style.visibility = 'visible'
+        this.showToastAndRedirect()
       }
     })
   }
@@ -325,6 +322,16 @@ class EditFormElement extends HTMLElement {
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')
     handleNavigation('/html/Log-in.html')
+  }
+
+  showToastAndRedirect() {
+    const toastMsg = document.getElementById('done-toast')
+    toastMsg.classList.add('show')
+
+    setTimeout(() => {
+      toastMsg.classList.remove('show')
+      handleNavigation('/html/Posts.html')
+    }, 1500)
   }
 }
 
