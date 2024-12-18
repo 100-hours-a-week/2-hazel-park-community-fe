@@ -160,6 +160,7 @@ class EditFormElement extends HTMLElement {
       } else if (validationResult === 'password') {
         const password = inputPassword.value.trim()
         this.storedData.user_pw = password
+        this.storedData.nickname = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
         await patchUserPw(this.storedData.email, password)
         this.showToastAndRedirect()
