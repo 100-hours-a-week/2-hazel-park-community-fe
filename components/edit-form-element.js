@@ -304,7 +304,7 @@ class EditFormElement extends HTMLElement {
   }
 
   pwValidCheck(value) {
-    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/.test(
+    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s])[A-Za-z\d@$!%*#?&^]{8,20}$/.test(
       value,
     )
   }
