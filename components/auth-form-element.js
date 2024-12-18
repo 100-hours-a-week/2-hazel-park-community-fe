@@ -226,7 +226,7 @@ class AuthFormElement extends HTMLElement {
   }
 
   emailValidCheck(email) {
-    const pattern = /^[A-Za-z_\.\-]+@[A-Za-z\-]+\.[A-Za-z\-]+$/
+    const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z\-]+$/
     return pattern.test(email)
   }
 
