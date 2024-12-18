@@ -237,14 +237,22 @@ class postFormElement extends HTMLElement {
       contentsCheck = false
       contentsHyperText.innerText = '내용을 작성해주세요.'
       contentsHyperText.style.visibility = 'visible'
-    } else if (inputContents.value.length > 1000) {
+    } else if (inputContents.value.length >= 1000) {
       contentsCheck = false
-      contentsHyperText.innerText = '내용은 1000자 이하로 작성해주세요.'
-      contentsHyperText.style.visibility = 'visible'
       inputContents.value = inputContents.value.slice(0, 1000)
+
+      // 글자수 초과 시 빨간색 표시
+      if (charCountDisplay) {
+        charCountDisplay.style.color = 'red'
+      }
     } else {
       contentsCheck = true
       contentsHyperText.style.visibility = 'hidden'
+
+      // 글자수가 초과하지 않으면 기본 색상으로 변경
+      if (charCountDisplay) {
+        charCountDisplay.style.color = '#666' // 기본 회색
+      }
     }
 
     // 글자수 업데이트
