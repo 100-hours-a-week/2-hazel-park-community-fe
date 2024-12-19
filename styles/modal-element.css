@@ -13,8 +13,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 21.25vw;
-  height: 22.407vh;
+  width: 408px;
+  height: 242px;
   border-radius: 12px;
   text-align: center;
   background-color: #ffffff;
@@ -53,6 +53,8 @@
 
 button {
   padding: 0.926vh 2.396vw 0.926vh 2.396vw;
+  width: 127px;
+  height: 44px;
   border: none;
   border-radius: 12px;
   font-weight: 400;
