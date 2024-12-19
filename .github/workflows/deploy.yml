@@ -85,7 +85,8 @@ jobs:
         run: |
           # 1. VERSION_LABEL 직접 설정
           VERSION_LABEL="${GITHUB_SHA}-$(date +%s)"
-                          
+          echo "Using VERSION_LABEL: $VERSION_LABEL" # 값 확인
+
           # 2. Dockerrun.aws.json 압축
           zip deploy.zip Dockerrun.aws.json
                           
