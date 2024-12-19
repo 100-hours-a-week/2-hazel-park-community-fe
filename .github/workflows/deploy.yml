@@ -83,8 +83,12 @@ jobs:
       # 8. Elastic Beanstalk에 배포 작업을 실행
       - name: Deploy to Elastic Beanstalk
         run: |
-          # 커밋 메시지와 SHA를 조합한 VERSION_LABEL 생성
-          COMMIT_MESSAGE=$(git log -1 --pretty=%s | iconv -c -t utf-8 | tr -cd '[:alnum:]- ' | cut -c1-20)
+          # 메시지에서 숫자(#숫자)를 추출
+          COMMIT_MESSAGE=$(echo "$RAW_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+')
+          # "Merge pull request #숫자" 패턴이 없을 경우 기본 커밋 메시지를 사용
+          if [ -z "$COMMIT_MESSAGE" ]; then
+            COMMIT_MESSAGE=$(echo "$RAW_COMMIT_MESSAGE" | cut -c1-20) # 메시지를 최대 20자로 제한
+          fi
           COMMIT_SHA="${GITHUB_SHA:0:8}"
           VERSION_LABEL="${COMMIT_MESSAGE}-${COMMIT_SHA}"
           echo "Using VERSION_LABEL: $VERSION_LABEL"
