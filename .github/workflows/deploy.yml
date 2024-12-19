@@ -80,20 +80,15 @@ jobs:
           }
           EOF
 
-      # 8. Elastic Beanstalk에 배포 작업을 실행합니다.
+        # 8. Elastic Beanstalk에 배포 작업을 실행
       - name: Deploy to Elastic Beanstalk
         run: |
-          # 1. Dockerrun.aws.json 파일 압축
           zip deploy.zip Dockerrun.aws.json
-
-          # 2. S3에 deploy.zip 파일 업로드
           aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
-
-          # 3. 새로운 애플리케이션 버전 생성
-          VERSION_LABEL="${{ github.sha }}-$(date +%s)"
+          echo "VERSION_LABEL=${GITHUB_SHA}-$(date +%s)" >> $GITHUB_ENV
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
-            --version-label "$VERSION_LABEL" \
+            --version-label "${{ env.VERSION_LABEL }}" \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
 
       # 9. Green 환경에 새로운 애플리케이션 버전 배포
@@ -102,9 +97,9 @@ jobs:
           aws elasticbeanstalk update-environment \
             --application-name "community-v2" \
             --environment-name "green-v2-env" \
-            --version-label "$VERSION_LABEL"
+            --version-label "${{ env.VERSION_LABEL }}"
 
-      # 10. Green 환경이 준비될 때까지 대기합니다.
+      # 10. Green 환경이 준비될 때까지 대기
       - name: Wait for Green Environment to be Ready
         run: |
           aws elasticbeanstalk wait environment-updated \
