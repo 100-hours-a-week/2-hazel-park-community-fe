@@ -40,6 +40,7 @@ class PostElement extends HTMLElement {
   async updateLikes() {
     if (!this.isLogin) {
       alert('로그인 후 이용할 수 있습니다.')
+      handleNavigation('/html/Log-in.html')
       return
     }
 
