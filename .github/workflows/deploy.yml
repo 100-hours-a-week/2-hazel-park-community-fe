@@ -89,12 +89,15 @@ jobs:
       # 8. Elastic Beanstalk에 배포 작업을 실행
       - name: Deploy to Elastic Beanstalk
         run: |
+          # GITHUB_HEAD_COMMIT_MESSAGE를 안전하게 처리
+          SAFE_COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | tr -d '\n')
+
           # 메시지에서 숫자를 추출
-          COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+')
+          COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+')
                       
           # "Merge pull request #숫자" 패턴이 없을 경우 기본 커밋 메시지를 사용
           if [ -z "$COMMIT_MESSAGE" ]; then
-            COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | cut -c1-20 || echo "default-message")
+            COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | cut -c1-50 || echo "default-message")
           fi
                       
           COMMIT_SHA="${GITHUB_SHA:0:8}"
