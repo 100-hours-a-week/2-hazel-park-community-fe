@@ -1,5 +1,5 @@
-import handleNavigation from '../utils/navigation.js'
-import { loginUser, registerUser } from '../services/user-api.js'
+import handleNavigation from '/utils/navigation.js'
+import { loginUser, registerUser } from '/services/user-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -19,8 +19,8 @@ class AuthFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/Log-in.css" />
-        <link rel="stylesheet" href="../styles/Sign-in.css" />
+        <link rel="stylesheet" href="/styles/Log-in.css">
+        <link rel="stylesheet" href="/styles/Sign-in.css">
         <div class="login-form-wrap">
             <form class="login-form">
               ${!this.isLoginPage ? this.rendingProfileImg() : ''}
@@ -57,10 +57,10 @@ class AuthFormElement extends HTMLElement {
         <div class="input-title">프로필 사진</div>
           <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
           <label for="input-profile-img" class="input-profile-img-label">
-          <img id="profile-plus-icon" src="../assets/plus.svg" class="plus-icon" />
+          <img id="profile-plus-icon" src="/assets/plus.svg" class="plus-icon" />
           <img id="profile-img-preview" class="preview-profile-img" />
           </label>
-        <input id="input-profile-img" type="file" class="input-profile-img" accept="image/*" />
+        <input id="input-profile-img" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png, .gif"  />
       </div>
     `
   }
@@ -107,7 +107,6 @@ class AuthFormElement extends HTMLElement {
         this.login(email, password)
       } else if (validationResult === 'login') {
         const nickname = inputNickname.value.trim()
-        console.log('in addEventListeners: ', this.profileImageData)
         this.register(email, password, nickname, this.profileImageData)
       }
     })
@@ -227,7 +226,7 @@ class AuthFormElement extends HTMLElement {
   }
 
   emailValidCheck(email) {
-    const pattern = /^[A-Za-z_\.\-]+@[A-Za-z\-]+\.[A-Za-z\-]+$/
+    const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z\-]+$/
     return pattern.test(email)
   }
 
@@ -298,8 +297,6 @@ class AuthFormElement extends HTMLElement {
           profileImgPreview.src = reader.result
           profileImgPreview.style.display = 'block'
           this.profileImageData = reader.result
-          //console.log(profileImgPreview)
-          console.log(this.profileImageData)
         }
       }
 
@@ -315,15 +312,13 @@ class AuthFormElement extends HTMLElement {
 
   async login(email, password) {
     try {
-      const response = await loginUser(email, password)
+      const user = await loginUser(email, password)
+      if (!user) {
+        alert('회원 정보가 존재하지 않습니다.')
+        return
+      }
       this.isLogin = true
       localStorage.setItem('isLogin', this.isLogin)
-      // const user = {
-      //   user_email: response.email,
-      //   user_name: response.nickname,
-      // }
-
-      // localStorage.setItem('user', JSON.stringify(user))
       handleNavigation('/html/Posts.html')
     } catch (error) {
       alert(error.message)

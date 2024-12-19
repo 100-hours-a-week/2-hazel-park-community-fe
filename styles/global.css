@@ -56,10 +56,9 @@ textarea {
 }
 
 .header-wrap {
-  width: 100%;
+  width: 592.02px;
+  padding-left: 193px;
   height: fit-content;
-  padding-right: 35.833vw;
-  padding-left: 44.635vw;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

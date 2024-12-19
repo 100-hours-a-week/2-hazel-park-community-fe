@@ -1,7 +1,7 @@
-import checkCount from '../utils/check-count.js'
-import handleNavigation from '../utils/navigation.js'
-import { getPostDetail, deletePost, likes } from '../services/post-api.js'
-import { formatDate } from '../utils/format-date.js'
+import checkCount from '/utils/check-count.js'
+import handleNavigation from '/utils/navigation.js'
+import { getPostDetail, deletePost, likes } from '/services/post-api.js'
+import { formatDate, formatCommentDate } from '/utils/format-date.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -16,6 +16,10 @@ class PostElement extends HTMLElement {
   }
 
   async connectedCallback() {
+    const styleLink = document.createElement('link')
+    styleLink.rel = 'stylesheet'
+    styleLink.href = '/styles/post.css'
+    this.shadowRoot.appendChild(styleLink)
     await this.loadPostData()
     this.loadLikeState()
   }
@@ -43,18 +47,17 @@ class PostElement extends HTMLElement {
       this.is_liked = !this.is_liked
 
       this.post.post_likes += this.is_liked ? 1 : -1
-      this.renderPost()
+      this.updateLikesUI()
 
       const updatedLikes = await likes(this.postId, this.is_liked)
 
       this.post.post_likes = updatedLikes
       await this.saveLikeState()
-      this.renderPost()
+      this.updateLikesUI()
     } catch (error) {
-      console.error('Failed to update likes:', error)
       this.is_liked = !this.is_liked
       this.post.post_likes += this.is_liked ? 1 : -1
-      this.renderPost()
+      this.updateLikesUI()
     }
   }
 
@@ -62,99 +65,42 @@ class PostElement extends HTMLElement {
     const likesElement = this.shadowRoot.getElementById(
       'post-interaction-likes',
     )
-    if (likesElement && this.likedPosts[this.postId]) {
-      likesElement.style.backgroundColor = '#e9e9e9'
+    if (!likesElement) return
+
+    const likesValueElement = likesElement.querySelector(
+      '.post-interaction-value',
+    )
+    if (likesValueElement) {
+      likesValueElement.textContent = checkCount(this.post.post_likes)
     }
+
+    likesElement.style.backgroundColor = this.is_liked ? '#e9e9e9' : '#d9d9d9'
   }
 
-  template() {
-    const {
-      post_title,
-      post_writer,
-      post_updated_at,
-      post_contents,
-      post_likes,
-      post_views,
-      post_comments,
-      author_profile_picture,
-      post_img,
-    } = this.post
-    return `
-      <link rel="stylesheet" href="../styles/post.css" />
-      <section class="post">
-          <article class="post-detail-top">
-            <div class="post-title">${post_title}</div>
-            <div class="post-title-detail-wrap">
-            ${
-              author_profile_picture
-                ? `
-                    <img id="post-writer-img" src="${author_profile_picture}" class="post-writer-profile" />
-                  `
-                : `
-                    <div id="post-writer-div" class="post-writer-img"></div>
-                  `
-            }
-              <div class="post-writer-name">${post_writer}</div>
-              <div class="post-updateAt">${formatDate(post_updated_at)}</div>
-              <div class="post-controll-button">
-                <button id="button-update" class="post-controll-button-detail">수정</button>
-                <button id="button-delete" class="post-controll-button-detail">삭제</button>
-              </div>
-            </div>
-          </article>
-          <article class="post-detail-bottom">
-          ${
-            post_img
-              ? `
-                  <img src="${post_img}" class="post-img" />
-                `
-              : `
-                `
-          }
-            
-            <div class="post-contents">${post_contents}</div>
-            <div class="post-interaction">
-              <div id="post-interaction-likes" class="post-interaction-box">
-                <div class="post-interaction-value">${checkCount(post_likes)}</div>
-                <div class="post-interaction-title">좋아요</div>
-              </div>
-              <div class="post-interaction-box">
-                <div class="post-interaction-value">${checkCount(post_views)}</div>
-                <div class="post-interaction-title">조회수</div>
-              </div>
-              <div class="post-interaction-box">
-                <div class="post-interaction-value">${checkCount(post_comments)}</div>
-                <div class="post-interaction-title">댓글</div>
-              </div>
-            </div>
-          </article>
-      </section>
-    `
-  }
+  addEventListeners() {
+    const deletePostButton = this.shadowRoot.getElementById('button-delete')
+    const updatePostButton = this.shadowRoot.getElementById('button-update')
+    const likesButton = this.shadowRoot.getElementById('post-interaction-likes')
 
-  addEventListener() {
-    const deletePost = this.shadowRoot.getElementById('button-delete')
-    const updatePost = this.shadowRoot.getElementById('button-update')
-    const likes = this.shadowRoot.getElementById('post-interaction-likes')
+    if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
+      deletePostButton.style.visibility = 'hidden'
+      updatePostButton.style.visibility = 'hidden'
+    }
 
-    deletePost?.addEventListener('click', () => {
-      if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
-        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
-        return
-      } else {
-        this.openModal()
-      }
+    deletePostButton?.addEventListener('click', () => {
+      this.openModal()
     })
-    updatePost?.addEventListener('click', () => {
+
+    updatePostButton?.addEventListener('click', () => {
       if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
-        alert('게시글 작성자만 이용할 수 있는 기능입니다.')
-        return
-      } else {
         this.openModal()
       }
       this.navigateToEditPage()
     })
-    likes?.addEventListener('click', async () => this.updateLikes())
+
+    likesButton?.addEventListener('click', async () => {
+      await this.updateLikes()
+    })
   }
 
   openModal() {
@@ -168,7 +114,7 @@ class PostElement extends HTMLElement {
     document.body.appendChild(modalBackground)
     document.body.appendChild(modal)
 
-    modal.onConfirm = () => this.deleteContirm()
+    modal.onConfirm = () => this.deleteConfirm()
     modalBackground.addEventListener('click', () => this.closeModal())
   }
 
@@ -185,15 +131,61 @@ class PostElement extends HTMLElement {
     this.renderPost()
   }
 
-  async deleteContirm() {
+  async deleteConfirm() {
     await deletePost(this.postId)
     handleNavigation('/html/Posts.html')
   }
 
   renderPost() {
-    this.shadowRoot.innerHTML = this.template()
-    this.addEventListener()
-    this.updateLikesUI()
+    const postContainer = document.createElement('div')
+    postContainer.className = 'post'
+
+    postContainer.innerHTML = `
+      <div class="post-detail-top">
+        <div class="post-title">${this.post.post_title}</div>
+        <div class="post-title-detail-wrap">
+          ${
+            this.post.author_profile_picture
+              ? `<img id="post-writer-img" src="${this.post.author_profile_picture}" class="post-writer-profile" />`
+              : `<div id="post-writer-div" class="post-writer-img"></div>`
+          }
+          <div class="post-writer-name">${this.post.post_writer}</div>
+          <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
+          <div class="post-controll-button">
+            <button id="button-update" class="post-controll-button-detail">수정</button>
+            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+          </div>
+        </div>
+      </div>
+      <div class="post-detail-bottom">
+        ${
+          this.post.post_img
+            ? `<img src="${this.post.post_img}" class="post-img" />`
+            : ''
+        }
+        <div class="post-contents">${this.post.post_contents}</div>
+        <div class="post-interaction">
+          <div id="post-interaction-likes" class="post-interaction-box">
+            <div class="post-interaction-value">${checkCount(this.post.post_likes)}</div>
+            <div class="post-interaction-title">좋아요</div>
+          </div>
+          <div class="post-interaction-box">
+            <div class="post-interaction-value">${checkCount(this.post.post_views)}</div>
+            <div class="post-interaction-title">조회수</div>
+          </div>
+          <div class="post-interaction-box">
+            <div class="post-interaction-value">${checkCount(this.post.post_comments)}</div>
+            <div class="post-interaction-title">댓글</div>
+          </div>
+        </div>
+      </div>
+    `
+
+    this.shadowRoot.appendChild(postContainer)
+
+    postContainer.classList.add('visible')
+
+    this.addEventListeners()
   }
 }
 

@@ -1,9 +1,9 @@
-import handleNavigation from '../utils/navigation.js'
+import handleNavigation from '/utils/navigation.js'
 import {
   patchUserNickname,
   patchUserPw,
   deleteUser,
-} from '../services/user-api.js'
+} from '/services/user-api.js'
 
 class EditFormElement extends HTMLElement {
   constructor() {
@@ -22,9 +22,9 @@ class EditFormElement extends HTMLElement {
 
   template() {
     return `
-    <link rel="stylesheet" href="../styles/Log-in.css" />
-    <link rel="stylesheet" href="../styles/Sign-in.css" />
-    <link rel="stylesheet" href="../styles/edit-profile.css" />
+    <link rel="stylesheet" href="/styles/Log-in.css">
+    <link rel="stylesheet" href="/styles/Sign-in.css">
+    <link rel="stylesheet" href="/styles/edit-profile.css">
     <div class="edit-form-wrap">
         <form class="edit-form">
           ${
@@ -39,23 +39,24 @@ class EditFormElement extends HTMLElement {
   profileForm() {
     return `
       <div style="margin-bottom: 2.87vh">
-        <div class="input-title">프로필 사진*</div>
+        <div class="input-title">프로필 사진</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profile_picture
+        this.storedData.profile_picture ||
+        this.storedData.profile_picture === null
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
-                <input type="file" id="imageUpload" style="display: none;" accept="image/*" />
+                <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png, .gif" />
                 <img id="profileImage" src="${this.storedData.profile_picture}" class="profile-img" />
               </div>
             `
           : `
               <div class="wrap-profile-img">
                 <label for="imageUpload" class="input-profile-img-label">
-                  <img src="../assets/plus.svg" class="plus-icon" />
+                  <img src="/assets/plus.svg" class="plus-icon" />
                 </label>
-                <input id="imageUpload" type="file" class="input-profile-img" accept="image/*" style="display: none;" />
+                <input id="imageUpload" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png, .gif" style="display: none;" />
                 <img id="profileImage" style="display: none;" class="profile-img" />
               </div>
             `
@@ -66,8 +67,8 @@ class EditFormElement extends HTMLElement {
           <div id="user-email" class="user-email" />${this.storedData.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
-          <div class="input-title">닉네임</div>
-            <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
+          <div class="input-title">닉네임*</div>
+            <input id="input-nickname" type="text" placeholder=${this.storedData.nickname} class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
     `
@@ -93,9 +94,6 @@ class EditFormElement extends HTMLElement {
     const inputPassword = this.shadowRoot.getElementById('input-password')
     const inputRePassword = this.shadowRoot.getElementById('input-re-password')
     const submit = this.shadowRoot.getElementById('submit')
-
-    const toastMsg = document.getElementById('done-toast')
-    toastMsg.style.visibility = 'hidden'
 
     const deleteAccountButton = document.getElementById('delete-account')
 
@@ -140,9 +138,8 @@ class EditFormElement extends HTMLElement {
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.name = nickname
+        this.storedData.nickname = nickname
         localStorage.setItem('user', JSON.stringify(this.storedData))
-        console.log(this.newImageData)
 
         const result = await patchUserNickname(
           this.storedData.email,
@@ -158,14 +155,16 @@ class EditFormElement extends HTMLElement {
           nicknameHyperText.style.visibility = 'visible'
         } else {
           nicknameHyperText.style.visibility = 'hidden'
-          toastMsg.style.visibility = 'visible'
+          this.storedData.nickname = nickname
+          localStorage.setItem('user', JSON.stringify(this.storedData))
+          this.showToastAndRedirect()
         }
       } else if (validationResult === 'password') {
         const password = inputPassword.value.trim()
         this.storedData.user_pw = password
         localStorage.setItem('user', JSON.stringify(this.storedData))
         await patchUserPw(this.storedData.email, password)
-        toastMsg.style.visibility = 'visible'
+        this.showToastAndRedirect()
       }
     })
   }
@@ -305,7 +304,7 @@ class EditFormElement extends HTMLElement {
   }
 
   pwValidCheck(value) {
-    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/.test(
+    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^\w\s])[A-Za-z\d@$!%*#?&^]{8,20}$/.test(
       value,
     )
   }
@@ -314,9 +313,7 @@ class EditFormElement extends HTMLElement {
     const currentPath = window.location.pathname
     if (currentPath === '/html/edit-profile.html') {
       this.isEditProfilePage = true
-      console.log(true)
     } else {
-      console.log(false)
       this.isEditProfilePage = false
     }
   }
@@ -327,6 +324,16 @@ class EditFormElement extends HTMLElement {
     localStorage.setItem('isLogin', this.isLogin)
     localStorage.removeItem('user')
     handleNavigation('/html/Log-in.html')
+  }
+
+  showToastAndRedirect() {
+    const toastMsg = document.getElementById('done-toast')
+    toastMsg.classList.add('show')
+
+    setTimeout(() => {
+      toastMsg.classList.remove('show')
+      handleNavigation('/html/Posts.html')
+    }, 1500)
   }
 }
 

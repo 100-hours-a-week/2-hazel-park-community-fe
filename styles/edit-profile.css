@@ -52,4 +52,13 @@
   border-radius: 30px;
   color: white;
   visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.5s ease-in-out,
+    visibility 0.5s ease-in-out;
+}
+
+.done-toast.show {
+  visibility: visible;
+  opacity: 1;
 }

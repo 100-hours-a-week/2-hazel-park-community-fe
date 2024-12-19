@@ -3,21 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../styles/global.css" />
-    <link rel="stylesheet" href="../styles/Log-in.css" />
+    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href="/styles/Log-in.css" />
     <title>Login</title>
   </head>
   <body>
     <header-element></header-element>
     <section class="login">
       <div class="login-text">로그인</div>
-      <auth-form-element></auth-form-element>
+      <auth-form-element
+        style="display: flex; justify-content: center"
+      ></auth-form-element>
     </section>
     <section class="signIn">
       <div id="sign-in">회원가입</div>
     </section>
-    <script type="module" src="../components/header-element.js"></script>
-    <script type="module" src="../components/auth-form-element.js"></script>
-    <script type="module" src="../scripts/Log-in.js"></script>
+    <script type="module" src="/components/header-element.js"></script>
+    <script type="module" src="/components/auth-form-element.js"></script>
+    <script type="module" src="/scripts/Log-in.js"></script>
   </body>
 </html>

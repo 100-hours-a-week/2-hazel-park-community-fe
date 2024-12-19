@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3000/api/posts'
+const baseUrl = '/api/posts'
+import handleNavigation from '/utils/navigation.js'
 
 export async function uploadPost(title, writer, updatedAt, contents, postImg) {
   const formData = new FormData()
@@ -21,8 +22,6 @@ export async function uploadPost(title, writer, updatedAt, contents, postImg) {
     })
 
     const data = await response.json()
-    console.log(data.message)
-    console.log(data.user)
   } catch (error) {
     alert(error.message)
   }
@@ -42,7 +41,6 @@ export async function getPosts({ page = 0, limit = 4 } = {}) {
     }
 
     const data = await response.json()
-    console.log(data.posts)
     return data.posts
   } catch (error) {
     alert(error.message)
@@ -60,6 +58,10 @@ export async function getPostDetail(postId) {
     })
 
     const data = await response.json()
+    if (data.message === '게시글이 존재하지 않습니다.') {
+      alert(data.message)
+      return handleNavigation('/html/Posts.html')
+    }
     return data
   } catch (error) {
     alert(error.message)
@@ -87,7 +89,6 @@ export async function patchPost(postId, title, content, updatedAt, postImg) {
     })
 
     const data = await response.json()
-    console.log(data.message)
   } catch (error) {
     alert(error.message)
   }
@@ -121,7 +122,6 @@ export async function likes(postId, is_liked) {
     })
 
     const data = await response.json()
-    console.log(data.message)
     return data.post_likes
   } catch (error) {
     alert(error.message)

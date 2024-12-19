@@ -1,6 +1,6 @@
-import handleNavigation from '../utils/navigation.js'
-import { uploadPost, getPostDetail, patchPost } from '../services/post-api.js'
-import { formatDate } from '../utils/format-date.js'
+import handleNavigation from '/utils/navigation.js'
+import { uploadPost, getPostDetail, patchPost } from '/services/post-api.js'
+import { formatDate } from '/utils/format-date.js'
 
 class postFormElement extends HTMLElement {
   constructor() {
@@ -31,10 +31,10 @@ class postFormElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/global.css" />
-        <link rel="stylesheet" href="../styles/Sign-in.css" />
-        <link rel="stylesheet" href="../styles/edit-profile.css" />
-        <link rel="stylesheet" href="../styles/make-post.css" />
+        <link rel="stylesheet" href="/styles/global.css">
+        <link rel="stylesheet" href="/styles/Sign-in.css">
+        <link rel="stylesheet" href="/styles/edit-profile.css">
+        <link rel="stylesheet" href="/styles/make-post.css">
         <div class="post-form-wrap">
             <form class="post-form">
               ${
@@ -53,14 +53,17 @@ class postFormElement extends HTMLElement {
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-        <div class="input-title">내용*</div>
-        <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
-        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text">dfsfs</div>
+          <div class="input-title">내용*</div>
+          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
+          <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
+              0 / 1000
+          </div>
+          <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
         <div class="input-file-wrap">
-          <input id="imageUpload" type="file" class="input-value-file"/>
+          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
           <label for="imageUpload" class="input-file-label">파일 선택</label>
           <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
         </div>
@@ -70,22 +73,27 @@ class postFormElement extends HTMLElement {
   }
 
   editPostForm() {
-    const { post_title, post_contents, post_img } = this.postData || {}
-    return `
+    const { post_title, post_contents, post_img, post_writer } =
+      this.postData || {}
+    if (this.storedData.nickname === post_writer) {
+      return `
       <div>
         <div class="input-title">제목*</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-        <div class="input-title">내용*</div>
-        <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
-        <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
+          <div class="input-title">내용*</div>
+          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
+          <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
+              ${post_contents.length} / 1000
+          </div>
+          <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
         <div class="input-title">이미지</div>
         <div class="input-file-wrap">
-          <input id="imageUpload" type="file" class="input-value-file"/>
+          <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
           <label for="imageUpload" class="input-file-label">파일 선택</label>
         ${
           post_img
@@ -103,6 +111,10 @@ class postFormElement extends HTMLElement {
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
     `
+    } else {
+      alert('올바르지 않은 접근입니다.')
+      handleNavigation('/html/Posts.html')
+    }
   }
 
   addEventListener() {
@@ -115,16 +127,13 @@ class postFormElement extends HTMLElement {
 
     if (imageUpload) {
       imageUpload.addEventListener('change', (event) => {
-        console.log(event.target.files[0])
         imageSpan.innerText = event.target.files[0].name
         const file = event.target.files[0]
         if (file) {
           if (this.validateImageFile(file)) {
             this.handleImageUpload(file)
           } else {
-            console.log(
-              '이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)',
-            )
+            alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)')
           }
         }
       })
@@ -179,8 +188,6 @@ class postFormElement extends HTMLElement {
 
     reader.onload = (e) => {
       this.postImg = e.target.result
-      // console.log(this.postImg)
-      //this.newImageData = file
     }
 
     reader.readAsDataURL(file)
@@ -192,6 +199,9 @@ class postFormElement extends HTMLElement {
     const titleHyperText = this.shadowRoot.getElementById('title-hyper-text')
     const contentsHyperText = this.shadowRoot.getElementById(
       'contents-hyper-text',
+    )
+    const charCountDisplay = this.shadowRoot.getElementById(
+      'contents-char-count',
     )
     const submit = this.shadowRoot.getElementById('submit')
     submit.style.backgroundColor = '#aea0eb'
@@ -210,7 +220,7 @@ class postFormElement extends HTMLElement {
 
     if (!inputTitle.value.trim()) {
       titleCheck = false
-      titleHyperText.innerText = '제목, 내용을 모두 작성해주세요.'
+      titleHyperText.innerText = '제목을 작성해주세요.'
       titleHyperText.style.visibility = 'visible'
     } else if (inputTitle.value.length > 26) {
       titleCheck = false
@@ -222,13 +232,32 @@ class postFormElement extends HTMLElement {
       titleHyperText.style.visibility = 'hidden'
     }
 
+    // 내용 검증 및 글자수 업데이트
     if (!inputContents.value.trim()) {
       contentsCheck = false
-      contentsHyperText.innerText = '제목, 내용을 모두 작성해주세요.'
+      contentsHyperText.innerText = '내용을 작성해주세요.'
       contentsHyperText.style.visibility = 'visible'
+    } else if (inputContents.value.length >= 1000) {
+      contentsCheck = false
+      inputContents.value = inputContents.value.slice(0, 1000)
+
+      // 글자수 초과 시 빨간색 표시
+      if (charCountDisplay) {
+        charCountDisplay.style.color = 'red'
+      }
     } else {
       contentsCheck = true
       contentsHyperText.style.visibility = 'hidden'
+
+      // 글자수가 초과하지 않으면 기본 색상으로 변경
+      if (charCountDisplay) {
+        charCountDisplay.style.color = '#666' // 기본 회색
+      }
+    }
+
+    // 글자수 업데이트
+    if (charCountDisplay) {
+      charCountDisplay.innerText = `${inputContents.value.length} / 1000`
     }
 
     if (titleCheck && contentsCheck) {

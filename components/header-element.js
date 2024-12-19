@@ -1,5 +1,5 @@
-import handleNavigation from '../utils/navigation.js'
-import { logoutUser } from '../services/user-api.js'
+import handleNavigation from '/utils/navigation.js'
+import { logoutUser } from '/services/user-api.js'
 
 class headerElement extends HTMLElement {
   constructor() {
@@ -18,10 +18,10 @@ class headerElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href="../styles/global.css" />
+        <link rel="stylesheet" href='/styles/global.css'>
         <header>
           <div id="header-wrap" class="header-wrap">
-            <img id="header-back" src='../assets/back.svg' class='header-back' />
+            <img id="header-back" src='/assets/back.svg' class='header-back' />
             <p id="header-text" class="header-text">아무 말 대잔치</p>
             <div id="profile-wrap" class="profile-wrap">
               <img
@@ -96,6 +96,7 @@ class headerElement extends HTMLElement {
       this.isLogin = false
       localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()
+      handleNavigation('/html/Log-in.html')
     })
 
     backIcon?.addEventListener('click', () => window.history.back())
@@ -134,7 +135,7 @@ class headerElement extends HTMLElement {
     dropdownLogout.style.display = this.isLogin ? 'block' : 'none'
 
     const user = JSON.parse(localStorage.getItem('user'))
-    profileImg.src = user?.profile_picture || '../assets/pre-profile.png'
+    profileImg.src = user?.profile_picture || '/assets/pre-profile.png'
   }
 
   hideProfile() {
@@ -148,8 +149,9 @@ class headerElement extends HTMLElement {
       profileWrap.style.display = 'none'
     } else if (currentPath === '/html/Sign-in.html') {
       profileWrap.style.display = 'none'
-      headerWrap.style.paddingLeft = '36.349vw'
-      headerWrap.style.paddingRight = '44.635vw'
+      headerWrap.style.justifyContent = 'start'
+      headerWrap.style.paddingLeft = '0px'
+      headerWrap.style.gap = '193px'
     } else if (
       currentPath === '/html/Posts.html' ||
       currentPath === '/html/edit-profile.html' ||
@@ -157,7 +159,7 @@ class headerElement extends HTMLElement {
     ) {
       backIcon.style.display = 'none'
     } else {
-      headerWrap.style.paddingLeft = '35.625vw'
+      headerWrap.style.paddingLeft = '0px'
     }
   }
 }
