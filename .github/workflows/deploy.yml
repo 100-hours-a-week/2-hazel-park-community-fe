@@ -80,27 +80,29 @@ jobs:
           }
           EOF
 
-        # 8. Elastic Beanstalk에 배포 작업을 실행
+      # 8. Elastic Beanstalk에 배포 작업을 실행
       - name: Deploy to Elastic Beanstalk
         run: |
-          # 1. VERSION_LABEL 직접 설정
-          VERSION_LABEL="${GITHUB_SHA}-$(date +%s)"
-          echo "Using VERSION_LABEL: $VERSION_LABEL" # 값 확인
-          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV # 환경 변수 설정
+          # 커밋 메시지와 SHA를 조합한 VERSION_LABEL 생성
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s | tr -d '[:space:]' | cut -c1-20)
+          COMMIT_SHA="${GITHUB_SHA:0:8}"
+          VERSION_LABEL="${COMMIT_MESSAGE}-${COMMIT_SHA}"
+          echo "Using VERSION_LABEL: $VERSION_LABEL"
+          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
 
-          # 2. Dockerrun.aws.json 압축
+          # Dockerrun.aws.json 압축
           zip deploy.zip Dockerrun.aws.json
-                          
-          # 3. S3에 업로드
+
+          # S3에 업로드
           aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
-                          
-          # 4. 환경변수 설정 및 애플리케이션 버전 생성
+
+          # 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
-            --version-label "${{ env.VERSION_LABEL }}" \
+            --version-label "$VERSION_LABEL" \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
 
-      # 9. Green 환경에 새로운 애플리케이션 버전 배포
+      # Green 환경 업데이트
       - name: Update Green Environment
         run: |
           aws elasticbeanstalk update-environment \
