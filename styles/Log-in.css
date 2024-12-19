@@ -31,10 +31,11 @@
 }
 
 .input-value {
+  width: 355px;
+  height: 33px;
   padding-left: 0.926vh;
   padding-top: 0.417vw;
   padding-bottom: 0.417vw;
-  width: 100%;
   box-sizing: border-box;
   border: 1px solid #000000;
   border-radius: 4px;
@@ -51,9 +52,14 @@
   line-height: 0.9075rem;
   color: #ff0000;
   visibility: hidden;
+  max-width: 355px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .login-submit {
+  width: 355px;
+  height: 33px;
   margin-top: 1vh;
   padding-top: 0.741vh;
   padding-bottom: 0.741vh;
