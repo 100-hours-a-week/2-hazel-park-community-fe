@@ -21,7 +21,11 @@ export async function uploadPost(title, writer, updatedAt, contents, postImg) {
       body: formData,
     })
 
-    const data = await response.json()
+    if (!response.ok) {
+      const result = await response.json()
+      alert(result.message)
+      return
+    }
   } catch (error) {
     alert(error.message)
   }
