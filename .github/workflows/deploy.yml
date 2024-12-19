@@ -37,7 +37,7 @@ jobs:
       #    - 다중 플랫폼(linux/arm64, linux/amd64)을 지원하기 위해 Buildx를 사용합니다.
       - name: Build and Push Frontend Docker Image
         run: |
-          docker buildx build --platform linux/arm64,linux/amd64 -t ${{ secrets.ECR_FRONTEND_URI }}:${{ github.sha }} push .
+          docker buildx build --platform linux/arm64,linux/amd64 -t ${{ secrets.ECR_FRONTEND_URI }}:${{ github.sha }} --push .
 
       # 6. S3에서 Backend SHA 파일(sha.txt)을 다운로드하여 해당 태그를 환경 변수로 설정합니다.
       #    - Backend Docker 이미지를 참조하기 위해 사용됩니다.
