@@ -28,21 +28,25 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 4. 프론트엔드 Docker 이미지를 빌드하고 Amazon ECR에 푸시합니다.
+      # 4. Docker Buildx 설치 및 활성화
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 5. 프론트엔드 Docker 이미지를 빌드하고 Amazon ECR에 푸시합니다.
       #    - GitHub SHA를 이미지 태그로 사용하여 버전을 관리합니다.
       #    - 다중 플랫폼(linux/arm64, linux/amd64)을 지원하기 위해 Buildx를 사용합니다.
       - name: Build and Push Frontend Docker Image
         run: |
           docker buildx build --platform linux/arm64,linux/amd64 -t ${{ secrets.ECR_FRONTEND_URI }}:${{ github.sha }} push .
 
-      # 5. S3에서 Backend SHA 파일(sha.txt)을 다운로드하여 해당 태그를 환경 변수로 설정합니다.
+      # 6. S3에서 Backend SHA 파일(sha.txt)을 다운로드하여 해당 태그를 환경 변수로 설정합니다.
       #    - Backend Docker 이미지를 참조하기 위해 사용됩니다.
       - name: Retrieve Backend SHA
         run: |
           aws s3 cp s3://hazel-sha-bucket/sha.txt sha.txt
           export BACKEND_TAG=$(cat sha.txt)
 
-      # 6. Elastic Beanstalk에 사용할 Dockerrun.aws.json 파일을 생성합니다.
+      # 7. Elastic Beanstalk에 사용할 Dockerrun.aws.json 파일을 생성합니다.
       #    - Backend와 Frontend Docker 이미지를 정의합니다.
       #    - 각 컨테이너의 포트 매핑(hostPort, containerPort)을 설정합니다.
       - name: Generate Dockerrun.aws.json
@@ -79,7 +83,7 @@ jobs:
           }
           EOF
 
-      # 7. Elastic Beanstalk에 배포 작업을 실행합니다.
+      # 8. Elastic Beanstalk에 배포 작업을 실행합니다.
       - name: Deploy to Elastic Beanstalk
         run: |
           # (1) Dockerrun.aws.json 파일을 ZIP 파일로 압축합니다.
