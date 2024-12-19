@@ -86,22 +86,25 @@ jobs:
       # 8. Elastic Beanstalk에 배포 작업을 실행합니다.
       - name: Deploy to Elastic Beanstalk
         run: |
-          # (1) Dockerrun.aws.json 파일을 ZIP 파일로 압축합니다.
+          # 1. Dockerrun.aws.json 파일 압축
           zip deploy.zip Dockerrun.aws.json
-
-          # (2) 새로운 애플리케이션 버전을 생성하고 S3에 업로드합니다.
+                    
+          # 2. S3에 deploy.zip 파일 업로드
+          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
+                    
+          # 3. 새로운 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community" \
             --version-label ${{ github.sha }} \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
-
-          # (3) Green 환경에 새로운 애플리케이션 버전을 배포합니다.
+                    
+          # 4. Green 환경에 배포
           aws elasticbeanstalk update-environment \
             --application-name "community" \
             --environment-name "green-v2-env" \
             --version-label ${{ github.sha }}
-
-          # (4) Blue-Green 환경 간 트래픽을 스왑하여 Green 환경을 새로운 Production 환경으로 전환합니다.
+                    
+          # 5. 트래픽 스왑
           aws elasticbeanstalk swap-environment-cnames \
             --source-environment-name "green-v2-env" \
             --destination-environment-name "blue-v2-env"
