@@ -90,34 +90,49 @@ jobs:
       - name: Deploy to Elastic Beanstalk
         run: |
           # 메시지를 안전하게 처리
+          echo "Original Commit Message: $GITHUB_HEAD_COMMIT_MESSAGE"
           SAFE_COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | sed 's/[^[:print:]]//g')
-                      
+          echo "Safe Commit Message: $SAFE_COMMIT_MESSAGE"
+                  
           # 메시지에서 숫자를 추출
           COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+')
-                      
+                  
           # 기본 커밋 메시지로 설정
           if [ -z "$COMMIT_MESSAGE" ]; then
             COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | head -c 50 || echo "default-message")
           fi
-                      
+          echo "Commit Message for Version Label: $COMMIT_MESSAGE"
+                  
           # SHA 추가
           COMMIT_SHA="${GITHUB_SHA:0:8}"
           VERSION_LABEL="${COMMIT_MESSAGE}-${COMMIT_SHA}"
-                      
+                  
           echo "Using VERSION_LABEL: $VERSION_LABEL"
           echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
-
+                  
           # Dockerrun.aws.json 압축
+          if [ ! -f Dockerrun.aws.json ]; then
+            echo "Error: Dockerrun.aws.json 파일이 없습니다."
+            exit 1
+          fi
           zip deploy.zip Dockerrun.aws.json
-
+                  
           # S3에 업로드
-          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
-
+          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-***/deploy.zip
+          if [ $? -ne 0 ]; then
+            echo "Error: S3 업로드 실패."
+            exit 1
+          fi
+                  
           # 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
             --version-label "$VERSION_LABEL" \
-            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
+            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-***",S3Key="deploy.zip"
+          if [ $? -ne 0 ]; then
+            echo "Error: Elastic Beanstalk 애플리케이션 버전 생성 실패."
+            exit 1
+          fi
 
       # 9.1 Green 환경의 현재 버전 기록
       - name: Retrieve Current Green Version
