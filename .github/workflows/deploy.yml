@@ -33,22 +33,19 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       # 5. 프론트엔드 Docker 이미지를 빌드하고 Amazon ECR에 푸시합니다.
-      #    - GitHub SHA를 이미지 태그로 사용하여 버전을 관리합니다.
-      #    - 다중 플랫폼(linux/arm64, linux/amd64)을 지원하기 위해 Buildx를 사용합니다.
       - name: Build and Push Frontend Docker Image
         run: |
-          docker buildx build --platform linux/arm64,linux/amd64 -t ${{ secrets.ECR_FRONTEND_URI }}:${{ github.sha }} --push .
+          docker buildx build --platform linux/arm64,linux/amd64 \
+            -t ${{ secrets.ECR_FRONTEND_URI }}:${{ github.sha }} \
+            --push .
 
       # 6. S3에서 Backend SHA 파일(sha.txt)을 다운로드하여 해당 태그를 환경 변수로 설정합니다.
-      #    - Backend Docker 이미지를 참조하기 위해 사용됩니다.
       - name: Retrieve Backend SHA
         run: |
           aws s3 cp s3://hazel-sha-bucket/sha.txt sha.txt
-          export BACKEND_TAG=$(cat sha.txt)
+          echo "BACKEND_TAG=$(cat sha.txt)" >> $GITHUB_ENV
 
       # 7. Elastic Beanstalk에 사용할 Dockerrun.aws.json 파일을 생성합니다.
-      #    - Backend와 Frontend Docker 이미지를 정의합니다.
-      #    - 각 컨테이너의 포트 매핑(hostPort, containerPort)을 설정합니다.
       - name: Generate Dockerrun.aws.json
         run: |
           cat <<EOF > Dockerrun.aws.json
@@ -57,7 +54,7 @@ jobs:
             "containerDefinitions": [
               {
                 "name": "backend",
-                "image": "${{ secrets.ECR_BACKEND_URI }}:$BACKEND_TAG",
+                "image": "${{ secrets.ECR_BACKEND_URI }}:${{ env.BACKEND_TAG }}",
                 "essential": true,
                 "memory": 512,
                 "portMappings": [
@@ -86,25 +83,34 @@ jobs:
       # 8. Elastic Beanstalk에 배포 작업을 실행합니다.
       - name: Deploy to Elastic Beanstalk
         run: |
-          # 1. Dockerrun.aws.json 파일 압축
+          # (1) Dockerrun.aws.json 파일 압축
           zip deploy.zip Dockerrun.aws.json
-                    
-          # 2. S3에 deploy.zip 파일 업로드
+
+          # (2) S3에 deploy.zip 파일 업로드
           aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
-                    
-          # 3. 새로운 애플리케이션 버전 생성
+
+          # (3) 새로운 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
-            --application-name "community-v2" \
+            --application-name "community" \
             --version-label ${{ github.sha }} \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
-                    
-          # 4. Green 환경에 배포
+
+          # (4) Green 환경에 배포
           aws elasticbeanstalk update-environment \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-name "green-v2-env" \
             --version-label ${{ github.sha }}
-                    
-          # 5. 트래픽 스왑
+
+      # 9. Green 환경이 준비될 때까지 대기합니다.
+      - name: Wait for Green Environment to be Ready
+        run: |
+          aws elasticbeanstalk wait environment-updated \
+            --application-name "community" \
+            --environment-names "green-v2-env"
+
+      # 10. Blue-Green 환경 간 트래픽 스왑을 실행합니다.
+      - name: Swap Blue-Green Environments
+        run: |
           aws elasticbeanstalk swap-environment-cnames \
             --source-environment-name "green-v2-env" \
             --destination-environment-name "blue-v2-env"
