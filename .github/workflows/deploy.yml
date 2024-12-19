@@ -83,26 +83,26 @@ jobs:
       - name: Set Commit Message as Environment Variable
         run: |
           # 메시지에서 특수 문자를 처리하여 안전한 형식으로 저장
-          SAFE_COMMIT_MESSAGE=$(echo "${{ github.event.head_commit.message }}" | sed 's/[^[:print:]]//g' | head -c 100)
+          SAFE_COMMIT_MESSAGE=$(echo "${{ github.event.head_commit.message }}" | tr -d '\n' | sed 's/[^[:print:]]//g' | head -c 100)
           echo "GITHUB_HEAD_COMMIT_MESSAGE=$SAFE_COMMIT_MESSAGE" >> $GITHUB_ENV
 
       # 8. Elastic Beanstalk에 배포 작업을 실행
+
       - name: Deploy to Elastic Beanstalk
         run: |
-          # 메시지를 안전하게 처리
+          # 안전한 메시지를 출력
           echo "Original Commit Message: $GITHUB_HEAD_COMMIT_MESSAGE"
-          SAFE_COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | sed 's/[^[:print:]]//g')
-          echo "Safe Commit Message: $SAFE_COMMIT_MESSAGE"
                   
           # 메시지에서 숫자를 추출
-          COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+')
+          COMMIT_MESSAGE=$(echo "$GITHUB_HEAD_COMMIT_MESSAGE" | grep -oE 'Merge pull request #[0-9]+' || echo "$GITHUB_HEAD_COMMIT_MESSAGE" | head -c 50)
                   
-          # 기본 커밋 메시지로 설정
+          # 기본값 설정
           if [ -z "$COMMIT_MESSAGE" ]; then
-            COMMIT_MESSAGE=$(echo "$SAFE_COMMIT_MESSAGE" | head -c 50 || echo "default-message")
+            COMMIT_MESSAGE="default-message"
           fi
-          echo "Commit Message for Version Label: $COMMIT_MESSAGE"
                   
+          echo "Commit Message for Version Label: $COMMIT_MESSAGE"
+                            
           # SHA 추가
           COMMIT_SHA="${GITHUB_SHA:0:8}"
           VERSION_LABEL="${COMMIT_MESSAGE}-${COMMIT_SHA}"
