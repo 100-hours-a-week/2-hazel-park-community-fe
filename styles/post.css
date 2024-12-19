@@ -76,6 +76,9 @@
 }
 
 .post-detail-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2.222vh 1.25vw 2.963vh 1.25vw;
   border-bottom: 1px solid rgba(0, 0, 0, 0.16);
 }
