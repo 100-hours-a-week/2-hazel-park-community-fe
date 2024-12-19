@@ -92,14 +92,14 @@ jobs:
           # (3) 새로운 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
-            --version-label ${{ github.sha }} \
+            --version-label "${{ github.sha }}-$(date +%s)" \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
 
           # (4) Green 환경에 배포
           aws elasticbeanstalk update-environment \
             --application-name "community-v2" \
             --environment-name "green-v2-env" \
-            --version-label ${{ github.sha }}
+            --version-label "${{ github.sha }}-$(date +%s)"
 
       # 9. Green 환경이 준비될 때까지 대기합니다.
       - name: Wait for Green Environment to be Ready
