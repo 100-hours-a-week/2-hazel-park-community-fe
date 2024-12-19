@@ -90,13 +90,13 @@ jobs:
           zip deploy.zip Dockerrun.aws.json
                           
           # 3. S3에 업로드
-          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-***/deploy.zip
+          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
                           
           # 4. 환경변수 설정 및 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
             --version-label "$VERSION_LABEL" \
-            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-***",S3Key="deploy.zip"
+            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
 
       # 9. Green 환경에 새로운 애플리케이션 버전 배포
       - name: Update Green Environment
