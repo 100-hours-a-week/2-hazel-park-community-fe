@@ -110,6 +110,16 @@ class EditFormElement extends HTMLElement {
       imageUpload.addEventListener('change', (event) => {
         const file = event.target.files[0]
         if (file) {
+          // 파일 크기 검증
+          if (file.size > 5 * 1024 * 1024) {
+            // 5MB 초과 여부 확인
+            alert(
+              '파일 크기가 5MB를 초과했습니다. 더 작은 파일을 선택해주세요.',
+            )
+            imageUpload.value = '' // 선택된 파일 초기화
+            return
+          }
+
           if (this.validateImageFile(file)) {
             this.handleImageUpload(file)
           } else {
@@ -139,7 +149,7 @@ class EditFormElement extends HTMLElement {
 
         const nickname = inputNickname.value.trim()
         this.storedData.nickname = nickname
-        localStorage.setItem('user', JSON.stringify(this.storedData))
+        //localStorage.setItem('user', JSON.stringify(this.storedData))
 
         const result = await patchUserNickname(
           this.storedData.email,
