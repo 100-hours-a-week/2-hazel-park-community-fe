@@ -5,6 +5,7 @@ import {
   deleteComments,
 } from '/services/comment-api.js'
 import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import handleNavigation from '/utils/navigation.js'
 
 class CommentListElement extends HTMLElement {
   constructor() {
@@ -377,6 +378,12 @@ class CommentListElement extends HTMLElement {
       commentButton.parentNode.replaceChild(newButton, commentButton)
 
       newButton.addEventListener('click', async () => {
+        if (!this.isLogin) {
+          alert('로그인 후 이용할 수 있습니다.')
+          handleNavigation('/html/Log-in.html')
+          return
+        }
+
         if (this.validateForm()) {
           const updatedContent = commentArea.value.trim()
 
