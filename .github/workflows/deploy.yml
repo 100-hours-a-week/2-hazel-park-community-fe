@@ -86,6 +86,7 @@ jobs:
           # 1. VERSION_LABEL 직접 설정
           VERSION_LABEL="${GITHUB_SHA}-$(date +%s)"
           echo "Using VERSION_LABEL: $VERSION_LABEL" # 값 확인
+          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV # 환경 변수 설정
 
           # 2. Dockerrun.aws.json 압축
           zip deploy.zip Dockerrun.aws.json
@@ -96,7 +97,7 @@ jobs:
           # 4. 환경변수 설정 및 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
             --application-name "community-v2" \
-            --version-label "$VERSION_LABEL" \
+            --version-label "${{ env.VERSION_LABEL }}" \
             --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
 
       # 9. Green 환경에 새로운 애플리케이션 버전 배포
@@ -105,7 +106,7 @@ jobs:
           aws elasticbeanstalk update-environment \
             --application-name "community-v2" \
             --environment-name "green-v2-env" \
-            --version-label "$VERSION_LABEL"
+            --version-label "${{ env.VERSION_LABEL }}"
 
       # 10. Green 환경이 준비될 때까지 대기
       - name: Wait for Green Environment to be Ready
