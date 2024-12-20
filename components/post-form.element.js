@@ -135,12 +135,14 @@ class postFormElement extends HTMLElement {
 
     const imageUpload = this.shadowRoot.getElementById('imageUpload')
     const imageWrapper = this.shadowRoot.querySelector('.image-wrapper')
+    const imageSpan = this.shadowRoot.getElementById('input-file-span')
 
     if (imageUpload) {
       imageUpload.addEventListener('change', (event) => {
         const file = event.target.files[0]
         if (file) {
           if (this.validateImageFile(file)) {
+            imageSpan.style.display = 'none'
             this.handleImageUpload(file, imageWrapper)
           } else {
             alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)')
