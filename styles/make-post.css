@@ -108,3 +108,38 @@
   font-size: 14px;
   cursor: not-allowed;
 }
+
+.image-preview {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: 12px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: 30.71px;
+  transition:
+    width 0.5s ease,
+    height 0.5s ease,
+    transform 0.5s ease;
+}
+
+.preview-image {
+  display: block;
+  width: auto;
+  height: 100%;
+  transform-origin: left center;
+  transform: scale(1) rotateY(0deg);
+  transition:
+    transform 0.5s ease,
+    scale 0.5s ease;
+}
+
+.image-wrapper:hover {
+  transform: scale(1.3);
+}

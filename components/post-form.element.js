@@ -18,13 +18,23 @@ class postFormElement extends HTMLElement {
     if (!isLogin) {
       alert('로그인 후 작성할 수 있습니다.')
       handleNavigation('/html/Log-in.html')
-
       return
     }
+
     this.checkLocation()
+
     if (!this.isMakePostPage) {
       await this.loadPostData()
+      if (!this.postData) {
+        return
+      }
+      if (this.storedData.nickname !== this.postData.post_writer) {
+        alert('올바르지 않은 접근입니다.')
+        handleNavigation('/html/Posts.html')
+        return
+      }
     }
+
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
   }
@@ -75,8 +85,7 @@ class postFormElement extends HTMLElement {
   editPostForm() {
     const { post_title, post_contents, post_img, post_writer } =
       this.postData || {}
-    if (this.storedData.nickname === post_writer) {
-      return `
+    return `
       <div>
         <div class="input-title">제목*</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
@@ -101,7 +110,13 @@ class postFormElement extends HTMLElement {
               ? `
                 <span class="input-file-span">${post_img}</span>
               `
-              : `<span id="input-file-span" class="input-file-span">${post_img}</span>`
+              : `<div class="image-wrapper">
+                <img
+                  id="input-file-span"
+                  class="preview-image collapsed"
+                  src=${post_img}
+                />
+              </div>`
             : `
                 <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
 
@@ -111,10 +126,6 @@ class postFormElement extends HTMLElement {
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
     `
-    } else {
-      alert('올바르지 않은 접근입니다.')
-      handleNavigation('/html/Posts.html')
-    }
   }
 
   addEventListener() {
@@ -123,15 +134,14 @@ class postFormElement extends HTMLElement {
     const submit = this.shadowRoot.getElementById('submit')
 
     const imageUpload = this.shadowRoot.getElementById('imageUpload')
-    const imageSpan = this.shadowRoot.getElementById('input-file-span')
+    const imageWrapper = this.shadowRoot.querySelector('.image-wrapper')
 
     if (imageUpload) {
       imageUpload.addEventListener('change', (event) => {
-        imageSpan.innerText = event.target.files[0].name
         const file = event.target.files[0]
         if (file) {
           if (this.validateImageFile(file)) {
-            this.handleImageUpload(file)
+            this.handleImageUpload(file, imageWrapper)
           } else {
             alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)')
           }
@@ -178,20 +188,46 @@ class postFormElement extends HTMLElement {
     }
   }
 
+  handleImageUpload(file, imageWrapper) {
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      this.postImg = e.target.result
+
+      if (!imageWrapper) {
+        const parent = this.shadowRoot.querySelector('.input-file-wrap')
+        imageWrapper = document.createElement('div')
+        imageWrapper.classList.add('image-wrapper')
+        parent.appendChild(imageWrapper)
+      }
+
+      let previewImage = imageWrapper.querySelector('.preview-image')
+      if (!previewImage) {
+        previewImage = document.createElement('img')
+        previewImage.classList.add('preview-image')
+        imageWrapper.appendChild(previewImage)
+      }
+
+      previewImage.src = e.target.result
+    }
+
+    reader.readAsDataURL(file)
+  }
+
   validateImageFile(file) {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
     return validTypes.includes(file.type)
   }
 
-  handleImageUpload(file) {
-    const reader = new FileReader()
+  // handleImageUpload(file) {
+  //   const reader = new FileReader()
 
-    reader.onload = (e) => {
-      this.postImg = e.target.result
-    }
+  //   reader.onload = (e) => {
+  //     this.postImg = e.target.result
+  //   }
 
-    reader.readAsDataURL(file)
-  }
+  //   reader.readAsDataURL(file)
+  // }
 
   validateForm() {
     const inputTitle = this.shadowRoot.getElementById('input-title')
