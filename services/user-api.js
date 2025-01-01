@@ -18,13 +18,31 @@ export async function loginUser(email, password) {
 
     const data = await response.json()
     if (data.user) {
-      localStorage.setItem('user', JSON.stringify(data.user))
       return data.user
     } else {
       return null
     }
   } catch (error) {
     alert(error.message)
+  }
+}
+
+export async function getSessionUser() {
+  try {
+    const response = await fetch(`${baseUrl}/user-session`, {
+      method: 'GET',
+      credentials: 'include', // 쿠키 포함
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return data.user // 세션 사용자 정보 반환
+    } else {
+      return null // 세션이 유효하지 않으면 null 반환
+    }
+  } catch (error) {
+    console.error('세션 사용자 확인 실패:', error)
+    return null
   }
 }
 
@@ -43,6 +61,7 @@ export async function registerUser(email, password, nickname, profilePic) {
   try {
     const response = await fetch(`${baseUrl}/register`, {
       method: 'POST',
+      credentials: 'include',
       body: formData,
     })
 
@@ -67,6 +86,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
   try {
     const response = await fetch(`${baseUrl}/info`, {
       method: 'PATCH',
+      credentials: 'include',
       body: formData,
     })
 
@@ -80,6 +100,7 @@ export async function patchUserPw(email, password) {
   try {
     const response = await fetch(`${baseUrl}/password`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -99,6 +120,7 @@ export async function deleteUser(email) {
   try {
     const response = await fetch(`${baseUrl}/${email}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -113,6 +135,7 @@ export async function logoutUser() {
   try {
     const response = await fetch(`${authUrl}/logout`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

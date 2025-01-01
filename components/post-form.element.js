@@ -1,4 +1,5 @@
 import handleNavigation from '/utils/navigation.js'
+import { getSessionUser } from '/services/user-api.js'
 import { uploadPost, getPostDetail, patchPost } from '/services/post-api.js'
 import { formatDate } from '/utils/format-date.js'
 
@@ -9,40 +10,65 @@ class postFormElement extends HTMLElement {
     this.isMakePostPage = true
     this.postId = null
     this.postData = null
-    this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.user = null
     this.postImg = null
   }
 
   async connectedCallback() {
-    const isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
-    if (!isLogin) {
+    this.style.visibility = 'hidden' // 콘텐츠 숨기기
+
+    this.user = await getSessionUser()
+    if (!this.user) {
       alert('로그인 후 작성할 수 있습니다.')
       handleNavigation('/html/Log-in.html')
-
       return
     }
+
     this.checkLocation()
+
     if (!this.isMakePostPage) {
       await this.loadPostData()
+      if (!this.postData) {
+        return
+      }
+      if (this.user.nickname !== this.postData.post_writer) {
+        alert('올바르지 않은 접근입니다.')
+        handleNavigation('/html/Posts.html')
+        return
+      }
     }
+
+    // 스타일 로드
+    await this.loadStyles()
+
     this.shadowRoot.innerHTML = this.template()
     this.addEventListener()
+
+    this.style.visibility = 'visible' // 콘텐츠 표시
+  }
+
+  async loadStyles() {
+    const styles = await Promise.all([
+      fetch('/styles/global.css').then((res) => res.text()),
+      fetch('/styles/Sign-in.css').then((res) => res.text()),
+      fetch('/styles/edit-profile.css').then((res) => res.text()),
+      fetch('/styles/make-post.css').then((res) => res.text()),
+    ])
+
+    const styleSheet = new CSSStyleSheet()
+    styleSheet.replaceSync(styles.join('\n'))
+
+    this.shadowRoot.adoptedStyleSheets = [styleSheet]
   }
 
   template() {
     return `
-        <link rel="stylesheet" href="/styles/global.css">
-        <link rel="stylesheet" href="/styles/Sign-in.css">
-        <link rel="stylesheet" href="/styles/edit-profile.css">
-        <link rel="stylesheet" href="/styles/make-post.css">
-        <div class="post-form-wrap">
-            <form class="post-form">
-              ${
-                this.isMakePostPage ? this.makePostForm() : this.editPostForm()
-              }           
-                <input id="submit" type="submit" value="완료" class="make-post-submit" />
-            </form>
-        </div>`
+      <div class="post-form-wrap">
+        <form class="post-form">
+          ${this.isMakePostPage ? this.makePostForm() : this.editPostForm()}
+          <input id="submit" type="submit" value="완료" class="make-post-submit" />
+        </form>
+      </div>`
   }
 
   makePostForm() {
@@ -73,20 +99,17 @@ class postFormElement extends HTMLElement {
   }
 
   editPostForm() {
-    const { post_title, post_contents, post_img, post_writer } =
-      this.postData || {}
-    if (this.storedData.nickname === post_writer) {
-      return `
+    return `
       <div>
         <div class="input-title">제목*</div>
-        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${post_title}" />
+        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData.post_title}" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
           <div class="input-title">내용*</div>
-          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${post_contents}</textarea>
+          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
-              ${post_contents.length} / 1000
+              ${this.postData.post_contents.length} / 1000
           </div>
           <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
@@ -95,26 +118,18 @@ class postFormElement extends HTMLElement {
         <div class="input-file-wrap">
           <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
           <label for="imageUpload" class="input-file-label">파일 선택</label>
-        ${
-          post_img
-            ? this.isMakePostPage
-              ? `
-                <span class="input-file-span">${post_img}</span>
-              `
-              : `<span id="input-file-span" class="input-file-span">${post_img}</span>`
-            : `
-                <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
-
-              `
-        }
+          ${
+            this.postImg
+              ? `<div class="image-wrapper">
+                  <img src="${this.postImg}" class="preview-image" />
+                  <button type="button" id="delete-button" class="delete-button"></button>
+                 </div>`
+              : `<span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>`
+          }
       </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
     `
-    } else {
-      alert('올바르지 않은 접근입니다.')
-      handleNavigation('/html/Posts.html')
-    }
   }
 
   addEventListener() {
@@ -123,14 +138,32 @@ class postFormElement extends HTMLElement {
     const submit = this.shadowRoot.getElementById('submit')
 
     const imageUpload = this.shadowRoot.getElementById('imageUpload')
+    const imageWrapper = this.shadowRoot.querySelector('.image-wrapper')
     const imageSpan = this.shadowRoot.getElementById('input-file-span')
 
     if (imageUpload) {
       imageUpload.addEventListener('change', (event) => {
-        imageSpan.innerText = event.target.files[0].name
         const file = event.target.files[0]
         if (file) {
+          if (this.postImg) {
+            alert('하나의 파일만 업로드할 수 있습니다.')
+            imageUpload.value = '' // 파일 입력 필드 초기화
+            return
+          }
+
+          const MAX_FILE_SIZE_MB = 10
+          const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
+          if (file.size > MAX_FILE_SIZE_BYTES) {
+            alert(
+              `파일 크기가 너무 큽니다. 최대 ${MAX_FILE_SIZE_MB}MB까지 업로드 가능합니다.`,
+            )
+            imageUpload.value = ''
+            return
+          }
+
           if (this.validateImageFile(file)) {
+            imageSpan.style.display = 'none'
             this.handleImageUpload(file)
           } else {
             alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)')
@@ -164,10 +197,9 @@ class postFormElement extends HTMLElement {
         } else if (this.validateForm() === 'posts') {
           const titleValue = inputTitle.value.trim()
           const contentsValue = inputContents.value.trim()
-          this.saveDataInLocalStorage(titleValue, contentsValue)
           await uploadPost(
             titleValue,
-            this.storedData.email,
+            this.user.email,
             formatDate(Date.now()),
             contentsValue,
             this.postImg,
@@ -176,11 +208,32 @@ class postFormElement extends HTMLElement {
         }
       })
     }
-  }
 
-  validateImageFile(file) {
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
-    return validTypes.includes(file.type)
+    const deleteButton = this.shadowRoot.querySelector('.delete-button')
+    if (deleteButton && imageWrapper) {
+      deleteButton.addEventListener('click', (event) => {
+        event.preventDefault() // 기본 동작 방지
+        this.postImg = null
+
+        const imageWrapper = this.shadowRoot.querySelector('.image-wrapper')
+        if (imageWrapper) {
+          imageWrapper.remove()
+        }
+
+        // 파일 입력 필드 초기화
+        if (imageUpload) {
+          imageUpload.value = ''
+        }
+
+        // 파일 선택 안내 메시지 표시
+        if (imageSpan) {
+          imageSpan.style.display = 'block'
+        }
+
+        this.shadowRoot.innerHTML = this.template()
+        this.addEventListener()
+      })
+    }
   }
 
   handleImageUpload(file) {
@@ -188,9 +241,54 @@ class postFormElement extends HTMLElement {
 
     reader.onload = (e) => {
       this.postImg = e.target.result
-    }
 
+      const parent = this.shadowRoot.querySelector('.input-file-wrap')
+
+      // 기존 이미지 wrapper 제거
+      let imageWrapper = parent.querySelector('.image-wrapper')
+      if (!imageWrapper) {
+        imageWrapper = document.createElement('div')
+        imageWrapper.classList.add('image-wrapper')
+        parent.appendChild(imageWrapper)
+      } else {
+        imageWrapper.innerHTML = '' // 기존 내용 초기화
+      }
+
+      const previewImage = document.createElement('img')
+      previewImage.classList.add('preview-image')
+      previewImage.src = e.target.result
+      imageWrapper.appendChild(previewImage)
+
+      const deleteButton = document.createElement('button')
+      deleteButton.type = 'button'
+      deleteButton.id = 'delete-button'
+      deleteButton.classList.add('delete-button')
+      imageWrapper.appendChild(deleteButton)
+
+      // 삭제 버튼 이벤트 리스너 등록
+      deleteButton.addEventListener('click', () => {
+        this.postImg = null
+        console.log('이미지 삭제 완료')
+
+        // DOM 초기화
+        imageWrapper.remove()
+        const imageSpan = this.shadowRoot.getElementById('input-file-span')
+        if (imageSpan) {
+          imageSpan.style.display = 'block'
+        }
+
+        const imageUpload = this.shadowRoot.getElementById('imageUpload')
+        if (imageUpload) {
+          imageUpload.value = ''
+        }
+      })
+    }
     reader.readAsDataURL(file)
+  }
+
+  validateImageFile(file) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+    return validTypes.includes(file.type)
   }
 
   validateForm() {
@@ -276,22 +374,6 @@ class postFormElement extends HTMLElement {
     }
   }
 
-  saveDataInLocalStorage(titleValue, contentsValue) {
-    const storedData = JSON.parse(localStorage.getItem('user'))
-    const post = {
-      post_id: 1,
-      post_title: titleValue,
-      post_writer: storedData.user_name,
-      post_updated_at: new Date().toISOString(),
-      post_contents: contentsValue,
-      post_likes: 0,
-      post_views: 0,
-      post_comments: 0,
-    }
-
-    localStorage.setItem('post', JSON.stringify(post))
-  }
-
   async loadPostData() {
     const urlParams = new URLSearchParams(window.location.search)
     this.postId = Number(urlParams.get('id'))
@@ -302,6 +384,7 @@ class postFormElement extends HTMLElement {
     }
 
     this.postData = await getPostDetail(this.postId)
+    this.postImg = this.postData.post_img
   }
 }
 

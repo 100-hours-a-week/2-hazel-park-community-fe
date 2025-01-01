@@ -21,6 +21,10 @@ body {
   user-select: none;
 }
 
+.body::-webkit-scrollbar {
+  display: none; /* Chrome , Safari , Opera */
+}
+
 header {
   height: 104px;
   padding-top: 2.25rem;

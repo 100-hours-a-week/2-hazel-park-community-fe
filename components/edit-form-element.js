@@ -1,4 +1,5 @@
 import handleNavigation from '/utils/navigation.js'
+import { getSessionUser } from '/services/user-api.js'
 import {
   patchUserNickname,
   patchUserPw,
@@ -10,11 +11,12 @@ class EditFormElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.isEditProfilePage = true
-    this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.user = null
     this.newImageData = null
   }
 
-  connectedCallback() {
+  async connectedCallback() {
+    this.user = await getSessionUser()
     this.checkLocation()
     this.shadowRoot.innerHTML = this.template()
     this.addEventListeners()
@@ -42,13 +44,12 @@ class EditFormElement extends HTMLElement {
         <div class="input-title">프로필 사진</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
-        this.storedData.profile_picture ||
-        this.storedData.profile_picture === null
+        this.user.profile_picture || this.user.profile_picture === null
           ? `
               <div class="wrap-profile-img">
                 <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
                 <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png, .gif" />
-                <img id="profileImage" src="${this.storedData.profile_picture}" class="profile-img" />
+                <img id="profileImage" src="${this.user.profile_picture}" class="profile-img" />
               </div>
             `
           : `
@@ -64,11 +65,11 @@ class EditFormElement extends HTMLElement {
         </div>
         <div class="email-wrap">
           <div class="input-title">이메일</div>
-          <div id="user-email" class="user-email" />${this.storedData.email}</div>
+          <div id="user-email" class="user-email" />${this.user.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
           <div class="input-title">닉네임*</div>
-            <input id="input-nickname" type="text" placeholder=${this.storedData.nickname} class="input-value" />
+            <input id="input-nickname" type="text" placeholder=${this.user.nickname} class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
     `
@@ -144,15 +145,14 @@ class EditFormElement extends HTMLElement {
       const validationResult = this.validateForm()
       if (validationResult === 'nickname') {
         if (this.newImageData) {
-          this.storedData.profile_picture = this.newImageData
+          this.user.profile_picture = this.newImageData
         }
 
         const nickname = inputNickname.value.trim()
-        this.storedData.nickname = nickname
-        //localStorage.setItem('user', JSON.stringify(this.storedData))
+        this.user.nickname = nickname
 
         const result = await patchUserNickname(
-          this.storedData.email,
+          this.user.email,
           nickname,
           this.newImageData,
         )
@@ -165,15 +165,15 @@ class EditFormElement extends HTMLElement {
           nicknameHyperText.style.visibility = 'visible'
         } else {
           nicknameHyperText.style.visibility = 'hidden'
-          this.storedData.nickname = nickname
-          localStorage.setItem('user', JSON.stringify(this.storedData))
+          this.user.nickname = nickname
+          // localStorage.setItem('user', JSON.stringify(this.user))
           this.showToastAndRedirect()
         }
       } else if (validationResult === 'password') {
         const password = inputPassword.value.trim()
-        this.storedData.user_pw = password
-        localStorage.setItem('user', JSON.stringify(this.storedData))
-        await patchUserPw(this.storedData.email, password)
+        this.user.user_pw = password
+        // localStorage.setItem('user', JSON.stringify(this.user))
+        await patchUserPw(this.user.email, password)
         this.showToastAndRedirect()
       }
     })
@@ -329,10 +329,7 @@ class EditFormElement extends HTMLElement {
   }
 
   async deleteUser() {
-    await deleteUser(this.storedData.email)
-    this.isLogin = false
-    localStorage.setItem('isLogin', this.isLogin)
-    localStorage.removeItem('user')
+    await deleteUser(this.user.email)
     handleNavigation('/html/Log-in.html')
   }
 
