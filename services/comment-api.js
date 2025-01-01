@@ -7,6 +7,7 @@ export async function getComments({ postId, page = 0, limit = 2 } = {}) {
       `${postUrl}/${postId}/comments?page=${page}&limit=${limit}`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -25,6 +26,7 @@ export async function uploadComment(postId, writer, updated_at, content) {
   try {
     const response = await fetch(`${postUrl}/${postId}/comment`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -43,6 +45,7 @@ export async function editComments(postId, commentId, content, updated_at) {
   try {
     const response = await fetch(`${baseUrl}/${commentId}`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -65,6 +68,7 @@ export async function deleteComments(postId, commentId) {
   try {
     const response = await fetch(`${postUrl}/${postId}/${commentId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
