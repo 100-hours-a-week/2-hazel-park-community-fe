@@ -333,7 +333,7 @@ class CommentListElement extends HTMLElement {
         this.shadowRoot.querySelectorAll('#button-update')[index]
 
       // 수정 권한이 없는 사용자에 대한 처리
-      if (this.user.nickname !== comments[index].writer) {
+      if (!this.user || this.user.nickname !== comments[index].writer) {
         newButton.style.visibility = 'hidden'
       } else {
         // 새로운 이벤트 리스너 등록
@@ -354,7 +354,7 @@ class CommentListElement extends HTMLElement {
 
     const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
     newDeleteButtons.forEach((button, index) => {
-      if (this.user.nickname !== comments[index].writer) {
+      if (!this.user || this.user.nickname !== comments[index].writer) {
         button.style.visibility = 'hidden'
       } else {
         button.addEventListener('click', async () => {

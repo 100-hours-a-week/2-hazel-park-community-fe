@@ -84,7 +84,7 @@ class PostElement extends HTMLElement {
     const updatePostButton = this.shadowRoot.getElementById('button-update')
     const likesButton = this.shadowRoot.getElementById('post-interaction-likes')
 
-    if (this.user.nickname !== this.post.post_writer) {
+    if (!this.user || this.user.nickname !== this.post.post_writer) {
       deletePostButton.style.visibility = 'hidden'
       updatePostButton.style.visibility = 'hidden'
     }
