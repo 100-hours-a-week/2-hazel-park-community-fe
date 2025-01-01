@@ -10,8 +10,12 @@ class headerElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    this.shadowRoot.innerHTML = this.template()
     this.user = await getSessionUser()
+    this.shadowRoot.innerHTML = this.template()
+    const styleSheet = document.createElement('link')
+    styleSheet.rel = 'stylesheet'
+    styleSheet.href = '/styles/global.css'
+    this.shadowRoot.prepend(styleSheet) // 스타일을 가장 먼저 추가
 
     const profileImg = this.shadowRoot.getElementById('profile-img')
     profileImg.src = this.user?.profile_picture || '/assets/pre-profile.png'
@@ -23,7 +27,6 @@ class headerElement extends HTMLElement {
 
   template() {
     return `
-        <link rel="stylesheet" href='/styles/global.css'>
         <header>
           <div id="header-wrap" class="header-wrap">
             <img id="header-back" src='/assets/back.svg' class='header-back' />
@@ -33,6 +36,7 @@ class headerElement extends HTMLElement {
                 id="profile-img"
                 alt="profile-img"
                 class="header-profile-img"
+                loading="lazy"
               />
               <div id="profile-dropdown" class="profile-dropdown">
                 <div id="dropdown-edit-profile" class="profile-dropdown-menu">
