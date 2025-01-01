@@ -4,6 +4,8 @@ import {
   editComments,
   deleteComments,
 } from '/services/comment-api.js'
+import { getSessionUser } from '/services/user-api.js'
+
 import { formatDate, formatCommentDate } from '/utils/format-date.js'
 import handleNavigation from '/utils/navigation.js'
 
@@ -12,9 +14,8 @@ class CommentListElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.postId = null
-    this.storedData = JSON.parse(localStorage.getItem('user'))
+    this.user = null
     this.isEditing = false
-    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
     this.page = 0
     this.allCommentsLoaded = false
     this.COMMENTS_PER_PAGE = 2
@@ -37,6 +38,7 @@ class CommentListElement extends HTMLElement {
     this.shadowRoot.innerHTML = this.template(this.comments)
 
     await this.loadCommentsData()
+    this.user = await getSessionUser()
 
     this.initInfiniteScroll()
 
@@ -331,10 +333,7 @@ class CommentListElement extends HTMLElement {
         this.shadowRoot.querySelectorAll('#button-update')[index]
 
       // 수정 권한이 없는 사용자에 대한 처리
-      if (
-        !this.isLogin ||
-        this.storedData.nickname !== comments[index].writer
-      ) {
+      if (this.user.nickname !== comments[index].writer) {
         newButton.style.visibility = 'hidden'
       } else {
         // 새로운 이벤트 리스너 등록
@@ -355,10 +354,7 @@ class CommentListElement extends HTMLElement {
 
     const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
     newDeleteButtons.forEach((button, index) => {
-      if (
-        !this.isLogin ||
-        this.storedData.nickname !== comments[index].writer
-      ) {
+      if (this.user.nickname !== comments[index].writer) {
         button.style.visibility = 'hidden'
       } else {
         button.addEventListener('click', async () => {
@@ -378,7 +374,7 @@ class CommentListElement extends HTMLElement {
       commentButton.parentNode.replaceChild(newButton, commentButton)
 
       newButton.addEventListener('click', async () => {
-        if (!this.isLogin) {
+        if (!this.user) {
           alert('로그인 후 이용할 수 있습니다.')
           handleNavigation('/html/Log-in.html')
           return
@@ -393,7 +389,7 @@ class CommentListElement extends HTMLElement {
               // 댓글 업로드 API 호출
               await uploadComment(
                 this.postId,
-                this.storedData.email,
+                this.user.email,
                 formatDate(Date.now()),
                 updatedContent,
               )
@@ -462,6 +458,9 @@ class CommentListElement extends HTMLElement {
             this.page = 0
             this.comments = []
             this.allCommentsLoaded = false
+
+            let charCountDisplay = document.getElementById('char-count')
+            charCountDisplay.textContent = `0 / 100`
 
             commentButton.innerText = '댓글 등록' // 버튼 텍스트를 "댓글 등록"으로 변경
             commentButton.style.backgroundColor = '#aea0eb'

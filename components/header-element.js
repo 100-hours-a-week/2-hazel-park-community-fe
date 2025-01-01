@@ -1,16 +1,21 @@
 import handleNavigation from '/utils/navigation.js'
 import { logoutUser } from '/services/user-api.js'
+import { getSessionUser } from '/services/user-api.js'
 
 class headerElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
-    localStorage.setItem('isLogin', this.isLogin)
+    this.user = null
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.shadowRoot.innerHTML = this.template()
+    this.user = await getSessionUser()
+
+    const profileImg = this.shadowRoot.getElementById('profile-img')
+    profileImg.src = this.user?.profile_picture || '/assets/pre-profile.png'
+
     this.addEventListener()
     this.updateProfileStatus()
     this.hideProfile()
@@ -93,8 +98,6 @@ class headerElement extends HTMLElement {
       await logoutUser()
       localStorage.removeItem('user')
       localStorage.removeItem('likedPosts')
-      this.isLogin = false
-      localStorage.setItem('isLogin', this.isLogin)
       this.updateProfileStatus()
       handleNavigation('/html/Log-in.html')
     })
@@ -119,7 +122,6 @@ class headerElement extends HTMLElement {
   }
 
   updateProfileStatus() {
-    const profileImg = this.shadowRoot.getElementById('profile-img')
     const dropdownEditProfile = this.shadowRoot.getElementById(
       'dropdown-edit-profile',
     )
@@ -129,13 +131,10 @@ class headerElement extends HTMLElement {
     const dropdownLogin = this.shadowRoot.getElementById('dropdown-login')
     const dropdownLogout = this.shadowRoot.getElementById('dropdown-logout')
 
-    dropdownEditProfile.style.display = this.isLogin ? 'block' : 'none'
-    dropdownEditPassword.style.display = this.isLogin ? 'block' : 'none'
-    dropdownLogin.style.display = this.isLogin ? 'none' : 'block'
-    dropdownLogout.style.display = this.isLogin ? 'block' : 'none'
-
-    const user = JSON.parse(localStorage.getItem('user'))
-    profileImg.src = user?.profile_picture || '/assets/pre-profile.png'
+    dropdownEditProfile.style.display = this.user ? 'block' : 'none'
+    dropdownEditPassword.style.display = this.user ? 'block' : 'none'
+    dropdownLogin.style.display = this.user ? 'none' : 'block'
+    dropdownLogout.style.display = this.user ? 'block' : 'none'
   }
 
   hideProfile() {

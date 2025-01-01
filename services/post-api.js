@@ -79,10 +79,12 @@ export async function patchPost(postId, title, content, updatedAt, postImg) {
   formData.append('content', content)
   formData.append('updated_at', updatedAt)
 
-  if (postImg) {
+  if (postImg !== null) {
     const base64Data = postImg.split(',')[1]
     const blob = await fetch(postImg).then((res) => res.blob())
     formData.append('post_img', blob, 'postImg.jpg')
+  } else {
+    formData.append('post_img', 'null')
   }
 
   try {

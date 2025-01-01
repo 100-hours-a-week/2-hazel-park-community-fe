@@ -1,19 +1,20 @@
 import handleNavigation from '/utils/navigation.js'
+import { getSessionUser } from '/services/user-api.js'
 import { loginUser, registerUser } from '/services/user-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
-    localStorage.setItem('isLogin', this.isLogin)
+    this.user = null
     this.isLoginPage = true
     this.profileImageData = null
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.checkLocation()
     this.shadowRoot.innerHTML = this.template()
+    this.user = await getSessionUser()
     this.addEventListeners()
   }
 
@@ -317,8 +318,6 @@ class AuthFormElement extends HTMLElement {
         alert('회원 정보가 존재하지 않습니다.')
         return
       }
-      this.isLogin = true
-      localStorage.setItem('isLogin', this.isLogin)
       handleNavigation('/html/Posts.html')
     } catch (error) {
       alert(error.message)

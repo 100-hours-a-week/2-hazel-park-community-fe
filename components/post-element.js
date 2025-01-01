@@ -1,5 +1,6 @@
 import checkCount from '/utils/check-count.js'
 import handleNavigation from '/utils/navigation.js'
+import { getSessionUser } from '/services/user-api.js'
 import { getPostDetail, deletePost, likes } from '/services/post-api.js'
 import { formatDate, formatCommentDate } from '/utils/format-date.js'
 
@@ -7,8 +8,7 @@ class PostElement extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.storedData = JSON.parse(localStorage.getItem('user'))
-    this.isLogin = JSON.parse(localStorage.getItem('isLogin')) || false
+    this.user = null
     this.post = null
     this.postId = null
     this.is_liked = false
@@ -16,6 +16,7 @@ class PostElement extends HTMLElement {
   }
 
   async connectedCallback() {
+    this.user = await getSessionUser()
     const styleLink = document.createElement('link')
     styleLink.rel = 'stylesheet'
     styleLink.href = '/styles/post.css'
@@ -38,7 +39,7 @@ class PostElement extends HTMLElement {
   }
 
   async updateLikes() {
-    if (!this.isLogin) {
+    if (!this.user) {
       alert('로그인 후 이용할 수 있습니다.')
       handleNavigation('/html/Log-in.html')
       return
@@ -83,7 +84,7 @@ class PostElement extends HTMLElement {
     const updatePostButton = this.shadowRoot.getElementById('button-update')
     const likesButton = this.shadowRoot.getElementById('post-interaction-likes')
 
-    if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
+    if (this.user.nickname !== this.post.post_writer) {
       deletePostButton.style.visibility = 'hidden'
       updatePostButton.style.visibility = 'hidden'
     }
@@ -93,7 +94,7 @@ class PostElement extends HTMLElement {
     })
 
     updatePostButton?.addEventListener('click', () => {
-      if (!this.isLogin || this.storedData.nickname !== this.post.post_writer) {
+      if (this.user.nickname !== this.post.post_writer) {
         this.openModal()
       }
       this.navigateToEditPage()
