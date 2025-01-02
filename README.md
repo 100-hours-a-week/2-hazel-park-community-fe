@@ -12,7 +12,7 @@
 
 <div align=center>
 
-|                                                           hazel                                                           |
+|                                                           hazel                                                            |
 | :------------------------------------------------------------------------------------------------------------------------: |
 | <a href="https://github.com/gmlwlsdl"> <img src="https://avatars.githubusercontent.com/gmlwlsdl" width=100px alt="_"/></a> |
 
@@ -27,12 +27,13 @@
 <br />
 
 ## 📁 폴더 구조
+
 ```bash
 .
 ├── assets # svg, png 파일
 ├── components # custom element
 ├── data # 디비 연결 전 사용했던 더미 데이터
-├── html # html 페이지 
+├── html # html 페이지
 ├── scripts # html에 대응하는 javascipt 코드
 ├── services # api 연결 코드
 ├── styles # css 파일
@@ -42,7 +43,6 @@
 ├── package.json
 └── README.md
 ```
-
 
 <br />
 
