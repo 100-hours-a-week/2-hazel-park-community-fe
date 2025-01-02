@@ -1,4 +1,4 @@
-name: Build and Deploy Backend
+name: Build and Deploy Frontend
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
       # 6. S3에서 Backend SHA 파일(sha.txt)을 다운로드하여 해당 태그를 환경 변수로 설정합니다.
       - name: Retrieve Backend SHA
         run: |
-          aws s3 cp s3://hazel-sha-bucket/sha.txt sha.txt
+          aws s3 cp s3://hazel2-sha-bucket/sha.txt sha.txt
           echo "BACKEND_TAG=$(cat sha.txt)" >> $GITHUB_ENV
 
       # 7. Elastic Beanstalk에 사용할 Dockerrun.aws.json 파일을 생성합니다.
@@ -118,7 +118,7 @@ jobs:
           zip deploy.zip Dockerrun.aws.json
                   
           # S3에 업로드
-          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-020557303774/deploy.zip
+          aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-050451374097/deploy.zip
           if [ $? -ne 0 ]; then
             echo "Error: S3 업로드 실패."
             exit 1
@@ -126,9 +126,9 @@ jobs:
                   
           # 애플리케이션 버전 생성
           aws elasticbeanstalk create-application-version \
-            --application-name "community-v2" \
+            --application-name "community" \
             --version-label "$VERSION_LABEL" \
-            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-020557303774",S3Key="deploy.zip"
+            --source-bundle S3Bucket="elasticbeanstalk-ap-northeast-2-050451374097",S3Key="deploy.zip"
           if [ $? -ne 0 ]; then
             echo "Error: Elastic Beanstalk 애플리케이션 버전 생성 실패."
             exit 1
@@ -139,7 +139,7 @@ jobs:
         id: green-version
         run: |
           CURRENT_GREEN_VERSION=$(aws elasticbeanstalk describe-environments \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-names "green-v2-env" \
             --query "Environments[0].VersionLabel" --output text)
           echo "CURRENT_GREEN_VERSION=$CURRENT_GREEN_VERSION" >> $GITHUB_ENV
@@ -149,7 +149,7 @@ jobs:
       - name: Update Green Environment
         run: |
           aws elasticbeanstalk update-environment \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-name "green-v2-env" \
             --version-label "${{ env.VERSION_LABEL }}"
 
@@ -157,14 +157,14 @@ jobs:
       - name: Wait for Green Environment to be Ready
         run: |
           aws elasticbeanstalk wait environment-updated \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-names "green-v2-env"
 
       # 9.4 Blue 환경에 이전 Green 버전 배포
       - name: Deploy Previous Green Version to Blue Environment
         run: |
           aws elasticbeanstalk update-environment \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-name "blue-v2-env" \
             --version-label "${{ env.CURRENT_GREEN_VERSION }}"
 
@@ -172,7 +172,7 @@ jobs:
       - name: Wait for Blue Environment to be Ready
         run: |
           aws elasticbeanstalk wait environment-updated \
-            --application-name "community-v2" \
+            --application-name "community" \
             --environment-names "blue-v2-env"
 
       # 10. Blue-Green 환경 간 트래픽 스왑을 실행합니다.
