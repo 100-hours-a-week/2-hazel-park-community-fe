@@ -96,8 +96,9 @@ class PostElement extends HTMLElement {
     updatePostButton?.addEventListener('click', () => {
       if (this.user.nickname !== this.post.post_writer) {
         this.openModal()
+      } else {
+        this.navigateToEditPage()
       }
-      this.navigateToEditPage()
     })
 
     likesButton?.addEventListener('click', async () => {
@@ -106,6 +107,12 @@ class PostElement extends HTMLElement {
   }
 
   openModal() {
+    if (!this.user || this.user.nickname !== this.post.post_writer) {
+      alert('올바르지 않은 접근입니다.')
+      handleNavigation(`/html/Posts.html`)
+      return
+    }
+
     const modalBackground = document.createElement('div')
     modalBackground.classList.add('modal-background')
 

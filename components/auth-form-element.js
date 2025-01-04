@@ -1,6 +1,11 @@
 import handleNavigation from '/utils/navigation.js'
 import { getSessionUser } from '/services/user-api.js'
-import { loginUser, registerUser } from '/services/user-api.js'
+import {
+  checkEmailDuplicate,
+  checkNicknameDuplicate,
+  loginUser,
+  registerUser,
+} from '/services/user-api.js'
 
 class AuthFormElement extends HTMLElement {
   constructor() {
@@ -70,7 +75,7 @@ class AuthFormElement extends HTMLElement {
     return `
       <div style="margin-top: 0.3em" class="password-wrap">
         <div class="input-title">비밀번호 확인*</div>
-        <input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />
+        <input id="input-re-password" type="password" placeholder="비밀번호를 한 번 더 입력하세요" class="input-value" />
         <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
       </div>
       <div style="margin-top: 0.3em" class="password-wrap">
@@ -92,8 +97,18 @@ class AuthFormElement extends HTMLElement {
     } = this.getElement()
 
     inputProfileImg?.addEventListener('input', () => this.checkImgUpload())
-    inputEmail?.addEventListener('input', () => this.validateForm())
-    inputPassword?.addEventListener('input', () => this.validateForm())
+    // inputEmail?.addEventListener('input', () => this.validateForm())
+    // inputPassword?.addEventListener('input', () => this.validateForm())
+    inputEmail?.addEventListener(
+      'input',
+      debounce(() => this.checkEmail(inputEmail.value.trim()), 500),
+    )
+
+    inputNickname?.addEventListener(
+      'input',
+      debounce(() => this.checkNickname(inputNickname.value.trim()), 500),
+    )
+
     inputRePassword?.addEventListener('input', () => this.validateForm())
     inputNickname?.addEventListener('input', () => this.validateForm())
 
@@ -111,6 +126,51 @@ class AuthFormElement extends HTMLElement {
         this.register(email, password, nickname, this.profileImageData)
       }
     })
+  }
+
+  async checkEmail(email) {
+    const emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
+    if (!email) {
+      emailHyperText.innerText = '*이메일을 입력해주세요.'
+      emailHyperText.style.visibility = 'visible'
+      return
+    } else if (!this.emailValidCheck(email)) {
+      emailHyperText.innerText = '*올바른 이메일 주소 형식을 입력해주세요.'
+      emailHyperText.style.visibility = 'visible'
+    } else {
+      const isDuplicate = await checkEmailDuplicate(email)
+      if (isDuplicate.code == 400) {
+        emailHyperText.innerText = `*${isDuplicate.message}`
+        emailHyperText.style.visibility = 'visible'
+      } else {
+        emailHyperText.style.visibility = 'hidden'
+      }
+    }
+  }
+
+  async checkNickname(nickname) {
+    const nicknameHyperText = this.shadowRoot.getElementById(
+      'nickname-hyper-text',
+    )
+    if (!nickname) {
+      nicknameHyperText.innerText = '*닉네임을 입력해주세요.'
+      nicknameHyperText.style.visibility = 'visible'
+      return
+    } else if (nickname.length > 10) {
+      nicknameHyperText.innerText = '*닉네임은 최대 10자까지 입력 가능합니다.'
+      nicknameHyperText.style.visibility = 'visible'
+    } else if (/\s/.test(nickname)) {
+      nicknameHyperText.innerText = '*띄어쓰기를 없애주세요.'
+      nicknameHyperText.style.visibility = 'visible'
+    } else {
+      const isDuplicate = await checkNicknameDuplicate(nickname)
+      if (isDuplicate.code == 400) {
+        nicknameHyperText.innerText = `*${isDuplicate.message}`
+        nicknameHyperText.style.visibility = 'visible'
+      } else {
+        nicknameHyperText.style.visibility = 'hidden'
+      }
+    }
   }
 
   getElement() {
@@ -140,11 +200,9 @@ class AuthFormElement extends HTMLElement {
     submit.style.backgroundColor = '#aea0eb'
     submit.style.cursor = 'not-allowed'
 
-    emailHyperText.innerText = ''
     pwHyperText.innerText = ''
     if (rePwHyperText) {
       rePwHyperText.innerText = ''
-      nicknameHyperText.innerText = ''
     }
 
     let emailCheck = false
@@ -156,13 +214,6 @@ class AuthFormElement extends HTMLElement {
       emailCheck = false
       emailHyperText.innerText = '*이메일을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
-    } else if (!this.emailValidCheck(inputEmail.value.trim())) {
-      emailCheck = false
-      emailHyperText.innerText = '*올바른 이메일 주소 형식을 입력해주세요.'
-      emailHyperText.style.visibility = 'visible'
-    } else {
-      emailCheck = true
-      emailHyperText.style.visibility = 'hidden'
     }
 
     if (!inputPassword.value.trim()) {
@@ -197,17 +248,6 @@ class AuthFormElement extends HTMLElement {
         nicknameCheck = false
         nicknameHyperText.innerText = '닉네임을 입력해주세요.'
         nicknameHyperText.style.visibility = 'visible'
-      } else if (inputNickname.value.trim().length > 10) {
-        nicknameCheck = false
-        nicknameHyperText.innerText = '닉네임은 최대 10자까지 입력 가능합니다.'
-        nicknameHyperText.style.visibility = 'visible'
-      } else if (/\s/.test(inputNickname.value.trim())) {
-        nicknameCheck = false
-        nicknameHyperText.innerText = '띄어쓰기를 없애주세요.'
-        nicknameHyperText.style.visibility = 'visible'
-      } else {
-        nicknameCheck = true
-        nicknameHyperText.style.visibility = 'hidden'
       }
     }
 
@@ -343,6 +383,14 @@ class AuthFormElement extends HTMLElement {
     } catch (error) {
       alert(error.message)
     }
+  }
+}
+
+function debounce(func, delay) {
+  let timer
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => func.apply(this, args), delay)
   }
 }
 

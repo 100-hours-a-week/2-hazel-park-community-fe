@@ -84,7 +84,7 @@ class EditFormElement extends HTMLElement {
       </div>
       <div style="margin-top: 0.3em" class="password-wrap">
         <div class="input-title">비밀번호 확인*</div>
-        <input id="input-re-password" type="password" placeholder="비밀번호를 한번 더입력하세요" class="input-value" />
+        <input id="input-re-password" type="password" placeholder="비밀번호를 한 번 더 입력하세요" class="input-value" />
         <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
       </div>
     `

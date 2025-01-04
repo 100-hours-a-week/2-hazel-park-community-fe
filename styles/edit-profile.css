@@ -33,6 +33,8 @@
 }
 
 .delete-account {
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 1.111vh;
   text-align: center;
   font-weight: 400;
