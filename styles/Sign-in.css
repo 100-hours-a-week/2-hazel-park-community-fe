@@ -102,7 +102,7 @@
 }
 
 .login {
-  margin-top: 1.111vh;
+  margin: 1.111vh auto 1.111vh auto;
   text-align: center;
   font-weight: 400;
   font-size: 0.875rem;

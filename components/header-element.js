@@ -7,55 +7,74 @@ class headerElement extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.user = null
+    this.loadingPromise = null // 로딩 상태 관리
   }
 
   async connectedCallback() {
-    this.user = await getSessionUser()
-    this.shadowRoot.innerHTML = this.template()
+    // 로딩 상태 Promise 저장
+    this.loadingPromise = this.fetchData()
+
+    // 스타일 로드
     const styleSheet = document.createElement('link')
     styleSheet.rel = 'stylesheet'
     styleSheet.href = '/styles/global.css'
-    this.shadowRoot.prepend(styleSheet) // 스타일을 가장 먼저 추가
+    this.shadowRoot.appendChild(styleSheet)
 
+    // 스타일 로드 후 템플릿 렌더링
+    styleSheet.addEventListener('load', async () => {
+      await this.loadingPromise // 데이터 로드 대기
+      this.shadowRoot.innerHTML += this.template()
+      this.initializeComponent()
+    })
+  }
+
+  // 데이터를 패치하고 Promise 반환
+  async fetchData() {
+    this.user = await getSessionUser() // 사용자 데이터 패치
+    return Promise.resolve()
+  }
+
+  template() {
+    return `
+    <header>
+      <div id="header-wrap" class="header-wrap">
+        <img id="header-back" src="/assets/back.svg" class="header-back" />
+        <p id="header-text" class="header-text">
+          아무 말 대잔치
+        </p>
+        <div id="profile-wrap" class="profile-wrap">
+          <img
+            id="profile-img"
+            alt="profile-img"
+            class="header-profile-img"
+            loading="lazy"
+          />
+          <div id="profile-dropdown" class="profile-dropdown">
+            <div id="dropdown-edit-profile" class="profile-dropdown-menu">
+              회원정보 수정
+            </div>
+            <div id="dropdown-edit-password" class="profile-dropdown-menu">
+              비밀번호 수정
+            </div>
+            <div id="dropdown-login" class="profile-dropdown-menu">
+              로그인
+            </div>
+            <div id="dropdown-logout" class="profile-dropdown-menu">
+              로그아웃
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>`
+  }
+
+  initializeComponent() {
     const profileImg = this.shadowRoot.getElementById('profile-img')
     profileImg.src = this.user?.profile_picture || '/assets/pre-profile.png'
 
     this.addEventListener()
     this.updateProfileStatus()
     this.hideProfile()
-  }
-
-  template() {
-    return `
-        <header>
-          <div id="header-wrap" class="header-wrap">
-            <img id="header-back" src='/assets/back.svg' class='header-back' />
-            <p id="header-text" class="header-text">아무 말 대잔치</p>
-            <div id="profile-wrap" class="profile-wrap">
-              <img
-                id="profile-img"
-                alt="profile-img"
-                class="header-profile-img"
-                loading="lazy"
-              />
-              <div id="profile-dropdown" class="profile-dropdown">
-                <div id="dropdown-edit-profile" class="profile-dropdown-menu">
-                  회원정보 수정
-                </div>
-                <div id="dropdown-edit-password" class="profile-dropdown-menu">
-                  비밀번호 수정
-                </div>
-                <div id="dropdown-login" class="profile-dropdown-menu">
-                  로그인
-                </div>
-                <div id="dropdown-logout" class="profile-dropdown-menu">
-                  로그아웃
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-      `
   }
 
   addEventListener() {
@@ -164,6 +183,11 @@ class headerElement extends HTMLElement {
     } else {
       headerWrap.style.paddingLeft = '0px'
     }
+  }
+
+  // 외부에서 호출 가능한 로딩 상태 반환 메서드
+  getLoadingPromise() {
+    return this.loadingPromise
   }
 }
 

@@ -1,21 +1,10 @@
-import handleNavigation from '/utils/navigation.js'
-
-document.addEventListener('DOMContentLoaded', () => {
-  const logInTxt = document.getElementById('log-in')
-
-  if (logInTxt) {
-    logInTxt.addEventListener('click', () =>
-      handleNavigation('/html/Log-in.html'),
-    )
-  }
-})
-
 document.addEventListener('DOMContentLoaded', async () => {
   const header = document.querySelector('header-element')
+  const commentList = document.querySelector('comment-list-element')
   const loadingScreen = document.getElementById('loading-screen')
 
   // 모든 데이터 패치가 완료될 때까지 기다림
-  await Promise.all([header.fetchData()])
+  await Promise.all([header.fetchData(), commentList.fetchData()])
 
   // 로딩 화면 제거
   if (loadingScreen) {

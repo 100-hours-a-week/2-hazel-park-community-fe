@@ -11,9 +11,13 @@ class PostListElement extends HTMLElement {
     this.page = 0
     this.allPostsLoaded = false
     this.isLoading = false
+    this.loadingPromise = null // 로딩 상태 관리
   }
 
   async connectedCallback() {
+    // 로딩 상태 Promise 저장
+    this.loadingPromise = this.fetchData()
+
     const savedScrollPosition = sessionStorage.getItem('scrollPosition')
     if (savedScrollPosition) {
       window.scrollTo(0, parseInt(savedScrollPosition, 10))
@@ -42,10 +46,8 @@ class PostListElement extends HTMLElement {
     postList.className = 'post-list'
     this.shadowRoot.appendChild(postList)
 
-    // 데이터 로드
-    await this.loadPostsData()
-
-    // 무한 스크롤 초기화
+    // 데이터 로드 완료 후 초기화
+    await this.loadingPromise // 데이터 로드 대기
     this.initInfiniteScroll()
   }
 
@@ -61,6 +63,12 @@ class PostListElement extends HTMLElement {
       stylesheet.addEventListener('load', () => resolve())
       stylesheet.addEventListener('error', () => resolve()) // 에러 시에도 진행
     })
+  }
+
+  async fetchData() {
+    // 데이터를 로드하고 Promise 반환
+    await this.loadPostsData()
+    return Promise.resolve()
   }
 
   async loadPostsData() {
@@ -181,6 +189,11 @@ class PostListElement extends HTMLElement {
     if (this.observer) {
       this.observer.disconnect()
     }
+  }
+
+  // 외부에서 호출 가능한 로딩 상태 반환 메서드
+  getLoadingPromise() {
+    return this.loadingPromise
   }
 
   showLoadingAnimation() {

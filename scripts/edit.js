@@ -1,15 +1,3 @@
-import handleNavigation from '/utils/navigation.js'
-
-document.addEventListener('DOMContentLoaded', () => {
-  const logInTxt = document.getElementById('log-in')
-
-  if (logInTxt) {
-    logInTxt.addEventListener('click', () =>
-      handleNavigation('/html/Log-in.html'),
-    )
-  }
-})
-
 document.addEventListener('DOMContentLoaded', async () => {
   const header = document.querySelector('header-element')
   const loadingScreen = document.getElementById('loading-screen')

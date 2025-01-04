@@ -21,12 +21,13 @@ class CommentListElement extends HTMLElement {
     this.COMMENTS_PER_PAGE = 2
     this.comments = []
     this.isLoading = false
-    // 댓글 등록 버튼을 비활성화하여 중복 클릭을 방지
     this.isRequestInProgress = false
+    this.loadingPromise = null // 로딩 상태 관리
   }
 
   async connectedCallback() {
     await this.loadLottieScript()
+
     const urlParams = new URLSearchParams(window.location.search)
     this.postId = Number(urlParams.get('id'))
 
@@ -37,12 +38,21 @@ class CommentListElement extends HTMLElement {
 
     this.shadowRoot.innerHTML = this.template(this.comments)
 
-    await this.loadCommentsData()
+    // 로딩 상태 Promise 저장
+    this.loadingPromise = this.loadCommentsData()
+
     this.user = await getSessionUser()
 
     this.initInfiniteScroll()
 
     this.addEventListener(this.comments)
+  }
+
+  async fetchData() {
+    if (!this.loadingPromise) {
+      this.loadingPromise = this.loadCommentsData()
+    }
+    return this.loadingPromise
   }
 
   async loadLottieScript() {
@@ -171,6 +181,13 @@ class CommentListElement extends HTMLElement {
       this.hideLoadingAnimation()
       this.isLoading = false
     }
+
+    return Promise.resolve() // 로딩 완료 후 Promise 반환
+  }
+
+  // 외부에서 호출 가능한 로딩 상태 반환 메서드
+  getLoadingPromise() {
+    return this.loadingPromise
   }
 
   initInfiniteScroll() {
@@ -251,29 +268,29 @@ class CommentListElement extends HTMLElement {
         ${comments
           .map(
             (comment) => `
-            <div class="comment-wrap">
-              <div class="comment-wrap-detail">
-                <div class="comment-writer-info">
-                ${
-                  comment.author_profile_picture
-                    ? `
-                        <img id="post-writer-img" src="${comment.author_profile_picture}" class="post-writer-profile" />
-                      `
-                    : `
-                        <div id="post-writer-div" class="post-writer-img"></div>
-                      `
-                }
-                  <div class="post-writer-name">${comment.writer}</div>
+        <div class="comment-wrap">
+          <div class="comment-wrap-detail">
+            <div class="comment-writer-info">
+            ${
+              comment.author_profile_picture
+                ? `
+                    <img id="post-writer-img" src="${comment.author_profile_picture}" class="post-writer-profile" />
+                  `
+                : `
+                    <div id="post-writer-div" class="post-writer-img"></div>
+                  `
+            }
+              <div class="post-writer-name">${comment.writer}</div>
                   <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
-                </div>
-                <div class="comment-contents">${comment.content}</div>
-              </div>
-              <div class="post-controll-button">
-                <button id="button-update" class="post-controll-button-detail">수정</button>
-                <button id="button-delete" class="post-controll-button-detail">삭제</button>
-              </div>
             </div>
-            `,
+            <div class="comment-contents">${comment.content}</div>
+          </div>
+          <div class="post-controll-button">
+            <button id="button-update" class="post-controll-button-detail">수정</button>
+            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+          </div>
+        </div>
+        `,
           )
           .join('')}
       </div>

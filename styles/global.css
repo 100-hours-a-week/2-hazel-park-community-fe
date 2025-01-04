@@ -129,3 +129,32 @@ textarea {
 #header-back {
   cursor: pointer;
 }
+
+/* 로딩 화면 */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(244, 245, 247, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+/* 로띠 애니메이션 스타일 */
+dotlottie-player {
+  display: block;
+  width: 300px;
+  height: 300px;
+}
+
+.sign-in {
+  width: 355px;
+  height: 33px;
+  text-align: center;
+}
