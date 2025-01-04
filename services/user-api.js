@@ -46,6 +46,41 @@ export async function getSessionUser() {
   }
 }
 
+export async function checkEmailDuplicate(email) {
+  try {
+    const response = await fetch(`${baseUrl}/email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    })
+    const data = await response.json()
+    console.log(data)
+    return data
+  } catch (error) {
+    console.error(error.message)
+    return false
+  }
+}
+
+export async function checkNicknameDuplicate(nickname) {
+  try {
+    const response = await fetch(`${baseUrl}/nickname`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nickname }),
+    })
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error(error.message)
+    return false
+  }
+}
+
 export async function registerUser(email, password, nickname, profilePic) {
   const formData = new FormData()
   formData.append('email', email)
