@@ -14,6 +14,10 @@ class AuthFormElement extends HTMLElement {
     this.user = null
     this.isLoginPage = true
     this.profileImageData = null
+    this.emailCheck = false
+    this.pwCheck = false
+    this.rePwCheck = false
+    this.nicknameCheck = false
   }
 
   async connectedCallback() {
@@ -97,8 +101,8 @@ class AuthFormElement extends HTMLElement {
     } = this.getElement()
 
     inputProfileImg?.addEventListener('input', () => this.checkImgUpload())
-    // inputEmail?.addEventListener('input', () => this.validateForm())
-    // inputPassword?.addEventListener('input', () => this.validateForm())
+    inputEmail?.addEventListener('input', () => this.validateForm())
+    inputPassword?.addEventListener('input', () => this.validateForm())
     inputEmail?.addEventListener(
       'input',
       debounce(() => this.checkEmail(inputEmail.value.trim()), 500),
@@ -131,21 +135,29 @@ class AuthFormElement extends HTMLElement {
   async checkEmail(email) {
     const emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
     if (!email) {
+      this.emailCheck = false
       emailHyperText.innerText = '*이메일을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
       return
     } else if (!this.emailValidCheck(email)) {
+      this.emailCheck = false
       emailHyperText.innerText = '*올바른 이메일 주소 형식을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
-    } else {
+    } else if (!this.isLoginPage) {
       const isDuplicate = await checkEmailDuplicate(email)
       if (isDuplicate.code == 400) {
+        this.emailCheck = false
         emailHyperText.innerText = `*${isDuplicate.message}`
         emailHyperText.style.visibility = 'visible'
       } else {
+        this.emailCheck = true
         emailHyperText.style.visibility = 'hidden'
       }
+    } else {
+      this.emailCheck = true
+      emailHyperText.style.visibility = 'hidden'
     }
+    this.validateForm()
   }
 
   async checkNickname(nickname) {
@@ -153,24 +165,34 @@ class AuthFormElement extends HTMLElement {
       'nickname-hyper-text',
     )
     if (!nickname) {
+      this.nicknameCheck = false
       nicknameHyperText.innerText = '*닉네임을 입력해주세요.'
       nicknameHyperText.style.visibility = 'visible'
       return
     } else if (nickname.length > 10) {
+      this.nicknameCheck = false
+
       nicknameHyperText.innerText = '*닉네임은 최대 10자까지 입력 가능합니다.'
       nicknameHyperText.style.visibility = 'visible'
     } else if (/\s/.test(nickname)) {
+      this.nicknameCheck = false
       nicknameHyperText.innerText = '*띄어쓰기를 없애주세요.'
       nicknameHyperText.style.visibility = 'visible'
-    } else {
+    } else if (!this.isLoginPage) {
       const isDuplicate = await checkNicknameDuplicate(nickname)
       if (isDuplicate.code == 400) {
+        this.nicknameCheck = false
         nicknameHyperText.innerText = `*${isDuplicate.message}`
         nicknameHyperText.style.visibility = 'visible'
       } else {
+        this.nicknameCheck = true
         nicknameHyperText.style.visibility = 'hidden'
       }
+    } else {
+      this.nicknameCheck = true
+      nicknameHyperText.style.visibility = 'hidden'
     }
+    this.validateForm()
   }
 
   getElement() {
@@ -205,60 +227,60 @@ class AuthFormElement extends HTMLElement {
       rePwHyperText.innerText = ''
     }
 
-    let emailCheck = false
-    let pwCheck = false
-    let rePwCheck = false
-    let nicknameCheck = false
-
     if (!inputEmail.value.trim()) {
-      emailCheck = false
+      this.emailCheck = false
       emailHyperText.innerText = '*이메일을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
     }
 
     if (!inputPassword.value.trim()) {
-      pwCheck = false
+      this.pwCheck = false
       pwHyperText.style.visibility = 'visible'
       pwHyperText.innerText = '*비밀번호를 입력해주세요.'
     } else if (!this.pwValidCheck(inputPassword.value.trim())) {
-      pwCheck = false
+      this.pwCheck = false
       pwHyperText.innerText =
         '*비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.'
       pwHyperText.style.visibility = 'visible'
     } else {
-      pwCheck = true
+      this.pwCheck = true
       pwHyperText.style.visibility = 'hidden'
     }
 
     if (inputRePassword) {
       if (!inputRePassword.value.trim()) {
-        rePwCheck = false
+        this.rePwCheck = false
         rePwHyperText.style.visibility = 'visible'
         rePwHyperText.innerText = '*비밀번호를 한 번 더 입력해주세요.'
       } else if (inputRePassword.value.trim() !== inputPassword.value.trim()) {
-        rePwCheck = false
+        this.rePwCheck = false
         rePwHyperText.style.visibility = 'visible'
         rePwHyperText.innerText = '*비밀번호가 다릅니다.'
       } else {
-        rePwCheck = true
+        this.rePwCheck = true
         rePwHyperText.style.visibility = 'hidden'
       }
 
       if (!inputNickname.value.trim()) {
-        nicknameCheck = false
+        this.nicknameCheck = false
         nicknameHyperText.innerText = '닉네임을 입력해주세요.'
         nicknameHyperText.style.visibility = 'visible'
       }
     }
 
     if (!inputRePassword && !inputNickname) {
-      if (emailCheck && pwCheck) {
+      if (this.emailCheck && this.pwCheck) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
         return 'posts'
       }
     } else {
-      if (emailCheck && pwCheck && rePwCheck && nicknameCheck) {
+      if (
+        this.emailCheck &&
+        this.pwCheck &&
+        this.rePwCheck &&
+        this.nicknameCheck
+      ) {
         submit.style.backgroundColor = '#7f6aee'
         submit.style.cursor = 'pointer'
         return 'login'
