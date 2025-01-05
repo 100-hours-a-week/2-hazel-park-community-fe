@@ -132,7 +132,7 @@ class PostListElement extends HTMLElement {
           ${
             post.img
               ? `<img id="post-writer-img" src="${post.img}" class="post-writer-profile" />`
-              : `<div id="post-writer-div" class="post-writer-img"></div>`
+              : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
           }
           <div class="post-writer">${post.writer}</div>
         </div>

@@ -156,7 +156,7 @@ class PostElement extends HTMLElement {
           ${
             this.post.author_profile_picture
               ? `<img id="post-writer-img" src="${this.post.author_profile_picture}" class="post-writer-profile" />`
-              : `<div id="post-writer-div" class="post-writer-img"></div>`
+              : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
           }
           <div class="post-writer-name">${this.post.post_writer}</div>
           <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
