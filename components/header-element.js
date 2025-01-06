@@ -20,6 +20,55 @@ class headerElement extends HTMLElement {
     styleSheet.href = '/styles/global.css'
     this.shadowRoot.appendChild(styleSheet)
 
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+      .profile-dropdown {
+        position: absolute;
+        width: 7.1875rem;
+        margin-top: 0.278vh;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255, 255, 255);
+        color: rgb(107, 107, 107);
+        font-weight: 400;
+        font-size: 0.75rem;
+        line-heihgt: 0.9075rem;
+        text-wrap: nowrap;
+        visibility: hidden;
+        z-index: 1;
+        box-shadow:
+          rgba(0, 0, 0, 0.05) 0px 0px 4px,
+          rgba(0, 0, 0, 0.15) 0px 2px 8px;
+      }
+
+      :host-context(body.dark-mode) .profile-dropdown {
+        box-shadow:
+          rgba(255, 255, 255, 0.05) 0px 0px 4px,
+          rgba(255, 255, 255, 0.15) 0px 2px 8px;
+      }
+
+      .profile-dropdown-menu {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+    
+      :host-context(body.dark-mode) .profile-dropdown-menu {
+        background-color: #141414;
+        color: #ffffff;
+      }
+              
+      :host-context(body.dark-mode) .profile-dropdown-menu:hover {
+        background-color: rgb(48, 48, 48)
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     // 스타일 로드 후 템플릿 렌더링
     styleSheet.addEventListener('load', async () => {
       await this.loadingPromise // 데이터 로드 대기

@@ -45,6 +45,55 @@ class CommentListElement extends HTMLElement {
 
     this.initInfiniteScroll()
 
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+      .profile-dropdown {
+        position: absolute;
+        width: 7.1875rem;
+        margin-top: 0.278vh;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255, 255, 255);
+        color: rgb(107, 107, 107);
+        font-weight: 400;
+        font-size: 0.75rem;
+        line-heihgt: 0.9075rem;
+        text-wrap: nowrap;
+        visibility: hidden;
+        z-index: 1;
+        box-shadow:
+          rgba(0, 0, 0, 0.05) 0px 0px 4px,
+          rgba(0, 0, 0, 0.15) 0px 2px 8px;
+      }
+
+      :host-context(body.dark-mode) .profile-dropdown {
+        box-shadow:
+          rgba(255, 255, 255, 0.05) 0px 0px 4px,
+          rgba(255, 255, 255, 0.15) 0px 2px 8px;
+      }
+
+      .profile-dropdown-menu {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+    
+      :host-context(body.dark-mode) .profile-dropdown-menu {
+        background-color: #141414;
+        color: #ffffff;
+      }
+    
+      :host-context(body.dark-mode) .profile-dropdown-menu:hover {
+        background-color: rgb(48, 48, 48)
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     this.addEventListener(this.comments)
   }
 
@@ -92,8 +141,15 @@ class CommentListElement extends HTMLElement {
             <div class="comment-contents">${comment.content}</div>
           </div>
           <div class="post-controll-button">
-            <button id="button-update" class="post-controll-button-detail">수정</button>
-            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+            <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style='color: #6b6b6b; cursor: pointer;'></i>
+              <div id="controll-button-dropdown" class="profile-dropdown">
+               <div id="button-update" class="profile-dropdown-menu">
+                 Edit
+               </div>
+               <div id="button-delete" class="profile-dropdown-menu">
+                 Delete
+               </div>
+            </div>           
           </div>
         </div>
         `,
@@ -286,8 +342,15 @@ class CommentListElement extends HTMLElement {
             <div class="comment-contents">${comment.content}</div>
           </div>
           <div class="post-controll-button">
-            <button id="button-update" class="post-controll-button-detail">수정</button>
-            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+            <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style='color: #6b6b6b; cursor: pointer;'></i>
+              <div id="controll-button-dropdown" class="profile-dropdown">
+               <div id="button-update" class="profile-dropdown-menu">
+                 Edit
+               </div>
+               <div id="button-delete" class="profile-dropdown-menu">
+                 Delete
+               </div>
+            </div>           
           </div>
         </div>
         `,
@@ -298,10 +361,44 @@ class CommentListElement extends HTMLElement {
     `
   }
 
-  addEventListener(comments) {
+  addEventListener() {
     this.registerComment()
-    this.updateComment(comments)
-    this.deleteComments(comments)
+    this.updateComment(this.comments)
+    this.deleteComments(this.comments)
+    const commentsContainer = this.shadowRoot.querySelector('div') // 댓글 컨테이너
+    if (!commentsContainer) return
+
+    // 이벤트 위임으로 controll-button 클릭 처리
+    commentsContainer.addEventListener('click', (event) => {
+      const controllButton = event.target.closest('.fa-ellipsis-vertical') // 클릭된 요소가 controll-button인지 확인
+      const dropdown = controllButton?.nextElementSibling // 버튼의 바로 다음 dropdown
+
+      if (controllButton && dropdown) {
+        event.stopPropagation()
+
+        // 모든 dropdown 닫기
+        const allDropdowns = this.shadowRoot.querySelectorAll(
+          '#controll-button-dropdown',
+        )
+        allDropdowns.forEach((dropdown) => {
+          dropdown.style.visibility = 'hidden'
+        })
+
+        // 클릭된 버튼의 dropdown 토글
+        dropdown.style.visibility =
+          dropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
+      }
+    })
+
+    // 다른 곳 클릭 시 모든 dropdown 닫기
+    document.addEventListener('click', () => {
+      const allDropdowns = this.shadowRoot.querySelectorAll(
+        '#controll-button-dropdown',
+      )
+      allDropdowns.forEach((dropdown) => {
+        dropdown.style.visibility = 'hidden'
+      })
+    })
   }
 
   registerComment() {
@@ -517,7 +614,11 @@ class CommentListElement extends HTMLElement {
     }
 
     if (commentArea && commentCheck && submit) {
-      submit.style.backgroundColor = '#141414'
+      if (localStorage.getItem('theme') === 'dark') {
+        submit.style.backgroundColor = '#303030'
+      } else {
+        submit.style.backgroundColor = '#f7f7f7'
+      }
       submit.style.cursor = 'pointer'
       return true
     }
