@@ -38,7 +38,6 @@
   padding-bottom: 0.417vw;
   box-sizing: border-box;
   border: 1px solid #000000;
-  border-radius: 4px;
 }
 
 .input-value:focus {
