@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/styles/global.css" />
     <link rel="stylesheet" href="/styles/make-post.css" />
+    <style>
+      html {
+        background-color: #ffffff;
+      }
+      html.dark-mode {
+        background-color: #111111;
+        color: #ffffff;
+      }
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(244, 245, 247, 1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 1s ease;
+      }
+      html.dark-mode .loading-screen {
+        background-color: #111111;
+      }
+    </style>
+    <script>
+      ;(function () {
+        const theme = localStorage.getItem('theme')
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark-mode')
+        }
+      })()
+    </script>
     <title>hazel</title>
     <link id="favicon" rel="icon" href="/assets/favicon.png" type="image/png" />
   </head>
@@ -12,7 +46,7 @@
     <div id="loading-screen" class="loading-screen"></div>
     <header-element></header-element>
     <section class="title">
-      <div>게시글 수정</div>
+      <div>Edit post</div>
     </section>
     <section class="post-form">
       <post-form-element></post-form-element>

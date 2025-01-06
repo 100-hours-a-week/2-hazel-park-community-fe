@@ -55,10 +55,48 @@ class postFormElement extends HTMLElement {
       fetch('/styles/make-post.css').then((res) => res.text()),
     ])
 
-    const styleSheet = new CSSStyleSheet()
-    styleSheet.replaceSync(styles.join('\n'))
+    // 로드한 스타일 시트를 CSSStyleSheet 객체로 생성
+    const mainStyleSheet = new CSSStyleSheet()
+    mainStyleSheet.replaceSync(styles.join('\n'))
 
-    this.shadowRoot.adoptedStyleSheets = [styleSheet]
+    // 추가 스타일 시트 정의
+    const additionalStyles = new CSSStyleSheet()
+    additionalStyles.replaceSync(`
+       .input-value {
+        margin-top: 1.481vh;
+        padding: 1.852vh 0 1.852vh 1.25vw;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+        background-color: #ffffff;
+      }
+  
+      :host-context(body.dark-mode) .input-value {
+        background-color: #141414;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        color: #ffffff; 
+      }
+  
+      .input-file-span {
+        padding: 0.556vh 0 0.556vh 0;
+        margin-left: 0.625vw;
+        display: block;
+        line-height: 1.0444rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        box-sizing: border-box;
+      }
+  
+      :host-context(body.dark-mode) .input-file-span {
+        color: #ffffff; 
+      }
+    `)
+
+    this.shadowRoot.adoptedStyleSheets = [mainStyleSheet, additionalStyles]
+
+    this.style.visibility = 'visible' // 콘텐츠 표시
   }
 
   template() {
@@ -74,12 +112,12 @@ class postFormElement extends HTMLElement {
   makePostForm() {
     return `    
       <div>
-        <div class="input-title">제목*</div>
+        <div class="input-title">제목 *</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-          <div class="input-title">내용*</div>
+          <div class="input-title">내용 *</div>
           <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               0 / 1000
@@ -101,12 +139,12 @@ class postFormElement extends HTMLElement {
   editPostForm() {
     return `
       <div>
-        <div class="input-title">제목*</div>
+        <div class="input-title">제목 *</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData.post_title}" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-          <div class="input-title">내용*</div>
+          <div class="input-title">내용 *</div>
           <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               ${this.postData.post_contents.length} / 1000
@@ -341,7 +379,7 @@ class postFormElement extends HTMLElement {
 
       // 글자수 초과 시 빨간색 표시
       if (charCountDisplay) {
-        charCountDisplay.style.color = 'red'
+        charCountDisplay.style.color = '#c94a4a'
       }
     } else {
       contentsCheck = true

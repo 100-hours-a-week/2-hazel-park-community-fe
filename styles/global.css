@@ -1,10 +1,10 @@
 @import url('https://statics.goorm.io/fonts/GoormSans/v1.0.0/GoormSans.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background: #f4f5f7;
 }
 
 body {
@@ -19,20 +19,25 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  background: rgba(255, 255, 255, 1);
+  color: black;
 }
 
 .body::-webkit-scrollbar {
   display: none; /* Chrome , Safari , Opera */
 }
 
+body.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
 header {
-  height: 104px;
-  padding-top: 2.25rem;
-  padding-bottom: 2.25rem;
-  background: #f4f5f7;
+  padding-top: 8px;
+  padding-bottom: 8px;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #f2f2f2;
 }
 
 main {
@@ -60,8 +65,8 @@ textarea {
 }
 
 .header-wrap {
-  width: 592.02px;
-  padding-left: 193px;
+  width: -webkit-fill-available;
+  padding: 0 24px;
   height: fit-content;
   display: flex;
   flex-direction: row;
@@ -74,11 +79,10 @@ textarea {
 }
 
 .header-text {
-  font-size: 2rem;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 900;
   line-height: 2rem;
   text-align: center;
-  color: #000000;
   text-wrap: nowrap;
   cursor: pointer;
 }
@@ -104,13 +108,17 @@ textarea {
   right: 0;
   display: flex;
   flex-direction: column;
-  background-color: #d9d9d9;
+  background-color: rgb(255, 255, 255);
+  color: rgb(107, 107, 107);
   font-weight: 400;
   font-size: 0.75rem;
   line-heihgt: 0.9075rem;
   text-wrap: nowrap;
   visibility: hidden;
   z-index: 1;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 0px 4px,
+    rgba(0, 0, 0, 0.15) 0px 2px 8px;
 }
 
 .profile-dropdown-menu {
@@ -118,8 +126,9 @@ textarea {
   padding-bottom: 0.625rem;
   padding-right: 1.5rem;
   padding-left: 1.5rem;
-  background-color: #d9d9d9;
+  background-color: transparent;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .profile-dropdown-menu:hover {
@@ -146,6 +155,10 @@ textarea {
   transition: opacity 1s ease;
 }
 
+body.dark-mode .loading-screen {
+  background-color: #121212;
+}
+
 /* 로띠 애니메이션 스타일 */
 dotlottie-player {
   display: block;
@@ -157,4 +170,60 @@ dotlottie-player {
   width: 355px;
   height: 33px;
   text-align: center;
+}
+
+.wrap-for-flex {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+
+/* 슬라이더 스타일 */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle input[type='checkbox'] {
+  display: none;
+}
+
+.theme-toggle .slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-toggle .slider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle input[type='checkbox']:checked + .slider {
+  background-color: #aea0eb;
+}
+
+.theme-toggle input[type='checkbox']:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+body.dark-mode .profile-dropdown-menu {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  box-shadow:
+    rgba(255, 255, 255, 0.05) 0px 0px 4px,
+    rgba(255, 255, 255, 0.15) 0px 2px 8px;
 }

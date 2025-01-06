@@ -21,7 +21,6 @@
   width: 149px;
   height: 149px;
   border-radius: 100%;
-  background-color: #c4c4c4;
   cursor: pointer;
   margin: 0 auto;
 }
@@ -85,10 +84,8 @@
   width: 149px;
   height: 149px;
   border-radius: 100%;
-  background-color: #c4c4c4;
   cursor: pointer;
   margin: 0 auto;
-  display: none;
   object-fit: cover;
 }
 

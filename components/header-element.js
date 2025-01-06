@@ -20,11 +20,84 @@ class headerElement extends HTMLElement {
     styleSheet.href = '/styles/global.css'
     this.shadowRoot.appendChild(styleSheet)
 
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+      .profile-dropdown {
+        position: absolute;
+        width: 7.1875rem;
+        margin-top: 0.278vh;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255, 255, 255);
+        color: rgb(107, 107, 107);
+        font-weight: 400;
+        font-size: 0.75rem;
+        line-heihgt: 0.9075rem;
+        text-wrap: nowrap;
+        visibility: hidden;
+        z-index: 1;
+        box-shadow:
+          rgba(0, 0, 0, 0.05) 0px 0px 4px,
+          rgba(0, 0, 0, 0.15) 0px 2px 8px;
+      }
+
+      :host-context(body.dark-mode) .profile-dropdown {
+        box-shadow:
+          rgba(255, 255, 255, 0.05) 0px 0px 4px,
+          rgba(255, 255, 255, 0.15) 0px 2px 8px;
+      }
+
+      .profile-dropdown-menu {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+    
+      :host-context(body.dark-mode) .profile-dropdown-menu {
+        background-color: #141414;
+        color: #ffffff;
+      }
+              
+      :host-context(body.dark-mode) .profile-dropdown-menu:hover {
+        background-color: rgb(48, 48, 48)
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     // 스타일 로드 후 템플릿 렌더링
     styleSheet.addEventListener('load', async () => {
       await this.loadingPromise // 데이터 로드 대기
       this.shadowRoot.innerHTML += this.template()
       this.initializeComponent()
+      this.initializeTheme() // 테마 초기화
+    })
+  }
+
+  // 테마 초기화 메서드
+  initializeTheme() {
+    const themeSwitch = this.shadowRoot.getElementById('theme-switch')
+    const body = document.body
+
+    // 초기 상태 설정 (로컬스토리지 기반)
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode')
+      themeSwitch.checked = true
+    }
+
+    // 슬라이더 상태 변경 이벤트
+    themeSwitch.addEventListener('change', () => {
+      if (themeSwitch.checked) {
+        body.classList.add('dark-mode')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        body.classList.remove('dark-mode')
+        localStorage.setItem('theme', 'light')
+      }
     })
   }
 
@@ -38,29 +111,36 @@ class headerElement extends HTMLElement {
     return `
     <header>
       <div id="header-wrap" class="header-wrap">
-        <img id="header-back" src="/assets/back.svg" class="header-back" />
         <p id="header-text" class="header-text">
-          아무 말 대잔치
+          Hazel Forum
         </p>
-        <div id="profile-wrap" class="profile-wrap">
-          <img
-            id="profile-img"
-            alt="profile-img"
-            class="header-profile-img"
-            loading="lazy"
-          />
-          <div id="profile-dropdown" class="profile-dropdown">
-            <div id="dropdown-edit-profile" class="profile-dropdown-menu">
-              회원정보 수정
-            </div>
-            <div id="dropdown-edit-password" class="profile-dropdown-menu">
-              비밀번호 수정
-            </div>
-            <div id="dropdown-login" class="profile-dropdown-menu">
-              로그인
-            </div>
-            <div id="dropdown-logout" class="profile-dropdown-menu">
-              로그아웃
+        <div class="wrap-for-flex">
+          <div class="theme-toggle">
+            <i class="fa-solid fa-sun"></i>
+            <input type="checkbox" id="theme-switch" />
+            <label for="theme-switch" class="slider"></label>
+            <i class="fa-solid fa-moon"></i>
+          </div>
+          <div id="profile-wrap" class="profile-wrap">
+            <img
+              id="profile-img"
+              alt="profile-img"
+              class="header-profile-img"
+              loading="lazy"
+            />
+            <div id="profile-dropdown" class="profile-dropdown">
+              <div id="dropdown-edit-profile" class="profile-dropdown-menu">
+                Edit profile
+              </div>
+              <div id="dropdown-edit-password" class="profile-dropdown-menu">
+                Edit pw
+              </div>
+              <div id="dropdown-login" class="profile-dropdown-menu">
+                Log in
+              </div>
+              <div id="dropdown-logout" class="profile-dropdown-menu">
+                Log out
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +154,6 @@ class headerElement extends HTMLElement {
 
     this.addEventListener()
     this.updateProfileStatus()
-    this.hideProfile()
   }
 
   addEventListener() {
@@ -86,7 +165,6 @@ class headerElement extends HTMLElement {
       dropdownEditPassword,
       dropdownLogin,
       dropdownLogout,
-      backIcon,
     } = this.getElements()
 
     headerText?.addEventListener('click', () =>
@@ -124,8 +202,6 @@ class headerElement extends HTMLElement {
       this.updateProfileStatus()
       handleNavigation('/html/Log-in.html')
     })
-
-    backIcon?.addEventListener('click', () => window.history.back())
   }
 
   getElements() {
@@ -138,7 +214,6 @@ class headerElement extends HTMLElement {
       dropdownEditPassword: getElement('dropdown-edit-password'),
       dropdownLogin: getElement('dropdown-login'),
       dropdownLogout: getElement('dropdown-logout'),
-      backIcon: getElement('header-back'),
       profileWrap: getElement('profile-wrap'),
       headerWrap: getElement('header-wrap'),
     }
@@ -160,32 +235,6 @@ class headerElement extends HTMLElement {
     dropdownLogout.style.display = this.user ? 'block' : 'none'
   }
 
-  hideProfile() {
-    const currentPath = window.location.pathname
-    const profileWrap = this.shadowRoot.getElementById('profile-wrap')
-    const backIcon = this.shadowRoot.getElementById('header-back')
-    const headerWrap = this.shadowRoot.getElementById('header-wrap')
-
-    if (currentPath === '/html/Log-in.html') {
-      backIcon.style.display = 'none'
-      profileWrap.style.display = 'none'
-    } else if (currentPath === '/html/Sign-in.html') {
-      profileWrap.style.display = 'none'
-      headerWrap.style.justifyContent = 'start'
-      headerWrap.style.paddingLeft = '0px'
-      headerWrap.style.gap = '193px'
-    } else if (
-      currentPath === '/html/Posts.html' ||
-      currentPath === '/html/edit-profile.html' ||
-      currentPath === '/html/edit-password.html'
-    ) {
-      backIcon.style.display = 'none'
-    } else {
-      headerWrap.style.paddingLeft = '0px'
-    }
-  }
-
-  // 외부에서 호출 가능한 로딩 상태 반환 메서드
   getLoadingPromise() {
     return this.loadingPromise
   }

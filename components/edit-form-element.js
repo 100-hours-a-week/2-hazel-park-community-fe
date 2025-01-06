@@ -19,6 +19,27 @@ class EditFormElement extends HTMLElement {
     this.user = await getSessionUser()
     this.checkLocation()
     this.shadowRoot.innerHTML = this.template()
+
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+       .input-value {
+        margin-top: 1.481vh;
+        padding: 1.852vh 0 1.852vh 1.25vw;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+        background-color: #ffffff;
+      }
+  
+      :host-context(body.dark-mode) .input-value {
+        background-color: #141414;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        color: #ffffff; 
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     this.addEventListeners()
   }
 
@@ -32,7 +53,7 @@ class EditFormElement extends HTMLElement {
           ${
             this.isEditProfilePage ? this.profileForm() : this.passwordForm()
           }           
-            <input id="submit" type="submit" value="수정하기" class="login-submit" />
+            <input id="submit" type="submit" value="Edit profile" class="login-submit" />
         </form>
     </div>
 `
@@ -41,7 +62,7 @@ class EditFormElement extends HTMLElement {
   profileForm() {
     return `
       <div style="margin-bottom: 2.87vh">
-        <div class="input-title">프로필 사진</div>
+        <div class="input-title">Profile</div>
         <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       ${
         this.user.profile_picture || this.user.profile_picture === null
@@ -64,11 +85,11 @@ class EditFormElement extends HTMLElement {
       }
         </div>
         <div class="email-wrap">
-          <div class="input-title">이메일</div>
+          <div class="input-title">Email</div>
           <div id="user-email" class="user-email" />${this.user.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
-          <div class="input-title">닉네임*</div>
+          <div class="input-title">Nickname *</div>
             <input id="input-nickname" type="text" placeholder=${this.user.nickname} class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
@@ -78,13 +99,13 @@ class EditFormElement extends HTMLElement {
   passwordForm() {
     return `
       <div style="margin-top: 0.3em" class="password-wrap">
-        <div class="input-title">비밀번호</div>
-         <input id="input-password" type="password" placeholder="비밀번호를 입력하세요" class="input-value" />
+        <div class="input-title">Password</div>
+         <input id="input-password" type="password" placeholder="Enter your password" class="input-value" />
         <div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>
       </div>
       <div style="margin-top: 0.3em" class="password-wrap">
-        <div class="input-title">비밀번호 확인*</div>
-        <input id="input-re-password" type="password" placeholder="비밀번호를 한 번 더 입력하세요" class="input-value" />
+        <div class="input-title">Re password*</div>
+        <input id="input-re-password" type="password" placeholder="Check your password" class="input-value" />
         <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
       </div>
     `

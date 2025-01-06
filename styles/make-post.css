@@ -20,8 +20,8 @@
 
 .input-title {
   padding-left: 1.25vw;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 400;
+  font-size: 14px;
   line-height: 1.3rem;
 }
 
@@ -30,7 +30,7 @@
   font-weight: 400;
   font-size: 0.75rem;
   line-height: 0.9075rem;
-  color: #ff0000;
+  color: #c94a4a;
   visibility: hidden;
 }
 
@@ -42,7 +42,7 @@
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.16);
   border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-  background-color: transparent;
+  background-color: #ffffff;
 }
 
 .input-value:focus {
