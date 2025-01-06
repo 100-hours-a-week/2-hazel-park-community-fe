@@ -55,10 +55,48 @@ class postFormElement extends HTMLElement {
       fetch('/styles/make-post.css').then((res) => res.text()),
     ])
 
-    const styleSheet = new CSSStyleSheet()
-    styleSheet.replaceSync(styles.join('\n'))
+    // 로드한 스타일 시트를 CSSStyleSheet 객체로 생성
+    const mainStyleSheet = new CSSStyleSheet()
+    mainStyleSheet.replaceSync(styles.join('\n'))
 
-    this.shadowRoot.adoptedStyleSheets = [styleSheet]
+    // 추가 스타일 시트 정의
+    const additionalStyles = new CSSStyleSheet()
+    additionalStyles.replaceSync(`
+      .input-value {
+        margin-top: 1.481vh;
+        padding: 1.852vh 0 1.852vh 1.25vw;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-top: 1px solid rgba(0, 0, 0, 0.16);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+        background-color: #ffffff;
+      }
+  
+      :host-context(body.dark-mode) .input-value {
+        background-color: #141414;
+        color: #ffffff; 
+      }
+  
+      .input-file-span {
+        padding: 0.556vh 0 0.556vh 0;
+        margin-left: 0.625vw;
+        display: block;
+        line-height: 1.0444rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        box-sizing: border-box;
+      }
+  
+      :host-context(body.dark-mode) .input-file-span {
+        color: #ffffff; 
+      }
+    `)
+
+    this.shadowRoot.adoptedStyleSheets = [mainStyleSheet, additionalStyles]
+
+    this.style.visibility = 'visible' // 콘텐츠 표시
   }
 
   template() {
