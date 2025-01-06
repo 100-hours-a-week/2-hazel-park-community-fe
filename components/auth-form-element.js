@@ -24,6 +24,27 @@ class AuthFormElement extends HTMLElement {
     this.checkLocation()
     this.shadowRoot.innerHTML = this.template()
     this.user = await getSessionUser()
+
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+       .input-value {
+        margin-top: 1.481vh;
+        padding: 1.852vh 0 1.852vh 1.25vw;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+        background-color: #ffffff;
+      }
+  
+      :host-context(body.dark-mode) .input-value {
+        background-color: #141414;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        color: #ffffff; 
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     this.addEventListeners()
   }
 
