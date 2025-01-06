@@ -10,6 +10,10 @@ class ModalElement extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.innerHTML = this.template()
+    const styleLink = document.createElement('link')
+    styleLink.rel = 'stylesheet'
+    styleLink.href = '/styles/modal-element.css'
+    this.shadowRoot.appendChild(styleLink)
     this.addEventListeners()
   }
 
@@ -40,7 +44,6 @@ class ModalElement extends HTMLElement {
   template() {
     return `
       <link rel="stylesheet" href="/styles/global.css">
-      <link rel="stylesheet" href="/styles/modal-element.css">
       <div class="modal-background"></div>
       <div class="modal-wrap">
           <section class="modal-title">

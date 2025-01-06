@@ -48,6 +48,32 @@ class PostListElement extends HTMLElement {
 
     // 데이터 로드 완료 후 초기화
     await this.loadingPromise // 데이터 로드 대기
+
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+      .post-item {
+        background-color: #ffffff;
+        color: #000000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+      }
+    
+      :host-context(body.dark-mode) .post-item {
+        background-color: #141414;
+        color: #ffffff; 
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+      }
+    
+      .post-item:hover {
+        box-shadow: 3px 4px 4px 0px #cccccc40;
+        transform: translateY(-5px);
+      }
+    
+      :host-context(body.dark-mode) .post-item:hover {
+        box-shadow: 3px 4px 4px 0px rgba(255, 255, 255, 0.2);
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     this.initInfiniteScroll()
   }
 
@@ -119,9 +145,18 @@ class PostListElement extends HTMLElement {
           <div class="post-info-wrap-left">
             <div class="post-title">${post.title}</div>
             <div class="post-wrap-detail">
-              <div class="post-likes">좋아요 ${checkCount(post.likes)}</div>
-              <div class="post-comment">댓글 ${checkCount(post.comments)}</div>
-              <div class="post-views">조회수 ${checkCount(post.views)}</div>
+              <div class="post-likes">
+                <i class="fa-solid fa-heart"></i>
+                ${checkCount(post.likes)}
+              </div>
+              <div class="post-comment">
+                <i class="fa-solid fa-comment"></i>
+                ${checkCount(post.comments)}
+              </div>
+              <div class="post-views">
+                <i class="fa-solid fa-eye"></i>
+               ${checkCount(post.views)}
+              </div>
             </div>
           </div>
           <div class="post-updateAt">
@@ -132,7 +167,7 @@ class PostListElement extends HTMLElement {
           ${
             post.img
               ? `<img id="post-writer-img" src="${post.img}" class="post-writer-profile" />`
-              : `<div id="post-writer-div" class="post-writer-img"></div>`
+              : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
           }
           <div class="post-writer">${post.writer}</div>
         </div>

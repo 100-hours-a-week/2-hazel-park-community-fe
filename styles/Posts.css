@@ -1,3 +1,5 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
+
 .title {
   display: flex;
   margin-top: 2.5rem;
@@ -31,16 +33,27 @@
   width: 138px;
   height: 2.4375rem;
   padding: 0.25rem;
-  background-color: #aea0eb;
   border-radius: 16px;
-  border: none;
+  border-color: #ffffff;
+  border-width: 0px;
   font-weight: 700;
   font-size: 1rem;
-  color: #f4f5f7;
+  color: #6b6b6b;
+  background-color: transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-post-button:hover {
-  background-color: #7f6aee;
+  color: #121212;
+}
+
+body.dark-mode .add-post-button {
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+body.dark-mode .add-post-button:hover {
+  color: #6b6b6b;
 }
 
 .posts {
@@ -59,10 +72,11 @@
   padding-top: 1.5em;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
   border-radius: 16px;
-  box-shadow: 3px 4px 4px 0px #cccccc40;
   cursor: pointer;
+  transition:
+    transform 0.5s ease,
+    box-shadow 0.5s ease;
 }
 
 .post-info-wrap {
@@ -72,7 +86,7 @@
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.1375rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+  border-bottom: 1px solid #f2f2f2;
 }
 
 .post-info-wrap-left {
@@ -96,12 +110,14 @@
   display: flex;
   flex-direction: row;
   gap: 10px;
+  color: rgb(107, 107, 107);
 }
 
 .post-updateAt {
   margin-left: auto;
   align-self: end;
   text-wrap: nowrap;
+  color: rgb(107, 107, 107);
 }
 
 .post-writer-wrap {
