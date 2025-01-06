@@ -25,6 +25,30 @@ class headerElement extends HTMLElement {
       await this.loadingPromise // 데이터 로드 대기
       this.shadowRoot.innerHTML += this.template()
       this.initializeComponent()
+      this.initializeTheme() // 테마 초기화
+    })
+  }
+
+  // 테마 초기화 메서드
+  initializeTheme() {
+    const themeSwitch = this.shadowRoot.getElementById('theme-switch')
+    const body = document.body
+
+    // 초기 상태 설정 (로컬스토리지 기반)
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode')
+      themeSwitch.checked = true
+    }
+
+    // 슬라이더 상태 변경 이벤트
+    themeSwitch.addEventListener('change', () => {
+      if (themeSwitch.checked) {
+        body.classList.add('dark-mode')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        body.classList.remove('dark-mode')
+        localStorage.setItem('theme', 'light')
+      }
     })
   }
 
@@ -41,25 +65,33 @@ class headerElement extends HTMLElement {
         <p id="header-text" class="header-text">
           Hazel Forum
         </p>
-        <div id="profile-wrap" class="profile-wrap">
-          <img
-            id="profile-img"
-            alt="profile-img"
-            class="header-profile-img"
-            loading="lazy"
-          />
-          <div id="profile-dropdown" class="profile-dropdown">
-            <div id="dropdown-edit-profile" class="profile-dropdown-menu">
-              회원정보 수정
-            </div>
-            <div id="dropdown-edit-password" class="profile-dropdown-menu">
-              비밀번호 수정
-            </div>
-            <div id="dropdown-login" class="profile-dropdown-menu">
-              로그인
-            </div>
-            <div id="dropdown-logout" class="profile-dropdown-menu">
-              로그아웃
+        <div class="wrap-for-flex">
+          <div class="theme-toggle">
+            <i class="fa-solid fa-sun"></i>
+            <input type="checkbox" id="theme-switch" />
+            <label for="theme-switch" class="slider"></label>
+            <i class="fa-solid fa-moon"></i>
+          </div>
+          <div id="profile-wrap" class="profile-wrap">
+            <img
+              id="profile-img"
+              alt="profile-img"
+              class="header-profile-img"
+              loading="lazy"
+            />
+            <div id="profile-dropdown" class="profile-dropdown">
+              <div id="dropdown-edit-profile" class="profile-dropdown-menu">
+                Edit profile
+              </div>
+              <div id="dropdown-edit-password" class="profile-dropdown-menu">
+                Edit pw
+              </div>
+              <div id="dropdown-login" class="profile-dropdown-menu">
+                Log in
+              </div>
+              <div id="dropdown-logout" class="profile-dropdown-menu">
+                Log out
+              </div>
             </div>
           </div>
         </div>
@@ -84,7 +116,6 @@ class headerElement extends HTMLElement {
       dropdownEditPassword,
       dropdownLogin,
       dropdownLogout,
-      backIcon,
     } = this.getElements()
 
     headerText?.addEventListener('click', () =>
@@ -122,8 +153,6 @@ class headerElement extends HTMLElement {
       this.updateProfileStatus()
       handleNavigation('/html/Log-in.html')
     })
-
-    backIcon?.addEventListener('click', () => window.history.back())
   }
 
   getElements() {
@@ -157,7 +186,6 @@ class headerElement extends HTMLElement {
     dropdownLogout.style.display = this.user ? 'block' : 'none'
   }
 
-  // 외부에서 호출 가능한 로딩 상태 반환 메서드
   getLoadingPromise() {
     return this.loadingPromise
   }

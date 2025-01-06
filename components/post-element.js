@@ -21,6 +21,11 @@ class PostElement extends HTMLElement {
     styleLink.rel = 'stylesheet'
     styleLink.href = '/styles/post.css'
     this.shadowRoot.appendChild(styleLink)
+
+    const styleSheet2 = document.createElement('link')
+    styleSheet2.rel = 'stylesheet'
+    styleSheet2.href = '/styles/global.css'
+    this.shadowRoot.appendChild(styleSheet2)
     await this.loadPostData()
     this.loadLikeState()
   }
@@ -76,18 +81,35 @@ class PostElement extends HTMLElement {
       likesValueElement.textContent = checkCount(this.post.post_likes)
     }
 
-    likesElement.style.backgroundColor = this.is_liked ? '#e9e9e9' : '#d9d9d9'
+    likesElement.style.color = this.is_liked ? 'red' : 'rgb(107, 107, 107)'
   }
 
   addEventListeners() {
+    const controllButton = this.shadowRoot.getElementById('controll-button')
+    const buttonDropdown = this.shadowRoot.getElementById(
+      'controll-button-dropdown',
+    )
     const deletePostButton = this.shadowRoot.getElementById('button-delete')
     const updatePostButton = this.shadowRoot.getElementById('button-update')
     const likesButton = this.shadowRoot.getElementById('post-interaction-likes')
 
     if (!this.user || this.user.nickname !== this.post.post_writer) {
+      controllButton.style.visibility = 'hidden'
       deletePostButton.style.visibility = 'hidden'
       updatePostButton.style.visibility = 'hidden'
     }
+
+    document.addEventListener('click', (event) => {
+      if (controllButton && !controllButton.contains(event.target)) {
+        buttonDropdown.style.visibility = 'hidden'
+      }
+    })
+
+    controllButton?.addEventListener('click', (event) => {
+      event.stopPropagation()
+      buttonDropdown.style.visibility =
+        buttonDropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
+    })
 
     deletePostButton?.addEventListener('click', () => {
       this.openModal()
@@ -158,11 +180,35 @@ class PostElement extends HTMLElement {
               ? `<img id="post-writer-img" src="${this.post.author_profile_picture}" class="post-writer-profile" />`
               : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
           }
-          <div class="post-writer-name">${this.post.post_writer}</div>
-          <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
+          <div class="wrap-for-gap">
+            <div class="post-writer-name">${this.post.post_writer}</div>
+            <div class="post-wrap-detail-box">
+              <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
+              <div>
+                <div class="post-wrap-detail">
+                  <div class="detail-icon">
+                    <i class="fa-solid fa-eye"></i>
+                    <div class="icon-value">${checkCount(this.post.post_views)}</div>
+                  </div>
+                  <div class="detail-icon">
+                    <i class="fa-regular fa-comment"></i>
+                    <div class="icon-value">${checkCount(this.post.post_comments)}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div class="post-controll-button">
-            <button id="button-update" class="post-controll-button-detail">수정</button>
-            <button id="button-delete" class="post-controll-button-detail">삭제</button>
+            <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style='color: #6b6b6b; cursor: pointer;'></i>
+              <div id="controll-button-dropdown" class="profile-dropdown">
+               <div id="button-update" class="profile-dropdown-menu">
+                 Edit post
+               </div>
+               <div id="button-delete" class="profile-dropdown-menu">
+                 Delete post
+               </div>
+            </div>           
           </div>
         </div>
       </div>
@@ -175,16 +221,8 @@ class PostElement extends HTMLElement {
         <div class="post-contents">${this.post.post_contents}</div>
         <div class="post-interaction">
           <div id="post-interaction-likes" class="post-interaction-box">
+            <i class="fa-solid fa-heart"></i>
             <div class="post-interaction-value">${checkCount(this.post.post_likes)}</div>
-            <div class="post-interaction-title">좋아요</div>
-          </div>
-          <div class="post-interaction-box">
-            <div class="post-interaction-value">${checkCount(this.post.post_views)}</div>
-            <div class="post-interaction-title">조회수</div>
-          </div>
-          <div class="post-interaction-box">
-            <div class="post-interaction-value">${checkCount(this.post.post_comments)}</div>
-            <div class="post-interaction-title">댓글</div>
           </div>
         </div>
       </div>
