@@ -7,19 +7,6 @@
   box-sizing: border-box;
 }
 
-html {
-  background-color: #ffffff; /* 라이트 모드 기본 배경 */
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-/* 다크모드 상태 */
-html.dark-mode {
-  background-color: #121212; /* 다크모드 기본 배경 */
-  color: #ffffff;
-}
-
 body {
   font-family: 'Goorm Sans', sans-serif;
   font-weight: 400;
@@ -40,7 +27,6 @@ body {
   display: none; /* Chrome , Safari , Opera */
 }
 
-/* 다크모드 스타일 */
 body.dark-mode {
   background-color: #121212;
   color: #ffffff;

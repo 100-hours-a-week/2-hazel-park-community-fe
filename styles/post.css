@@ -187,6 +187,7 @@
 body.dark-mode .comment-area {
   background-color: #121212;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
+  color: #ffffff;
 }
 
 .comment-area:focus {
@@ -208,12 +209,27 @@ body.dark-mode .comment-btn-wrap {
 
 .comment-button {
   padding: 0.4375rem 2.4375rem 0.4375rem 2.5rem;
+  border-radius: 16px;
+  border-color: #ffffff;
+  border-width: 0px;
   font-weight: 700;
   font-size: 1rem;
+  color: #6b6b6b;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #6b6b6b;
+  background-color: transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .comment-button {
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
   color: #ffffff;
-  border: none;
-  border-radius: 16px;
-  background-color: #aea0eb;
+}
+
+body.dark-mode .post-item:hover {
+  box-shadow: 3px 4px 4px 0px #cccccc40;
+  transform: translateY(-5px);
 }
 
 .comment-list-article {

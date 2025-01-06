@@ -48,6 +48,32 @@ class PostListElement extends HTMLElement {
 
     // 데이터 로드 완료 후 초기화
     await this.loadingPromise // 데이터 로드 대기
+
+    const sheet = new CSSStyleSheet()
+    sheet.replaceSync(`
+      .post-item {
+        background-color: #ffffff;
+        color: #000000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+      }
+    
+      :host-context(body.dark-mode) .post-item {
+        background-color: #141414;
+        color: #ffffff; 
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+      }
+    
+      .post-item:hover {
+        box-shadow: 3px 4px 4px 0px #cccccc40;
+        transform: translateY(-5px);
+      }
+    
+      :host-context(body.dark-mode) .post-item:hover {
+        box-shadow: 3px 4px 4px 0px rgba(255, 255, 255, 0.2);
+      }
+    `)
+    this.shadowRoot.adoptedStyleSheets = [sheet]
+
     this.initInfiniteScroll()
   }
 

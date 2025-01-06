@@ -81,7 +81,7 @@ class PostElement extends HTMLElement {
       likesValueElement.textContent = checkCount(this.post.post_likes)
     }
 
-    likesElement.style.color = this.is_liked ? 'red' : 'rgb(107, 107, 107)'
+    likesElement.style.color = this.is_liked ? '#c94a4a' : 'rgb(107, 107, 107)'
   }
 
   addEventListeners() {

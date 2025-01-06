@@ -33,12 +33,14 @@
   width: 138px;
   height: 2.4375rem;
   padding: 0.25rem;
+  border-radius: 16px;
   border-color: #ffffff;
   border-width: 0px;
   font-weight: 700;
   font-size: 1rem;
   color: #6b6b6b;
   background-color: transparent !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-post-button:hover {
@@ -46,9 +48,7 @@
 }
 
 body.dark-mode .add-post-button {
-  border-radius: 16px;
-  border-width: 1px;
-  border-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
@@ -79,24 +79,6 @@ body.dark-mode .add-post-button:hover {
     box-shadow 0.5s ease;
 }
 
-.post-item:hover {
-  box-shadow: 3px 4px 4px 0px #cccccc40;
-  transform: translateY(-5px); /* 위로 5px 올라가는 효과 */
-}
-
-/* 다크 모드 기본 스타일 */
-body.dark-mode .post-item {
-  background-color: #1f1f1f; /* 다크 모드 배경 */
-  color: #ffffff; /* 다크 모드 텍스트 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
-}
-
-/* 다크 모드 hover */
-body.dark-mode .post-item:hover {
-  box-shadow: 3px 4px 4px 0px rgba(255, 255, 255, 0.2); /* 다크 모드 hover 그림자 */
-  transform: translateY(-5px); /* 위로 5px 올라가는 효과 */
-}
-
 .post-info-wrap {
   display: flex;
   justify-content: space-between;
@@ -122,10 +104,6 @@ body.dark-mode .post-item:hover {
   text-wrap: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-body.dark-mode .post-title {
-  color: #ffffff;
 }
 
 .post-wrap-detail {
