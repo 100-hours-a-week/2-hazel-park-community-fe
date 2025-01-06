@@ -119,9 +119,18 @@ class PostListElement extends HTMLElement {
           <div class="post-info-wrap-left">
             <div class="post-title">${post.title}</div>
             <div class="post-wrap-detail">
-              <div class="post-likes">좋아요 ${checkCount(post.likes)}</div>
-              <div class="post-comment">댓글 ${checkCount(post.comments)}</div>
-              <div class="post-views">조회수 ${checkCount(post.views)}</div>
+              <div class="post-likes">
+                <i class="fa-solid fa-heart"></i>
+                ${checkCount(post.likes)}
+              </div>
+              <div class="post-comment">
+                <i class="fa-solid fa-comment"></i>
+                ${checkCount(post.comments)}
+              </div>
+              <div class="post-views">
+                <i class="fa-solid fa-eye"></i>
+               ${checkCount(post.views)}
+              </div>
             </div>
           </div>
           <div class="post-updateAt">
