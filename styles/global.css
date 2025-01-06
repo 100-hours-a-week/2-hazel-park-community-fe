@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background: #f4f5f7;
+  background: rgba(255, 255, 255, 1);
 }
 
 body {
@@ -26,13 +26,12 @@ body {
 }
 
 header {
-  height: 104px;
-  padding-top: 2.25rem;
-  padding-bottom: 2.25rem;
-  background: #f4f5f7;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background: rgba(255, 255, 255, 1);
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #f2f2f2;
 }
 
 main {
@@ -60,8 +59,8 @@ textarea {
 }
 
 .header-wrap {
-  width: 592.02px;
-  padding-left: 193px;
+  width: -webkit-fill-available;
+  padding: 0 24px;
   height: fit-content;
   display: flex;
   flex-direction: row;
@@ -74,8 +73,8 @@ textarea {
 }
 
 .header-text {
-  font-size: 2rem;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 500;
   line-height: 2rem;
   text-align: center;
   color: #000000;
@@ -104,13 +103,17 @@ textarea {
   right: 0;
   display: flex;
   flex-direction: column;
-  background-color: #d9d9d9;
+  background-color: rgb(255, 255, 255);
+  color: rgb(107, 107, 107);
   font-weight: 400;
   font-size: 0.75rem;
   line-heihgt: 0.9075rem;
   text-wrap: nowrap;
   visibility: hidden;
   z-index: 1;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 0px 4px,
+    rgba(0, 0, 0, 0.15) 0px 2px 8px;
 }
 
 .profile-dropdown-menu {
@@ -118,7 +121,7 @@ textarea {
   padding-bottom: 0.625rem;
   padding-right: 1.5rem;
   padding-left: 1.5rem;
-  background-color: #d9d9d9;
+  background-color: transparent;
   cursor: pointer;
 }
 

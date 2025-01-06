@@ -38,9 +38,8 @@ class headerElement extends HTMLElement {
     return `
     <header>
       <div id="header-wrap" class="header-wrap">
-        <img id="header-back" src="/assets/back.svg" class="header-back" />
         <p id="header-text" class="header-text">
-          아무 말 대잔치
+          Hazel Forum
         </p>
         <div id="profile-wrap" class="profile-wrap">
           <img
@@ -74,7 +73,6 @@ class headerElement extends HTMLElement {
 
     this.addEventListener()
     this.updateProfileStatus()
-    this.hideProfile()
   }
 
   addEventListener() {
@@ -138,7 +136,6 @@ class headerElement extends HTMLElement {
       dropdownEditPassword: getElement('dropdown-edit-password'),
       dropdownLogin: getElement('dropdown-login'),
       dropdownLogout: getElement('dropdown-logout'),
-      backIcon: getElement('header-back'),
       profileWrap: getElement('profile-wrap'),
       headerWrap: getElement('header-wrap'),
     }
@@ -158,31 +155,6 @@ class headerElement extends HTMLElement {
     dropdownEditPassword.style.display = this.user ? 'block' : 'none'
     dropdownLogin.style.display = this.user ? 'none' : 'block'
     dropdownLogout.style.display = this.user ? 'block' : 'none'
-  }
-
-  hideProfile() {
-    const currentPath = window.location.pathname
-    const profileWrap = this.shadowRoot.getElementById('profile-wrap')
-    const backIcon = this.shadowRoot.getElementById('header-back')
-    const headerWrap = this.shadowRoot.getElementById('header-wrap')
-
-    if (currentPath === '/html/Log-in.html') {
-      backIcon.style.display = 'none'
-      profileWrap.style.display = 'none'
-    } else if (currentPath === '/html/Sign-in.html') {
-      profileWrap.style.display = 'none'
-      headerWrap.style.justifyContent = 'start'
-      headerWrap.style.paddingLeft = '0px'
-      headerWrap.style.gap = '193px'
-    } else if (
-      currentPath === '/html/Posts.html' ||
-      currentPath === '/html/edit-profile.html' ||
-      currentPath === '/html/edit-password.html'
-    ) {
-      backIcon.style.display = 'none'
-    } else {
-      headerWrap.style.paddingLeft = '0px'
-    }
   }
 
   // 외부에서 호출 가능한 로딩 상태 반환 메서드
