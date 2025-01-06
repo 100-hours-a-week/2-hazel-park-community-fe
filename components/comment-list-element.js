@@ -386,7 +386,7 @@ class CommentListElement extends HTMLElement {
   }
 
   ConfirmComment(commentArea, commentButton) {
-    if (commentButton.innerText === '댓글 등록') {
+    if (commentButton.innerText === 'Respond') {
       const newButton = commentButton.cloneNode(true)
       commentButton.parentNode.replaceChild(newButton, commentButton)
 
@@ -415,7 +415,7 @@ class CommentListElement extends HTMLElement {
               commentArea.value = ''
 
               // 버튼 상태 초기화
-              newButton.style.backgroundColor = '#aea0eb'
+              newButton.style.backgroundColor = 'transparent'
               newButton.style.cursor = 'not-allowed'
               newButton.disabled = true
 
@@ -447,7 +447,7 @@ class CommentListElement extends HTMLElement {
     }
 
     if (commentButton) {
-      commentButton.innerText = '댓글 수정'
+      commentButton.innerText = 'Edit'
       this.isEditing = true
 
       // 클릭 이벤트 추가
@@ -479,8 +479,8 @@ class CommentListElement extends HTMLElement {
             let charCountDisplay = document.getElementById('char-count')
             charCountDisplay.textContent = `0 / 100`
 
-            commentButton.innerText = '댓글 등록' // 버튼 텍스트를 "댓글 등록"으로 변경
-            commentButton.style.backgroundColor = '#aea0eb'
+            commentButton.innerText = 'Respond' // 버튼 텍스트를 "댓글 등록"으로 변경
+            commentButton.style.backgroundColor = 'transparent'
             commentButton.style.cursor = 'not-allowed'
             //commentButton.disabled = true // 버튼 비활성화
 
@@ -506,7 +506,7 @@ class CommentListElement extends HTMLElement {
     const submit = document.getElementById('comment-button')
 
     if (submit) {
-      submit.style.backgroundColor = '#aea0eb'
+      submit.style.backgroundColor = 'transparent'
       submit.style.cursor = 'not-allowed'
     }
 
@@ -517,7 +517,7 @@ class CommentListElement extends HTMLElement {
     }
 
     if (commentArea && commentCheck && submit) {
-      submit.style.backgroundColor = '#7f6aee'
+      submit.style.backgroundColor = '#141414'
       submit.style.cursor = 'pointer'
       return true
     }
