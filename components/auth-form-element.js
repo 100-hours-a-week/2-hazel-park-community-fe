@@ -35,27 +35,27 @@ class AuthFormElement extends HTMLElement {
             <form class="login-form">
               ${!this.isLoginPage ? this.rendingProfileImg() : ''}
                 <div class="email-wrap">
-                    <div class="input-title">${this.isLoginPage ? '이메일' : '이메일*'}</div>
+                    <div class="input-title">${this.isLoginPage ? 'Email' : 'Email *'}</div>
                       <input
                         id="input-email"
                         type="email"
-                        placeholder="이메일을 입력하세요"
+                        placeholder="Enter your email"
                         class="input-value"
                       />
                     <div id="email-hyper-text" style="height: 1em" class="hyper-text"></div>
                 </div>
                 <div style="margin-top: 0.3em" class="password-wrap">
-                    <div class="input-title">${this.isLoginPage ? '비밀번호' : '비밀번호*'}</div>
+                    <div class="input-title">${this.isLoginPage ? 'Password' : 'Password *'}</div>
                         <input
                         id="input-password"
                         type="password"
-                        placeholder="비밀번호를 입력하세요"
+                        placeholder="Enter your password"
                         class="input-value"
                         />
                     <div id="pw-hyper-text" style="height: 2.2em" class="hyper-text"></div>
                 </div>
                 ${!this.isLoginPage ? this.rendingSignInForm() : ''}              
-                <input id="submit" type="submit" value="${this.isLoginPage ? '로그인' : '회원가입'}" class="login-submit" />
+                <input id="submit" type="submit" value="${this.isLoginPage ? 'Log in' : 'Sign in'}" class="login-submit" />
             </form>
         </div>
     `
@@ -64,11 +64,10 @@ class AuthFormElement extends HTMLElement {
   rendingProfileImg() {
     return `
       <div style="margin-bottom: 2.87vh">
-        <div class="input-title">프로필 사진</div>
+        <div class="input-title">Profile</div>
           <div id="img-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
           <label for="input-profile-img" class="input-profile-img-label">
-          <img id="profile-plus-icon" src="/assets/plus.svg" class="plus-icon" />
-          <img id="profile-img-preview" class="preview-profile-img" />
+          <img id="profile-img-preview" src="/assets/pre-profile.png" class="preview-profile-img" />
           </label>
         <input id="input-profile-img" type="file" class="input-profile-img" accept=".jpg, .jpeg, .png, .gif"  />
       </div>
@@ -78,13 +77,13 @@ class AuthFormElement extends HTMLElement {
   rendingSignInForm() {
     return `
       <div style="margin-top: 0.3em" class="password-wrap">
-        <div class="input-title">비밀번호 확인*</div>
-        <input id="input-re-password" type="password" placeholder="비밀번호를 한 번 더 입력하세요" class="input-value" />
+        <div class="input-title">Re password *</div>
+        <input id="input-re-password" type="password" placeholder="Check your password" class="input-value" />
         <div id="re-pw-hyper-text" style="height: 1.7em" class="hyper-text"></div>
       </div>
       <div style="margin-top: 0.3em" class="password-wrap">
-        <div class="input-title">닉네임*</div>
-        <input id="input-nickname" type="text" placeholder="닉네임를 입력하세요" class="input-value" />
+        <div class="input-title">Nickname *</div>
+        <input id="input-nickname" type="text" placeholder="Enter your Email" class="input-value" />
         <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
       </div>
     `
@@ -136,18 +135,18 @@ class AuthFormElement extends HTMLElement {
     const emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
     if (!email) {
       this.emailCheck = false
-      emailHyperText.innerText = '*이메일을 입력해주세요.'
+      emailHyperText.innerText = '* 이메일을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
       return
     } else if (!this.emailValidCheck(email)) {
       this.emailCheck = false
-      emailHyperText.innerText = '*올바른 이메일 주소 형식을 입력해주세요.'
+      emailHyperText.innerText = '* 올바른 이메일 주소 형식을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
     } else if (!this.isLoginPage) {
       const isDuplicate = await checkEmailDuplicate(email)
       if (isDuplicate.code == 400) {
         this.emailCheck = false
-        emailHyperText.innerText = `*${isDuplicate.message}`
+        emailHyperText.innerText = `* ${isDuplicate.message}`
         emailHyperText.style.visibility = 'visible'
       } else {
         this.emailCheck = true
@@ -166,23 +165,23 @@ class AuthFormElement extends HTMLElement {
     )
     if (!nickname) {
       this.nicknameCheck = false
-      nicknameHyperText.innerText = '*닉네임을 입력해주세요.'
+      nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'
       nicknameHyperText.style.visibility = 'visible'
       return
     } else if (nickname.length > 10) {
       this.nicknameCheck = false
 
-      nicknameHyperText.innerText = '*닉네임은 최대 10자까지 입력 가능합니다.'
+      nicknameHyperText.innerText = '* 닉네임은 최대 10자까지 입력 가능합니다.'
       nicknameHyperText.style.visibility = 'visible'
     } else if (/\s/.test(nickname)) {
       this.nicknameCheck = false
-      nicknameHyperText.innerText = '*띄어쓰기를 없애주세요.'
+      nicknameHyperText.innerText = '* 띄어쓰기를 없애주세요.'
       nicknameHyperText.style.visibility = 'visible'
     } else if (!this.isLoginPage) {
       const isDuplicate = await checkNicknameDuplicate(nickname)
       if (isDuplicate.code == 400) {
         this.nicknameCheck = false
-        nicknameHyperText.innerText = `*${isDuplicate.message}`
+        nicknameHyperText.innerText = `* ${isDuplicate.message}`
         nicknameHyperText.style.visibility = 'visible'
       } else {
         this.nicknameCheck = true
@@ -229,18 +228,18 @@ class AuthFormElement extends HTMLElement {
 
     if (!inputEmail.value.trim()) {
       this.emailCheck = false
-      emailHyperText.innerText = '*이메일을 입력해주세요.'
+      emailHyperText.innerText = '* 이메일을 입력해주세요.'
       emailHyperText.style.visibility = 'visible'
     }
 
     if (!inputPassword.value.trim()) {
       this.pwCheck = false
       pwHyperText.style.visibility = 'visible'
-      pwHyperText.innerText = '*비밀번호를 입력해주세요.'
+      pwHyperText.innerText = '* 비밀번호를 입력해주세요.'
     } else if (!this.pwValidCheck(inputPassword.value.trim())) {
       this.pwCheck = false
       pwHyperText.innerText =
-        '*비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.'
+        '* 비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.'
       pwHyperText.style.visibility = 'visible'
     } else {
       this.pwCheck = true
@@ -251,11 +250,11 @@ class AuthFormElement extends HTMLElement {
       if (!inputRePassword.value.trim()) {
         this.rePwCheck = false
         rePwHyperText.style.visibility = 'visible'
-        rePwHyperText.innerText = '*비밀번호를 한 번 더 입력해주세요.'
+        rePwHyperText.innerText = '* 비밀번호를 한 번 더 입력해주세요.'
       } else if (inputRePassword.value.trim() !== inputPassword.value.trim()) {
         this.rePwCheck = false
         rePwHyperText.style.visibility = 'visible'
-        rePwHyperText.innerText = '*비밀번호가 다릅니다.'
+        rePwHyperText.innerText = '* 비밀번호가 다릅니다.'
       } else {
         this.rePwCheck = true
         rePwHyperText.style.visibility = 'hidden'
@@ -314,7 +313,6 @@ class AuthFormElement extends HTMLElement {
     const profileImgPreview = this.shadowRoot.getElementById(
       'profile-img-preview',
     )
-    const profilePlusIcon = this.shadowRoot.getElementById('profile-plus-icon')
     const inputProfileImgLabel = this.shadowRoot.getElementById(
       'input-profile-img-label',
     )
@@ -324,12 +322,6 @@ class AuthFormElement extends HTMLElement {
     if (!inputProfileImg.value) {
       profileHyperText.innerHTML = '프로필 사진을 추가해주세요.'
       profileHyperText.style.visibility = 'visible'
-      if (profileImgPreview) {
-        profileImgPreview.style.display = 'none'
-      }
-      if (profilePlusIcon) {
-        profilePlusIcon.style.display = 'block'
-      }
       if (inputProfileImgLabel) {
         inputProfileImgLabel.style.display = 'block'
       }
@@ -341,9 +333,6 @@ class AuthFormElement extends HTMLElement {
         profileHyperText.style.visibility = 'visible'
         if (profileImgPreview) {
           profileImgPreview.style.display = 'none'
-        }
-        if (profilePlusIcon) {
-          profilePlusIcon.style.display = 'block'
         }
         if (inputProfileImgLabel) {
           inputProfileImgLabel.style.display = 'block'
@@ -364,9 +353,6 @@ class AuthFormElement extends HTMLElement {
       }
 
       reader.readAsDataURL(file)
-      if (profilePlusIcon) {
-        profilePlusIcon.style.display = 'none'
-      }
       if (inputProfileImgLabel) {
         inputProfileImgLabel.style.display = 'none'
       }

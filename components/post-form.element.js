@@ -341,7 +341,7 @@ class postFormElement extends HTMLElement {
 
       // 글자수 초과 시 빨간색 표시
       if (charCountDisplay) {
-        charCountDisplay.style.color = 'red'
+        charCountDisplay.style.color = '#c94a4a'
       }
     } else {
       contentsCheck = true
