@@ -88,7 +88,7 @@ class EditFormElement extends HTMLElement {
         this.user.profile_picture || this.user.profile_picture === null
           ? `
               <div class="wrap-profile-img">
-                <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
+                <button type="button" id="changeImageBtn" class="profile-img-change-btn">Update</button>
                 <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png, .gif" />
                 <img id="profileImage" src="${this.user.profile_picture}" class="profile-img" />
               </div>
@@ -109,7 +109,7 @@ class EditFormElement extends HTMLElement {
           <div id="user-email" class="user-email" />${this.user.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
-          <div class="input-title">Nickname *</div>
+          <div class="input-title">Nickname</div>
             <input id="input-nickname" type="text" placeholder=${this.user.nickname} class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
@@ -187,33 +187,34 @@ class EditFormElement extends HTMLElement {
       event.preventDefault()
 
       const validationResult = this.validateForm()
-      if (validationResult === 'nickname') {
-        if (this.newImageData) {
-          this.user.profile_picture = this.newImageData
+      if (this.newImageData) {
+        this.user.profile_picture = this.newImageData
+      }
+
+      if (this.nicknameCheck || this.newImageData) {
+        const nickname = inputNickname.value.trim()
+          ? inputNickname.value.trim()
+          : null
+
+        const result = await patchUserNickname(
+          this.user.email,
+          nickname,
+          this.newImageData,
+        )
+        let nicknameHyperText = this.shadowRoot.getElementById(
+          'nickname-hyper-text',
+        )
+
+        if (result === 400) {
+          nicknameHyperText.innerText = '중복된 닉네임 입니다.'
+          nicknameHyperText.style.visibility = 'visible'
+        } else {
+          nicknameHyperText.style.visibility = 'hidden'
+          this.user.nickname = nickname
+          // localStorage.setItem('user', JSON.stringify(this.user))
+          this.showToastAndRedirect()
         }
-
-        if (this.nicknameCheck) {
-          // const nickname = inputNickname.value.trim()
-
-          const result = await patchUserNickname(
-            this.user.email,
-            nickname,
-            this.newImageData,
-          )
-          let nicknameHyperText = this.shadowRoot.getElementById(
-            'nickname-hyper-text',
-          )
-
-          if (result === 400) {
-            nicknameHyperText.innerText = '중복된 닉네임 입니다.'
-            nicknameHyperText.style.visibility = 'visible'
-          } else {
-            nicknameHyperText.style.visibility = 'hidden'
-            this.user.nickname = nickname
-            // localStorage.setItem('user', JSON.stringify(this.user))
-            this.showToastAndRedirect()
-          }
-        } else if (validationResult === 'password') {
+        if (validationResult === 'password') {
           const password = inputPassword.value.trim()
           this.user.user_pw = password
           // localStorage.setItem('user', JSON.stringify(this.user))
@@ -257,11 +258,7 @@ class EditFormElement extends HTMLElement {
       }
     }
 
-    if (this.nicknameCheck) {
-      submit.style.backgroundColor = '#0a84ff'
-      submit.style.cursor = 'pointer'
-      return 'nickname'
-    }
+    this.validateImage()
   }
 
   validateImageFile(file) {
@@ -281,15 +278,37 @@ class EditFormElement extends HTMLElement {
       this.newImageData = e.target.result
 
       imgHyperText.innerText =
-        '수정하기 버튼을 누르면 프로필 이미지가 변경됩니다.'
+        'Edit profile 버튼을 누르면 프로필 이미지가 변경됩니다.'
       imgHyperText.style.visibility = 'visible'
 
       setTimeout(() => {
         imgHyperText.style.visibility = 'hidden'
       }, 3000)
+
+      this.validateImage()
     }
 
     reader.readAsDataURL(file)
+  }
+
+  validateImage() {
+    const inputNickname = this.shadowRoot.getElementById('input-nickname')
+    const submit = this.shadowRoot.getElementById('submit')
+
+    // 기본 상태 초기화
+    submit.style.backgroundColor = '#8e8e93'
+    submit.style.cursor = 'not-allowed'
+    submit.disabled = true
+
+    // 이미지 변경 또는 닉네임 유효성 검사
+    if (this.newImageData || (inputNickname && this.nicknameCheck)) {
+      submit.style.backgroundColor = '#0a84ff'
+      submit.style.cursor = 'pointer'
+      submit.disabled = false
+      return true
+    }
+
+    return false
   }
 
   openModal() {
@@ -308,6 +327,7 @@ class EditFormElement extends HTMLElement {
   }
 
   validateForm() {
+    const inputNickname = this.shadowRoot.getElementById('input-nickname')
     const inputPassword = this.shadowRoot.getElementById('input-password')
     const inputRePassword = this.shadowRoot.getElementById('input-re-password')
 
@@ -360,6 +380,13 @@ class EditFormElement extends HTMLElement {
         submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'password'
+      }
+    } else if (inputNickname) {
+      if (this.newImageData) {
+        submit.style.backgroundColor = '#0a84ff'
+        submit.style.cursor = 'pointer'
+        submit.disabled = false
+        return 'nickname'
       }
     }
   }
