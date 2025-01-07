@@ -137,7 +137,7 @@ class postFormElement extends HTMLElement {
       </div>
       <div class="email-wrap">
           <div class="input-title">Contents *</div>
-          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
+          <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               0 / 1000
           </div>
@@ -164,7 +164,7 @@ class postFormElement extends HTMLElement {
       </div>
       <div class="email-wrap">
           <div class="input-title">Contents *</div>
-          <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
+          <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               ${this.postData.post_contents.length} / 1000
           </div>

@@ -113,6 +113,8 @@
   font-weight: 400;
   font-size: 0.9375rem;
   line-height: 1.3219rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .post-interaction {
@@ -270,6 +272,7 @@ body.dark-mode .post-item:hover {
   height: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .loading-animation {
