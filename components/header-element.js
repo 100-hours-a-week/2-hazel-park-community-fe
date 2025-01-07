@@ -30,7 +30,7 @@ class headerElement extends HTMLElement {
         display: flex;
         flex-direction: column;
         background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;

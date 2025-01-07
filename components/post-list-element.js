@@ -101,7 +101,7 @@ class PostListElement extends HTMLElement {
         font-weight: 400;
         font-size: 0.875rem;
         line-height: 1.1375rem;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid #D1D1D6;
       }
 
       :host-context(body.dark-mode) .post-info-wrap {

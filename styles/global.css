@@ -19,7 +19,7 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background: rgba(255, 255, 255, 1);
+  background: #f2f2f7;
   color: black;
 }
 
@@ -41,7 +41,7 @@ header {
   padding-bottom: 8px;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
 }
 
 body.dark-mode header {
@@ -117,7 +117,6 @@ textarea {
   display: flex;
   flex-direction: column;
   background-color: rgb(255, 255, 255);
-  color: rgb(107, 107, 107);
   font-weight: 400;
   font-size: 0.75rem;
   line-heihgt: 0.9075rem;

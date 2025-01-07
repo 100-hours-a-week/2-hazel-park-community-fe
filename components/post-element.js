@@ -36,8 +36,7 @@ class PostElement extends HTMLElement {
         right: 0;
         display: flex;
         flex-direction: column;
-        background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;
@@ -129,7 +128,7 @@ class PostElement extends HTMLElement {
       .post-detail-top {
         width: 592px;
         padding: 2.222vh 1.25vw 2.222vh 1.25vw;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid #D1D1D6;
       }
 
       :host-context(body.dark-mode) .post-detail-top {
@@ -141,7 +140,7 @@ class PostElement extends HTMLElement {
         flex-direction: column;
         align-items: center;
         padding: 2.222vh 1.25vw 2.963vh 1.25vw;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid #D1D1D6;
       }
 
       :host-context(body.dark-mode) .post-detail-bottom {

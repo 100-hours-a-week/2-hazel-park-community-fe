@@ -54,8 +54,7 @@ class CommentListElement extends HTMLElement {
         right: 0;
         display: flex;
         flex-direction: column;
-        background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;
@@ -515,7 +514,7 @@ class CommentListElement extends HTMLElement {
               commentArea.value = ''
 
               // 버튼 상태 초기화
-              newButton.style.backgroundColor = '#8e8e93'
+              newButton.style.backgroundColor = ''
               newButton.style.cursor = 'not-allowed'
               newButton.disabled = true
 
@@ -580,7 +579,7 @@ class CommentListElement extends HTMLElement {
             charCountDisplay.textContent = `0 / 100`
 
             commentButton.innerText = 'Respond' // 버튼 텍스트를 "댓글 등록"으로 변경
-            commentButton.style.backgroundColor = '#8e8e93'
+            commentButton.style.backgroundColor = ''
             commentButton.style.cursor = 'not-allowed'
             //commentButton.disabled = true // 버튼 비활성화
 
@@ -606,7 +605,7 @@ class CommentListElement extends HTMLElement {
     const submit = document.getElementById('comment-button')
 
     if (submit) {
-      submit.style.backgroundColor = '#8e8e93'
+      submit.style.backgroundColor = ''
       submit.style.cursor = 'not-allowed'
     }
 
@@ -620,7 +619,7 @@ class CommentListElement extends HTMLElement {
       if (localStorage.getItem('theme') === 'dark') {
         submit.style.backgroundColor = '#0a84ff'
       } else {
-        submit.style.backgroundColor = '#f7f7f7'
+        submit.style.backgroundColor = '#007AFF'
       }
       submit.style.cursor = 'pointer'
       return true

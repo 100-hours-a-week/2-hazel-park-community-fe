@@ -38,8 +38,8 @@
   border-width: 0px;
   font-weight: 500;
   font-size: 1rem;
-  color: #6b6b6b;
-  background-color: transparent;
+  color: #000000;
+  background-color: #f2f2f7;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -83,7 +83,7 @@ body.dark-mode .add-post-button {
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.1375rem;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
 }
 
 .post-info-wrap-left {

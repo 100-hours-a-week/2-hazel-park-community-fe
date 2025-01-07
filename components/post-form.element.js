@@ -359,7 +359,7 @@ class postFormElement extends HTMLElement {
       'contents-char-count',
     )
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#8e8e93'
+    submit.style.backgroundColor = ''
     submit.style.cursor = 'not-allowed'
 
     if (titleHyperText) {
@@ -426,7 +426,7 @@ class postFormElement extends HTMLElement {
     }
 
     if (titleCheck && contentsCheck) {
-      submit.style.backgroundColor = '#7f6aee'
+      submit.style.backgroundColor = '#007aff'
       submit.style.cursor = 'pointer'
       return 'posts'
     }
