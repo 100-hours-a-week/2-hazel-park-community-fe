@@ -9,7 +9,7 @@
 .post-detail-top {
   width: 592px;
   padding: 2.222vh 1.25vw 2.222vh 1.25vw;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
 }
 
 .post-title-detail-wrap {
@@ -80,7 +80,7 @@
 
 .post-controll-button-detail {
   padding: 0.185vh 0.625vw 0.185vh 0.625vw;
-  border: 1px solid #aca0eb;
+  border: 1px solid #0a84ff;
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
@@ -91,7 +91,7 @@
   flex-direction: column;
   align-items: center;
   padding: 2.222vh 1.25vw 2.963vh 1.25vw;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
 }
 
 .post-contents-img {
@@ -113,6 +113,8 @@
   font-weight: 400;
   font-size: 0.9375rem;
   line-height: 1.3219rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .post-interaction {
@@ -147,7 +149,7 @@
 .post-interaction-value {
   padding: 0;
   font-size: 12px;
-  color: rgb(107, 107, 107) !important;
+  color: rgb(107, 107, 107);
   text-align: center;
 }
 
@@ -177,7 +179,7 @@
   font-size: 0.9375rem;
   line-height: 1.3219rem;
   border: none;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
   border-radius: 16px 16px 0 0;
   background-color: #ffffff;
   resize: none;
@@ -185,9 +187,10 @@
 }
 
 body.dark-mode .comment-area {
-  background-color: #121212;
+  background-color: #1c1c1e;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
   color: #ffffff;
+  border-bottom: 1px solid #48484a;
 }
 
 .comment-area:focus {
@@ -195,6 +198,7 @@ body.dark-mode .comment-area {
 }
 
 .comment-btn-wrap {
+  background-color: #ffffff;
   padding: 0.556vh 0.417vw 0.556vh 0;
   display: flex;
   justify-content: end;
@@ -204,6 +208,7 @@ body.dark-mode .comment-area {
 }
 
 body.dark-mode .comment-btn-wrap {
+  background-color: #1c1c1e;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
 }
 
@@ -212,19 +217,17 @@ body.dark-mode .comment-btn-wrap {
   border-radius: 16px;
   border-color: #ffffff;
   border-width: 0px;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1rem;
-  color: #6b6b6b;
-  font-weight: 700;
   font-size: 1rem;
-  color: #6b6b6b;
-  background-color: transparent;
+  color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 body.dark-mode .comment-button {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
-  color: #ffffff;
+  background-color: #8e8e93;
+  color: #ebebf5;
 }
 
 body.dark-mode .post-item:hover {
@@ -269,6 +272,7 @@ body.dark-mode .post-item:hover {
   height: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .loading-animation {

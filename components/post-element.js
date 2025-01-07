@@ -36,8 +36,7 @@ class PostElement extends HTMLElement {
         right: 0;
         display: flex;
         flex-direction: column;
-        background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;
@@ -73,6 +72,81 @@ class PostElement extends HTMLElement {
       :host-context(body.dark-mode) .profile-dropdown-menu:hover {
         background-color: rgb(48, 48, 48)
       }
+
+      .post-wrap-detail {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        color: rgb(107, 107, 107);
+      }
+
+      :host-context(body.dark-mode) .post-wrap-detail {
+        color: #ebebf5;
+      }
+
+      .post-updateAt {
+        margin-left: auto;
+        align-self: end;
+        text-wrap: nowrap;
+        color: rgb(107, 107, 107);
+      }
+
+      :host-context(body.dark-mode) .post-updateAt {
+        color: #ebebf5;
+      }
+
+      .post-interaction-box {
+        padding: 1.111vh 0 1.204vh 0;
+        width: 100%;
+        min-width: 7.25rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        font-weight: 700;
+        text-align: center;
+        gap: 4px;
+        color: rgb(107, 107, 107);
+      }
+
+      :host-context(body.dark-mode) .post-interaction-box {
+        color: #ebebf5;
+      }
+
+      .post-interaction-value {
+        padding: 0;
+        font-size: 12px;
+        color: rgb(107, 107, 107);
+        text-align: center;
+      }
+
+      :host-context(body.dark-mode) .post-interaction-value {
+        color: #ebebf5;
+      }
+
+      .post-detail-top {
+        width: 592px;
+        padding: 2.222vh 1.25vw 2.222vh 1.25vw;
+        border-bottom: 1px solid #D1D1D6;
+      }
+
+      :host-context(body.dark-mode) .post-detail-top {
+        border-bottom: 1px solid #48484a;
+      }
+
+      .post-detail-bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2.222vh 1.25vw 2.963vh 1.25vw;
+        border-bottom: 1px solid #D1D1D6;
+      }
+
+      :host-context(body.dark-mode) .post-detail-bottom {
+        border-bottom: 1px solid #48484a;
+      } 
+ 
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 

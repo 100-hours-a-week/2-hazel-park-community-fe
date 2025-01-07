@@ -1,6 +1,7 @@
 import handleNavigation from '/utils/navigation.js'
 import { getSessionUser } from '/services/user-api.js'
 import {
+  checkNicknameDuplicate,
   patchUserNickname,
   patchUserPw,
   deleteUser,
@@ -13,6 +14,7 @@ class EditFormElement extends HTMLElement {
     this.isEditProfilePage = true
     this.user = null
     this.newImageData = null
+    this.nicknameCheck = false
   }
 
   async connectedCallback() {
@@ -36,6 +38,24 @@ class EditFormElement extends HTMLElement {
         background-color: #141414;
         border-bottom: 1px solid rgba(255, 255, 255, 0.16);
         color: #ffffff; 
+      }
+
+      .login-submit {
+        width: 355px;
+        height: 33px;
+        margin-top: 1vh;
+        padding-top: 0.741vh;
+        padding-bottom: 0.741vh;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: not-allowed;
+      }
+
+      :host-context(body.dark-mode) .login-submit {
+        background-color: #8e8e93;
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -68,7 +88,7 @@ class EditFormElement extends HTMLElement {
         this.user.profile_picture || this.user.profile_picture === null
           ? `
               <div class="wrap-profile-img">
-                <button type="button" id="changeImageBtn" class="profile-img-change-btn">변경</button>
+                <button type="button" id="changeImageBtn" class="profile-img-change-btn">Update</button>
                 <input type="file" id="imageUpload" style="display: none;" accept=".jpg, .jpeg, .png, .gif" />
                 <img id="profileImage" src="${this.user.profile_picture}" class="profile-img" />
               </div>
@@ -89,7 +109,7 @@ class EditFormElement extends HTMLElement {
           <div id="user-email" class="user-email" />${this.user.email}</div>
         </div>
         <div style="margin-top: 1rem" class="nickname-wrap">
-          <div class="input-title">Nickname *</div>
+          <div class="input-title">Nickname</div>
             <input id="input-nickname" type="text" placeholder=${this.user.nickname} class="input-value" />
             <div id="nickname-hyper-text" style="height: 1.7em" class="hyper-text"></div>
         </div>
@@ -156,7 +176,10 @@ class EditFormElement extends HTMLElement {
     }
 
     deleteAccountButton?.addEventListener('click', () => this.openModal())
-    inputNickname?.addEventListener('input', () => this.validateForm())
+    inputNickname?.addEventListener(
+      'input',
+      debounce(() => this.checkNickname(inputNickname.value.trim()), 500),
+    )
     inputPassword?.addEventListener('input', () => this.validateForm())
     inputRePassword?.addEventListener('input', () => this.validateForm())
 
@@ -164,13 +187,14 @@ class EditFormElement extends HTMLElement {
       event.preventDefault()
 
       const validationResult = this.validateForm()
-      if (validationResult === 'nickname') {
-        if (this.newImageData) {
-          this.user.profile_picture = this.newImageData
-        }
+      if (this.newImageData) {
+        this.user.profile_picture = this.newImageData
+      }
 
+      if (this.nicknameCheck || this.newImageData) {
         const nickname = inputNickname.value.trim()
-        this.user.nickname = nickname
+          ? inputNickname.value.trim()
+          : null
 
         const result = await patchUserNickname(
           this.user.email,
@@ -190,14 +214,51 @@ class EditFormElement extends HTMLElement {
           // localStorage.setItem('user', JSON.stringify(this.user))
           this.showToastAndRedirect()
         }
-      } else if (validationResult === 'password') {
-        const password = inputPassword.value.trim()
-        this.user.user_pw = password
-        // localStorage.setItem('user', JSON.stringify(this.user))
-        await patchUserPw(this.user.email, password)
-        this.showToastAndRedirect()
+        if (validationResult === 'password') {
+          const password = inputPassword.value.trim()
+          this.user.user_pw = password
+          // localStorage.setItem('user', JSON.stringify(this.user))
+          await patchUserPw(this.user.email, password)
+          this.showToastAndRedirect()
+        }
       }
     })
+  }
+
+  async checkNickname(nickname) {
+    const nicknameHyperText = this.shadowRoot.getElementById(
+      'nickname-hyper-text',
+    )
+    const submit = this.shadowRoot.getElementById('submit')
+    submit.style.backgroundColor = ''
+    submit.style.cursor = 'not-allowed'
+
+    if (!nickname) {
+      this.nicknameCheck = false
+      nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'
+      nicknameHyperText.style.visibility = 'visible'
+    } else if (nickname.length > 10) {
+      this.nicknameCheck = false
+      nicknameHyperText.innerText = '* 닉네임은 최대 10자까지 입력 가능합니다.'
+      nicknameHyperText.style.visibility = 'visible'
+    } else if (/\s/.test(nickname)) {
+      this.nicknameCheck = false
+      nicknameHyperText.innerText = '* 띄어쓰기를 없애주세요.'
+      nicknameHyperText.style.visibility = 'visible'
+    } else {
+      const isDuplicate = await checkNicknameDuplicate(nickname)
+      if (isDuplicate.code == 400) {
+        this.nicknameCheck = false
+        nicknameHyperText.innerText = `* ${isDuplicate.message}`
+        nicknameHyperText.style.visibility = 'visible'
+      } else {
+        this.nicknameCheck = true
+        this.user.nickname = nickname
+        nicknameHyperText.style.visibility = 'hidden'
+      }
+    }
+
+    this.validateImage()
   }
 
   validateImageFile(file) {
@@ -215,18 +276,39 @@ class EditFormElement extends HTMLElement {
       profileImage.style.display = 'block'
 
       this.newImageData = e.target.result
-      //this.newImageData = file
 
       imgHyperText.innerText =
-        '수정하기 버튼을 누르면 프로필 이미지가 변경됩니다.'
+        'Edit profile 버튼을 누르면 프로필 이미지가 변경됩니다.'
       imgHyperText.style.visibility = 'visible'
 
       setTimeout(() => {
         imgHyperText.style.visibility = 'hidden'
       }, 3000)
+
+      this.validateImage()
     }
 
     reader.readAsDataURL(file)
+  }
+
+  validateImage() {
+    const inputNickname = this.shadowRoot.getElementById('input-nickname')
+    const submit = this.shadowRoot.getElementById('submit')
+
+    // 기본 상태 초기화
+    submit.style.backgroundColor = '#8e8e93'
+    submit.style.cursor = 'not-allowed'
+    submit.disabled = true
+
+    // 이미지 변경 또는 닉네임 유효성 검사
+    if (this.newImageData || (inputNickname && this.nicknameCheck)) {
+      submit.style.backgroundColor = '#0a84ff'
+      submit.style.cursor = 'pointer'
+      submit.disabled = false
+      return true
+    }
+
+    return false
   }
 
   openModal() {
@@ -249,46 +331,20 @@ class EditFormElement extends HTMLElement {
     const inputPassword = this.shadowRoot.getElementById('input-password')
     const inputRePassword = this.shadowRoot.getElementById('input-re-password')
 
-    let nicknameHyperText = this.shadowRoot.getElementById(
-      'nickname-hyper-text',
-    )
     let pwHyperText = this.shadowRoot.getElementById('pw-hyper-text')
     let rePwHyperText = this.shadowRoot.getElementById('re-pw-hyper-text')
 
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#aea0eb'
+    submit.style.backgroundColor = ''
     submit.style.cursor = 'not-allowed'
 
-    if (nicknameHyperText) {
-      nicknameHyperText.innerText = ''
-    }
     if (pwHyperText || rePwHyperText) {
       pwHyperText.innerText = ''
       rePwHyperText.innerText = ''
     }
 
-    let nicknameCheck = false
     let pwCheck = false
     let rePwCheck = false
-
-    if (inputNickname) {
-      if (!inputNickname.value.trim()) {
-        nicknameCheck = false
-        nicknameHyperText.innerText = '닉네임을 입력해주세요.'
-        nicknameHyperText.style.visibility = 'visible'
-      } else if (inputNickname.value.trim().length > 10) {
-        nicknameCheck = false
-        nicknameHyperText.innerText = '닉네임은 최대 10자까지 입력 가능합니다.'
-        nicknameHyperText.style.visibility = 'visible'
-      } else if (/\s/.test(inputNickname.value.trim())) {
-        nicknameCheck = false
-        nicknameHyperText.innerText = '띄어쓰기를 없애주세요.'
-        nicknameHyperText.style.visibility = 'visible'
-      } else {
-        nicknameCheck = true
-        nicknameHyperText.style.visibility = 'hidden'
-      }
-    }
 
     if (inputPassword) {
       if (!inputPassword.value.trim()) {
@@ -319,17 +375,18 @@ class EditFormElement extends HTMLElement {
       }
     }
 
-    if (inputNickname) {
-      if (nicknameCheck) {
-        submit.style.backgroundColor = '#7f6aee'
-        submit.style.cursor = 'pointer'
-        return 'nickname'
-      }
-    } else if (inputPassword) {
+    if (inputPassword) {
       if (pwCheck && rePwCheck) {
-        submit.style.backgroundColor = '#7f6aee'
+        submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'password'
+      }
+    } else if (inputNickname) {
+      if (this.newImageData) {
+        submit.style.backgroundColor = '#0a84ff'
+        submit.style.cursor = 'pointer'
+        submit.disabled = false
+        return 'nickname'
       }
     }
   }
@@ -362,6 +419,14 @@ class EditFormElement extends HTMLElement {
       toastMsg.classList.remove('show')
       handleNavigation('/html/Posts.html')
     }, 1500)
+  }
+}
+
+function debounce(func, delay) {
+  let timer
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => func.apply(this, args), delay)
   }
 }
 

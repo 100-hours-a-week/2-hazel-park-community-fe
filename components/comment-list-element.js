@@ -54,8 +54,7 @@ class CommentListElement extends HTMLElement {
         right: 0;
         display: flex;
         flex-direction: column;
-        background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;
@@ -140,17 +139,19 @@ class CommentListElement extends HTMLElement {
             </div>
             <div class="comment-contents">${comment.content}</div>
           </div>
-          <div class="post-controll-button">
-            <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style='color: #6b6b6b; cursor: pointer;'></i>
-              <div id="controll-button-dropdown" class="profile-dropdown">
-               <div id="button-update" class="profile-dropdown-menu">
-                 Edit
-               </div>
-               <div id="button-delete" class="profile-dropdown-menu">
-                 Delete
-               </div>
-            </div>           
-          </div>
+          ${
+            this.user && this.user.nickname === comment.writer
+              ? `
+              <div class="post-controll-button">
+                <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style="color: #6b6b6b; cursor: pointer;"></i>
+                  <div id="controll-button-dropdown" class="profile-dropdown">
+                    <div id="button-update" class="profile-dropdown-menu">Edit</div>
+                    <div id="button-delete" class="profile-dropdown-menu">Delete</div>
+                  </div>
+              </div>
+            `
+              : ''
+          }
         </div>
         `,
       )
@@ -286,7 +287,7 @@ class CommentListElement extends HTMLElement {
 
     const lottieHtml = `
       <dotlottie-player
-        src="https://lottie.host/c956f1a0-cebe-4833-9fc2-fa838c2c1731/zJVQAx5Siv.json"
+        src="https://lottie.host/7aabca84-399a-4a9d-98e6-4adf8833b9da/Mym1EA2Izc.lottie"
         background="transparent"
         speed="1"
         style="width: 4.167vw; height: 7.407vh"
@@ -365,6 +366,7 @@ class CommentListElement extends HTMLElement {
     this.registerComment()
     this.updateComment(this.comments)
     this.deleteComments(this.comments)
+
     const commentsContainer = this.shadowRoot.querySelector('div') // 댓글 컨테이너
     if (!commentsContainer) return
 
@@ -512,7 +514,7 @@ class CommentListElement extends HTMLElement {
               commentArea.value = ''
 
               // 버튼 상태 초기화
-              newButton.style.backgroundColor = 'transparent'
+              newButton.style.backgroundColor = ''
               newButton.style.cursor = 'not-allowed'
               newButton.disabled = true
 
@@ -577,7 +579,7 @@ class CommentListElement extends HTMLElement {
             charCountDisplay.textContent = `0 / 100`
 
             commentButton.innerText = 'Respond' // 버튼 텍스트를 "댓글 등록"으로 변경
-            commentButton.style.backgroundColor = 'transparent'
+            commentButton.style.backgroundColor = ''
             commentButton.style.cursor = 'not-allowed'
             //commentButton.disabled = true // 버튼 비활성화
 
@@ -603,7 +605,7 @@ class CommentListElement extends HTMLElement {
     const submit = document.getElementById('comment-button')
 
     if (submit) {
-      submit.style.backgroundColor = 'transparent'
+      submit.style.backgroundColor = ''
       submit.style.cursor = 'not-allowed'
     }
 
@@ -615,9 +617,9 @@ class CommentListElement extends HTMLElement {
 
     if (commentArea && commentCheck && submit) {
       if (localStorage.getItem('theme') === 'dark') {
-        submit.style.backgroundColor = '#303030'
+        submit.style.backgroundColor = '#0a84ff'
       } else {
-        submit.style.backgroundColor = '#f7f7f7'
+        submit.style.backgroundColor = '#007AFF'
       }
       submit.style.cursor = 'pointer'
       return true

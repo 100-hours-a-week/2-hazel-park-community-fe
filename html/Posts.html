@@ -6,13 +6,6 @@
     <link rel="stylesheet" href="/styles/global.css" />
     <link rel="stylesheet" href="/styles/Posts.css" />
     <style>
-      html {
-        background-color: #ffffff;
-      }
-      html.dark-mode {
-        background-color: #111111;
-        color: #ffffff;
-      }
       .loading-screen {
         position: fixed;
         top: 0;
@@ -28,7 +21,7 @@
         transition: opacity 1s ease;
       }
       html.dark-mode .loading-screen {
-        background-color: #111111;
+        background-color: #000000;
       }
     </style>
     <script>
@@ -36,6 +29,8 @@
         const theme = localStorage.getItem('theme')
         if (theme === 'dark') {
           document.documentElement.classList.add('dark-mode')
+        } else {
+          document.documentElement.classList.remove('dark-mode')
         }
       })()
     </script>

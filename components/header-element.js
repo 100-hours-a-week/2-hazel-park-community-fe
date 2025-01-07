@@ -30,7 +30,7 @@ class headerElement extends HTMLElement {
         display: flex;
         flex-direction: column;
         background-color: rgb(255, 255, 255);
-        color: rgb(107, 107, 107);
+        border-radius: 4px;
         font-weight: 400;
         font-size: 0.75rem;
         line-heihgt: 0.9075rem;
@@ -92,9 +92,11 @@ class headerElement extends HTMLElement {
     // 슬라이더 상태 변경 이벤트
     themeSwitch.addEventListener('change', () => {
       if (themeSwitch.checked) {
+        document.documentElement.classList.add('dark-mode')
         body.classList.add('dark-mode')
         localStorage.setItem('theme', 'dark')
       } else {
+        document.documentElement.classList.remove('dark-mode')
         body.classList.remove('dark-mode')
         localStorage.setItem('theme', 'light')
       }
