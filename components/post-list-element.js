@@ -58,7 +58,7 @@ class PostListElement extends HTMLElement {
       }
     
       :host-context(body.dark-mode) .post-item {
-        background-color: #141414;
+        background-color: #1C1C1E;
         color: #ffffff; 
         box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
       }
@@ -70,6 +70,42 @@ class PostListElement extends HTMLElement {
     
       :host-context(body.dark-mode) .post-item:hover {
         box-shadow: 3px 4px 4px 0px rgba(255, 255, 255, 0.2);
+      }
+
+      .post-wrap-detail {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        color: rgb(107, 107, 107);
+      }
+
+      :host-context(body.dark-mode) .post-wrap-detail {
+        color: #ebebf5;
+      }
+
+      .post-updateAt {
+        margin-left: auto;
+        align-self: end;
+        text-wrap: nowrap;
+        color: rgb(107, 107, 107);
+      }
+
+      :host-context(body.dark-mode) .post-updateAt {
+        color: #ebebf5;
+      }
+
+      .post-info-wrap {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 1.5em 1.5em 1.5em;
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.1375rem;
+        border-bottom: 1px solid #D1D1D6;
+      }
+
+      :host-context(body.dark-mode) .post-info-wrap {
+        border-bottom: 1px solid #48484a;
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -237,7 +273,7 @@ class PostListElement extends HTMLElement {
 
     const lottieHtml = `
       <dotlottie-player
-        src="https://lottie.host/c956f1a0-cebe-4833-9fc2-fa838c2c1731/zJVQAx5Siv.json"
+        src="https://lottie.host/7aabca84-399a-4a9d-98e6-4adf8833b9da/Mym1EA2Izc.lottie"
         background="transparent"
         speed="1"
         style="width: 4.167vw; height: 7.407vh"
