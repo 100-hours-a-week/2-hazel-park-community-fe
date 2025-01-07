@@ -92,6 +92,25 @@ class postFormElement extends HTMLElement {
       :host-context(body.dark-mode) .input-file-span {
         color: #ffffff; 
       }
+
+      .login-submit {
+        width: 355px;
+        height: 33px;
+        margin-top: 1vh;
+        padding-top: 0.741vh;
+        padding-bottom: 0.741vh;
+        background-color: #8e8e93;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: not-allowed;
+      }
+
+      :host-context(body.dark-mode) .login-submit {
+        background-color: #8e8e93;
+      }
     `)
 
     this.shadowRoot.adoptedStyleSheets = [mainStyleSheet, additionalStyles]
@@ -104,7 +123,7 @@ class postFormElement extends HTMLElement {
       <div class="post-form-wrap">
         <form class="post-form">
           ${this.isMakePostPage ? this.makePostForm() : this.editPostForm()}
-          <input id="submit" type="submit" value="완료" class="make-post-submit" />
+          <input id="submit" type="submit" value="Post" class="make-post-submit" />
         </form>
       </div>`
   }
@@ -112,12 +131,12 @@ class postFormElement extends HTMLElement {
   makePostForm() {
     return `    
       <div>
-        <div class="input-title">제목 *</div>
+        <div class="input-title">Title *</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-          <div class="input-title">내용 *</div>
+          <div class="input-title">Contents *</div>
           <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               0 / 1000
@@ -125,11 +144,11 @@ class postFormElement extends HTMLElement {
           <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
-        <div class="input-title">이미지</div>
+        <div class="input-title">Photo</div>
         <div class="input-file-wrap">
           <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
-          <label for="imageUpload" class="input-file-label">파일 선택</label>
-          <span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>
+          <label for="imageUpload" class="input-file-label">Upload</label>
+          <span id="input-file-span" class="input-file-span">Your photo</span>
         </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
       </div>
@@ -139,12 +158,12 @@ class postFormElement extends HTMLElement {
   editPostForm() {
     return `
       <div>
-        <div class="input-title">제목 *</div>
+        <div class="input-title">Title *</div>
         <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData.post_title}" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
-          <div class="input-title">내용 *</div>
+          <div class="input-title">Contents *</div>
           <textarea id="input-contents" type="text" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               ${this.postData.post_contents.length} / 1000
@@ -152,17 +171,17 @@ class postFormElement extends HTMLElement {
           <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="nickname-wrap">
-        <div class="input-title">이미지</div>
+        <div class="input-title">Photo</div>
         <div class="input-file-wrap">
           <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
-          <label for="imageUpload" class="input-file-label">파일 선택</label>
+          <label for="imageUpload" class="input-file-label">Upload</label>
           ${
             this.postImg
               ? `<div class="image-wrapper">
                   <img src="${this.postImg}" class="preview-image" />
                   <button type="button" id="delete-button" class="delete-button"></button>
                  </div>`
-              : `<span id="input-file-span" class="input-file-span">파일을 선택해주세요.</span>`
+              : `<span id="input-file-span" class="input-file-span">Your photo</span>`
           }
       </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>
@@ -340,7 +359,7 @@ class postFormElement extends HTMLElement {
       'contents-char-count',
     )
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#aea0eb'
+    submit.style.backgroundColor = '#8e8e93'
     submit.style.cursor = 'not-allowed'
 
     if (titleHyperText) {
@@ -370,15 +389,24 @@ class postFormElement extends HTMLElement {
 
     // 내용 검증 및 글자수 업데이트
     if (!inputContents.value.trim()) {
+      if (charCountDisplay) {
+        charCountDisplay.style.fontWeight = ''
+      }
       contentsCheck = false
       contentsHyperText.innerText = '내용을 작성해주세요.'
       contentsHyperText.style.visibility = 'visible'
+    } else if (inputContents.value.length == 1000) {
+      if (charCountDisplay) {
+        charCountDisplay.style.fontWeight = 'bold'
+      }
     } else if (inputContents.value.length >= 1000) {
+      charCountDisplay.style.fontWeight = ''
       contentsCheck = false
       inputContents.value = inputContents.value.slice(0, 1000)
 
       // 글자수 초과 시 빨간색 표시
       if (charCountDisplay) {
+        charCountDisplay.style.fontWeight = ''
         charCountDisplay.style.color = '#c94a4a'
       }
     } else {
@@ -387,6 +415,7 @@ class postFormElement extends HTMLElement {
 
       // 글자수가 초과하지 않으면 기본 색상으로 변경
       if (charCountDisplay) {
+        charCountDisplay.style.fontWeight = ''
         charCountDisplay.style.color = '#666' // 기본 회색
       }
     }
