@@ -340,6 +340,8 @@ class postFormElement extends HTMLElement {
         }
       })
     }
+
+    this.validateForm()
     reader.readAsDataURL(file)
   }
 
@@ -399,6 +401,8 @@ class postFormElement extends HTMLElement {
       if (charCountDisplay) {
         charCountDisplay.style.fontWeight = 'bold'
       }
+      contentsCheck = true
+      contentsHyperText.style.visibility = 'hidden'
     } else if (inputContents.value.length >= 1000) {
       charCountDisplay.style.fontWeight = ''
       contentsCheck = false
