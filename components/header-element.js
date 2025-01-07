@@ -92,9 +92,11 @@ class headerElement extends HTMLElement {
     // 슬라이더 상태 변경 이벤트
     themeSwitch.addEventListener('change', () => {
       if (themeSwitch.checked) {
+        document.documentElement.classList.add('dark-mode')
         body.classList.add('dark-mode')
         localStorage.setItem('theme', 'dark')
       } else {
+        document.documentElement.classList.remove('dark-mode')
         body.classList.remove('dark-mode')
         localStorage.setItem('theme', 'light')
       }
