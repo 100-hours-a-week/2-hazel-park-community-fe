@@ -49,7 +49,6 @@ class AuthFormElement extends HTMLElement {
         margin-top: 1vh;
         padding-top: 0.741vh;
         padding-bottom: 0.741vh;
-        background-color: #8e8e93;
         border: none;
         border-radius: 4px;
         color: #ffffff;
@@ -259,7 +258,7 @@ class AuthFormElement extends HTMLElement {
       'nickname-hyper-text',
     )
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#8e8e93'
+    submit.style.backgroundColor = ''
     submit.style.cursor = 'not-allowed'
 
     pwHyperText.innerText = ''
