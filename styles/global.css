@@ -23,13 +23,17 @@ body {
   color: black;
 }
 
-.body::-webkit-scrollbar {
+body::-webkit-scrollbar {
   display: none; /* Chrome , Safari , Opera */
 }
 
 body.dark-mode {
-  background-color: #121212;
+  background-color: #000000;
   color: #ffffff;
+}
+
+body.dark-mode::-webkit-scrollbar {
+  display: none; /* Chrome , Safari , Opera */
 }
 
 header {
@@ -38,6 +42,10 @@ header {
   display: flex;
   justify-content: center;
   border-bottom: 1px solid #f2f2f2;
+}
+
+body.dark-mode header {
+  border-bottom: 1px solid #48484a;
 }
 
 main {
@@ -213,7 +221,7 @@ dotlottie-player {
 }
 
 .theme-toggle input[type='checkbox']:checked + .slider {
-  background-color: #aea0eb;
+  background-color: #0a84ff;
 }
 
 .theme-toggle input[type='checkbox']:checked + .slider::before {

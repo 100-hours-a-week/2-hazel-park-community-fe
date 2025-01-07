@@ -80,7 +80,7 @@
 
 .post-controll-button-detail {
   padding: 0.185vh 0.625vw 0.185vh 0.625vw;
-  border: 1px solid #aca0eb;
+  border: 1px solid #0a84ff;
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
@@ -147,7 +147,7 @@
 .post-interaction-value {
   padding: 0;
   font-size: 12px;
-  color: rgb(107, 107, 107) !important;
+  color: rgb(107, 107, 107);
   text-align: center;
 }
 
@@ -185,9 +185,10 @@
 }
 
 body.dark-mode .comment-area {
-  background-color: #121212;
+  background-color: #1c1c1e;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
   color: #ffffff;
+  border-bottom: 1px solid #48484a;
 }
 
 .comment-area:focus {
@@ -204,6 +205,7 @@ body.dark-mode .comment-area {
 }
 
 body.dark-mode .comment-btn-wrap {
+  background-color: #1c1c1e;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
 }
 
@@ -212,19 +214,17 @@ body.dark-mode .comment-btn-wrap {
   border-radius: 16px;
   border-color: #ffffff;
   border-width: 0px;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1rem;
-  color: #6b6b6b;
-  font-weight: 700;
   font-size: 1rem;
-  color: #6b6b6b;
-  background-color: transparent;
+  background-color: #8e8e93;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 body.dark-mode .comment-button {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* 다크 모드 기본 그림자 */
-  color: #ffffff;
+  background-color: #8e8e93;
+  color: #ebebf5;
 }
 
 body.dark-mode .post-item:hover {

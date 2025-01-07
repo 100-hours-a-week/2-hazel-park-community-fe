@@ -1,8 +1,8 @@
 .title {
   padding-top: 2.222vh;
   text-align: center;
-  font-weight: 700;
-  font-size: 1.5rem;
+  font-weight: 400;
+  font-size: 28px;
 }
 
 .post-form {
@@ -62,7 +62,6 @@
   display: flex;
   font-weight: 400;
   font-size: 0.875rem;
-  color: #000000;
 }
 
 .input-value-file {
@@ -76,13 +75,13 @@
 .input-file-label {
   height: 28.23px;
   padding: 0.556vh 0.417vw 0.556vh 0.417vw;
-  background: #d9d9d9;
-  border: 1px solid #000000;
+  /* background: #0a84ff; */
   border-radius: 4px;
   line-height: 1.0444rem;
   text-align: center;
   text-wrap: nowrap;
   cursor: pointer;
+  color: #0a84ff;
 }
 
 .input-file-span {
@@ -94,6 +93,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
+  color: #0a84ff !important;
 }
 
 .make-post-submit {
@@ -101,11 +101,11 @@
   padding-bottom: 0.741vh;
   margin: auto;
   width: 18.49vw;
-  background-color: #aea0eb;
+  background-color: #8e8e93;
   border: none;
   border-radius: 4px;
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   cursor: not-allowed;
 }

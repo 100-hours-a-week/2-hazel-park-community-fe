@@ -36,7 +36,7 @@
   border-radius: 16px;
   border-color: #ffffff;
   border-width: 0px;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1rem;
   color: #6b6b6b;
   background-color: transparent;
@@ -49,11 +49,8 @@
 
 body.dark-mode .add-post-button {
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-body.dark-mode .add-post-button:hover {
-  color: #6b6b6b;
+  color: #ebebf5;
+  background-color: #0a84ff;
 }
 
 .posts {

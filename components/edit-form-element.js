@@ -256,7 +256,7 @@ class EditFormElement extends HTMLElement {
     let rePwHyperText = this.shadowRoot.getElementById('re-pw-hyper-text')
 
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#aea0eb'
+    submit.style.backgroundColor = '#8e8e93'
     submit.style.cursor = 'not-allowed'
 
     if (nicknameHyperText) {
@@ -321,13 +321,13 @@ class EditFormElement extends HTMLElement {
 
     if (inputNickname) {
       if (nicknameCheck) {
-        submit.style.backgroundColor = '#7f6aee'
+        submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'nickname'
       }
     } else if (inputPassword) {
       if (pwCheck && rePwCheck) {
-        submit.style.backgroundColor = '#7f6aee'
+        submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'password'
       }

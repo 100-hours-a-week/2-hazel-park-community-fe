@@ -42,6 +42,26 @@ class AuthFormElement extends HTMLElement {
         border-bottom: 1px solid rgba(255, 255, 255, 0.16);
         color: #ffffff; 
       }
+
+      .login-submit {
+        width: 355px;
+        height: 33px;
+        margin-top: 1vh;
+        padding-top: 0.741vh;
+        padding-bottom: 0.741vh;
+        background-color: #8e8e93;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: not-allowed;
+      }
+
+      :host-context(body.dark-mode) .login-submit {
+        background-color: #8e8e93;
+      }
+
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
@@ -239,7 +259,7 @@ class AuthFormElement extends HTMLElement {
       'nickname-hyper-text',
     )
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = '#aea0eb'
+    submit.style.backgroundColor = '#8e8e93'
     submit.style.cursor = 'not-allowed'
 
     pwHyperText.innerText = ''
@@ -290,7 +310,7 @@ class AuthFormElement extends HTMLElement {
 
     if (!inputRePassword && !inputNickname) {
       if (this.emailCheck && this.pwCheck) {
-        submit.style.backgroundColor = '#7f6aee'
+        submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'posts'
       }
@@ -301,7 +321,7 @@ class AuthFormElement extends HTMLElement {
         this.rePwCheck &&
         this.nicknameCheck
       ) {
-        submit.style.backgroundColor = '#7f6aee'
+        submit.style.backgroundColor = '#0a84ff'
         submit.style.cursor = 'pointer'
         return 'login'
       }
