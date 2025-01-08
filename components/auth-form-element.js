@@ -144,12 +144,18 @@ class AuthFormElement extends HTMLElement {
     inputPassword?.addEventListener('input', () => this.validateForm())
     inputEmail?.addEventListener(
       'input',
-      debounce(() => this.checkEmail(inputEmail.value.trim()), 500),
+      debounce(
+        () => this.checkEmail(this.escapeHtml(inputEmail.value.trim())),
+        500,
+      ),
     )
 
     inputNickname?.addEventListener(
       'input',
-      debounce(() => this.checkNickname(inputNickname.value.trim()), 500),
+      debounce(
+        () => this.checkNickname(this.escapeHtml(inputNickname.value.trim())),
+        500,
+      ),
     )
 
     inputRePassword?.addEventListener('input', () => this.validateForm())
@@ -157,8 +163,8 @@ class AuthFormElement extends HTMLElement {
 
     submit?.addEventListener('click', (event) => {
       event.preventDefault()
-      const email = inputEmail.value.trim()
-      const password = inputPassword.value.trim()
+      const email = this.escapeHtml(inputEmail.value.trim())
+      const password = this.escapeHtml(inputPassword.value.trim())
 
       const validationResult = this.validateForm()
 
@@ -173,6 +179,7 @@ class AuthFormElement extends HTMLElement {
 
   async checkEmail(email) {
     const emailHyperText = this.shadowRoot.getElementById('email-hyper-text')
+    email = this.escapeHtml(email)
     if (!email) {
       this.emailCheck = false
       emailHyperText.innerText = '* 이메일을 입력해주세요.'
@@ -203,6 +210,7 @@ class AuthFormElement extends HTMLElement {
     const nicknameHyperText = this.shadowRoot.getElementById(
       'nickname-hyper-text',
     )
+    nickname = escapeHtml(nickname)
     if (!nickname) {
       this.nicknameCheck = false
       nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'
@@ -431,6 +439,15 @@ class AuthFormElement extends HTMLElement {
     } catch (error) {
       alert(error.message)
     }
+  }
+
+  escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
   }
 }
 
