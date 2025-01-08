@@ -33,14 +33,9 @@ class AuthFormElement extends HTMLElement {
         width: 100%;
         box-sizing: border-box;
         border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-        background-color: #ffffff;
-      }
-  
-      :host-context(body.dark-mode) .input-value {
-        background-color: #141414;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-        color: #ffffff; 
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.16));
+        background-color: var(--input-value-bg, #ffffff);
+        color: var(--input-value-color);
       }
 
       .login-submit {
@@ -55,16 +50,46 @@ class AuthFormElement extends HTMLElement {
         font-weight: 500;
         font-size: 14px;
         cursor: not-allowed;
+        background-color: var(--login-submit-bg);
       }
-
-      :host-context(body.dark-mode) .login-submit {
-        background-color: #8e8e93;
-      }
-
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
+    this.setupThemeObserver()
+
     this.addEventListeners()
+  }
+
+  setupThemeObserver() {
+    // 초기 테마 설정
+    this.updateThemeVariables()
+
+    // body의 class 변경 감지
+    const observer = new MutationObserver(() => {
+      this.updateThemeVariables()
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
+  updateThemeVariables() {
+    const isDarkMode = document.body.classList.contains('dark-mode')
+    const host = this.shadowRoot.host
+
+    host.style.setProperty(
+      '--border-color',
+      isDarkMode ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.16)',
+    )
+    host.style.setProperty(
+      '--input-value-bg',
+      isDarkMode ? '#141414' : '#ffffff',
+    )
+
+    host.style.setProperty('--input-value-color', isDarkMode ? '#ffffff' : '')
+    host.style.setProperty('--login-submit-bg', isDarkMode ? '#8e8e93' : '')
   }
 
   template() {
