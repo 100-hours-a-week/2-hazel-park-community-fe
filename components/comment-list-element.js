@@ -28,20 +28,19 @@ class CommentListElement extends HTMLElement {
   async connectedCallback() {
     await this.loadLottieScript()
 
-    const urlParams = new URLSearchParams(window.location.search)
-    this.postId = Number(urlParams.get('id'))
+    await this.loadPostId()
 
     if (!this.postId) {
       console.error('postId를 찾을 수 없습니다.')
       return
     }
 
-    this.shadowRoot.innerHTML = this.template(this.comments)
+    this.user = await getSessionUser()
 
     // 로딩 상태 Promise 저장
     this.loadingPromise = this.loadCommentsData()
 
-    this.user = await getSessionUser()
+    this.shadowRoot.innerHTML = this.template(this.comments)
 
     this.initInfiniteScroll()
 
@@ -94,6 +93,11 @@ class CommentListElement extends HTMLElement {
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
     this.addEventListener(this.comments)
+  }
+
+  async loadPostId() {
+    const urlParams = new URLSearchParams(String(window.location.search))
+    this.postId = parseInt(urlParams.get('id'), 10)
   }
 
   async fetchData() {
@@ -173,6 +177,8 @@ class CommentListElement extends HTMLElement {
   }
 
   async loadCommentsData() {
+    await this.loadPostId()
+
     if (this.isLoading || this.allCommentsLoaded) return
 
     try {
@@ -325,7 +331,7 @@ class CommentListElement extends HTMLElement {
         ${comments
           .map(
             (comment) => `
-        <div class="comment-wrap">
+          <div class="comment-wrap">
           <div class="comment-wrap-detail">
             <div class="comment-writer-info">
             ${
@@ -340,9 +346,11 @@ class CommentListElement extends HTMLElement {
               <div class="post-writer-name">${comment.writer}</div>
                   <div class="post-updateAt">${formatDate(comment.updated_at)}</div>
             </div>
-            <div class="comment-contents">${comment.content}</div>
+            <div class="comment-contents">${this.escapeHtml(comment.content)}</div>
           </div>
-          <div class="post-controll-button">
+          ${
+            !this.user || this.user.nickname !== comments[index].writer
+              ? `<div class="post-controll-button">
             <i id="controll-button" class="fa-solid fa-ellipsis-vertical" style='color: #6b6b6b; cursor: pointer;'></i>
               <div id="controll-button-dropdown" class="profile-dropdown">
                <div id="button-update" class="profile-dropdown-menu">
@@ -352,7 +360,10 @@ class CommentListElement extends HTMLElement {
                  Delete
                </div>
             </div>           
-          </div>
+          </div>`
+              : ``
+          }
+          
         </div>
         `,
           )
@@ -448,15 +459,10 @@ class CommentListElement extends HTMLElement {
       const newButton =
         this.shadowRoot.querySelectorAll('#button-update')[index]
 
-      // 수정 권한이 없는 사용자에 대한 처리
-      if (!this.user || this.user.nickname !== comments[index].writer) {
-        newButton.style.visibility = 'hidden'
-      } else {
-        // 새로운 이벤트 리스너 등록
-        newButton.addEventListener('click', async () => {
-          await this.handleUpdate(comments[index].id, comments[index].content)
-        })
-      }
+      // 새로운 이벤트 리스너 등록
+      newButton.addEventListener('click', async () => {
+        await this.handleUpdate(comments[index].id, comments[index].content)
+      })
     })
   }
 
@@ -470,13 +476,9 @@ class CommentListElement extends HTMLElement {
 
     const newDeleteButtons = this.shadowRoot.querySelectorAll('#button-delete')
     newDeleteButtons.forEach((button, index) => {
-      if (!this.user || this.user.nickname !== comments[index].writer) {
-        button.style.visibility = 'hidden'
-      } else {
-        button.addEventListener('click', async () => {
-          this.openModal(comments[index].id)
-        })
-      }
+      button.addEventListener('click', async () => {
+        this.openModal(comments[index].id)
+      })
     })
   }
 
@@ -497,7 +499,7 @@ class CommentListElement extends HTMLElement {
         }
 
         if (this.validateForm()) {
-          const updatedContent = commentArea.value.trim()
+          const updatedContent = this.escapeHtml(commentArea.value.trim())
 
           if (!this.isEditing && !this.isRequestInProgress) {
             this.isRequestInProgress = true
@@ -551,7 +553,7 @@ class CommentListElement extends HTMLElement {
 
       // 클릭 이벤트 추가
       const updateListener = async () => {
-        const updatedContent = commentArea.value.trim()
+        const updatedContent = this.escapeHtml(commentArea.value.trim())
         if (updatedContent) {
           try {
             this.isRequestInProgress = true
@@ -666,6 +668,15 @@ class CommentListElement extends HTMLElement {
       this.closeModal()
     }
     location.reload()
+  }
+
+  escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
   }
 }
 

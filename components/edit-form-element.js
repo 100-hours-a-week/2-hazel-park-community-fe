@@ -178,7 +178,10 @@ class EditFormElement extends HTMLElement {
     deleteAccountButton?.addEventListener('click', () => this.openModal())
     inputNickname?.addEventListener(
       'input',
-      debounce(() => this.checkNickname(inputNickname.value.trim()), 500),
+      debounce(
+        () => this.checkNickname(this.escapeHtml(inputNickname.value.trim())),
+        500,
+      ),
     )
     inputPassword?.addEventListener('input', () => this.validateForm())
     inputRePassword?.addEventListener('input', () => this.validateForm())
@@ -192,7 +195,7 @@ class EditFormElement extends HTMLElement {
       }
 
       if (this.nicknameCheck || this.newImageData) {
-        const nickname = inputNickname.value.trim()
+        const nickname = this.escapeHtml(inputNickname.value.trim())
           ? inputNickname.value.trim()
           : null
 
@@ -215,7 +218,7 @@ class EditFormElement extends HTMLElement {
           this.showToastAndRedirect()
         }
         if (validationResult === 'password') {
-          const password = inputPassword.value.trim()
+          const password = this.escapeHtml(inputPassword.value.trim())
           this.user.user_pw = password
           // localStorage.setItem('user', JSON.stringify(this.user))
           await patchUserPw(this.user.email, password)
@@ -419,6 +422,15 @@ class EditFormElement extends HTMLElement {
       toastMsg.classList.remove('show')
       handleNavigation('/html/Posts.html')
     }, 1500)
+  }
+
+  escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
   }
 }
 

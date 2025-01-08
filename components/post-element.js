@@ -279,8 +279,8 @@ class PostElement extends HTMLElement {
   }
 
   async loadPostData() {
-    const urlParams = new URLSearchParams(window.location.search)
-    const postId = Number(urlParams.get('id'))
+    const urlParams = new URLSearchParams(String(window.location.search))
+    const postId = parseInt(urlParams.get('id'), 10)
     this.post = await getPostDetail(postId)
     this.postId = postId
     this.renderPost()

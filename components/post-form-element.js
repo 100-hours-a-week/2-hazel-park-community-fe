@@ -159,12 +159,12 @@ class postFormElement extends HTMLElement {
     return `
       <div>
         <div class="input-title">Title *</div>
-        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.postData.post_title}" />
+        <input id="input-title" type="text" placeholder="제목을 입력해주세요. (최대 26글자)" class="input-value" value="${this.escapeHtml(this.postData.post_title)}" />
         <div id="title-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
       </div>
       <div class="email-wrap">
           <div class="input-title">Contents *</div>
-          <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.postData.post_contents}</textarea>
+          <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea">${this.escapeHtml(this.postData.post_contents)}</textarea>
           <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
               ${this.postData.post_contents.length} / 1000
           </div>
@@ -241,8 +241,8 @@ class postFormElement extends HTMLElement {
       submit.addEventListener('click', async (event) => {
         event.preventDefault()
         if (!this.isMakePostPage) {
-          const titleValue = inputTitle.value.trim()
-          const contentsValue = inputContents.value.trim()
+          const titleValue = this.escapeHtml(inputTitle.value.trim())
+          const contentsValue = this.escapeHtml(inputContents.value.trim())
           await patchPost(
             this.postId,
             titleValue,
@@ -252,8 +252,8 @@ class postFormElement extends HTMLElement {
           )
           handleNavigation('/html/Posts.html')
         } else if (this.validateForm() === 'posts') {
-          const titleValue = inputTitle.value.trim()
-          const contentsValue = inputContents.value.trim()
+          const titleValue = this.escapeHtml(inputTitle.value.trim())
+          const contentsValue = this.escapeHtml(inputContents.value.trim())
           await uploadPost(
             titleValue,
             this.user.email,
@@ -456,6 +456,15 @@ class postFormElement extends HTMLElement {
 
     this.postData = await getPostDetail(this.postId)
     this.postImg = this.postData.post_img
+  }
+
+  escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
   }
 }
 
