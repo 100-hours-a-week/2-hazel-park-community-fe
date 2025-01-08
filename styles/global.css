@@ -19,17 +19,21 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background: rgba(255, 255, 255, 1);
+  background: #f2f2f7;
   color: black;
 }
 
-.body::-webkit-scrollbar {
+body::-webkit-scrollbar {
   display: none; /* Chrome , Safari , Opera */
 }
 
 body.dark-mode {
-  background-color: #121212;
+  background-color: #000000;
   color: #ffffff;
+}
+
+body.dark-mode::-webkit-scrollbar {
+  display: none; /* Chrome , Safari , Opera */
 }
 
 header {
@@ -37,7 +41,11 @@ header {
   padding-bottom: 8px;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid #d1d1d6;
+}
+
+body.dark-mode header {
+  border-bottom: 1px solid #48484a;
 }
 
 main {
@@ -109,7 +117,6 @@ textarea {
   display: flex;
   flex-direction: column;
   background-color: rgb(255, 255, 255);
-  color: rgb(107, 107, 107);
   font-weight: 400;
   font-size: 0.75rem;
   line-heihgt: 0.9075rem;
@@ -213,7 +220,7 @@ dotlottie-player {
 }
 
 .theme-toggle input[type='checkbox']:checked + .slider {
-  background-color: #aea0eb;
+  background-color: #0a84ff;
 }
 
 .theme-toggle input[type='checkbox']:checked + .slider::before {
