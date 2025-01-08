@@ -10,61 +10,50 @@
 
 .modal-wrap {
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 408px;
-  height: 242px;
-  border-radius: 12px;
+  width: 360px;
+  height: 220px;
+  border-radius: 12px; /* 전체 모달의 radius */
   text-align: center;
   background-color: #ffffff;
   z-index: 10000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 모달 그림자 */
 }
 
 .modal-title {
-  padding-top: 4.444vh;
-  font-weight: 700;
-  font-size: 1.5rem;
+  margin-top: 36px; /* 제목 위아래 여백 */
+  font-weight: 600;
+  font-size: 20px;
   line-height: 1.79rem;
-  border-radius: 12px;
-  background-color: #ffffff;
+  /* color: #000000; */
 }
 
 .modal-description {
-  padding-top: 2.222vh;
+  margin: 10px 20px; /* 설명에 약간의 여백 추가 */
   font-weight: 400;
   font-size: 1.25rem;
   line-height: 1.4919rem;
-  background-color: #ffffff;
-}
-
-.modal-buttons {
-  padding-top: 2.222vh;
-  background-color: #ffffff;
 }
 
 .button-wrap {
   display: flex;
-  flex-direction: row;
-  gap: 0.833vw;
-  justify-content: center;
-  background-color: #ffffff;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #d1d1d6; /* 상단 경계선 */
 }
 
 button {
-  padding: 0.926vh 2.396vw 0.926vh 2.396vw;
-  width: 127px;
-  height: 44px;
+  padding: 12px 24px; /* 버튼 내부 여백 */
+  width: 50%;
+  height: 52px;
   border: none;
-  border-radius: 12px;
   font-weight: 400;
-  font-size: 1.25rem;
-  line-height: 1.4919rem;
-  background-color: #c4a5fa;
-  color: #000000;
-}
-
-.button-cancel {
-  background-color: #242424;
-  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #ffffff;
 }

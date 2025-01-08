@@ -52,46 +52,28 @@ class PostListElement extends HTMLElement {
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(`
       .post-item {
-        background-color: #ffffff;
-        color: #000000;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-      }
-    
-      :host-context(body.dark-mode) .post-item {
-        background-color: #1C1C1E;
-        color: #ffffff; 
-        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+        background-color: var(--post-item-bg, #ffffff);
+        color: var(--post-item-color, #000000);
+        box-shadow: 0 2px 4px var(--post-item-shadow, rgba(0, 0, 0, 0.1)); 
       }
     
       .post-item:hover {
-        box-shadow: 3px 4px 4px 0px #cccccc40;
+        box-shadow: 3px 4px 4px 0px var(--post-item-hover-shadow, #cccccc40);
         transform: translateY(-5px);
       }
     
-      :host-context(body.dark-mode) .post-item:hover {
-        box-shadow: 3px 4px 4px 0px rgba(255, 255, 255, 0.2);
-      }
-
       .post-wrap-detail {
         display: flex;
         flex-direction: row;
         gap: 10px;
-        color: rgb(107, 107, 107);
-      }
-
-      :host-context(body.dark-mode) .post-wrap-detail {
-        color: #ebebf5;
+        color: var(--post-detail-color, rgb(107, 107, 107));
       }
 
       .post-updateAt {
         margin-left: auto;
         align-self: end;
         text-wrap: nowrap;
-        color: rgb(107, 107, 107);
-      }
-
-      :host-context(body.dark-mode) .post-updateAt {
-        color: #ebebf5;
+        color: var(--post-detail-color, rgb(107, 107, 107));
       }
 
       .post-info-wrap {
@@ -101,16 +83,58 @@ class PostListElement extends HTMLElement {
         font-weight: 400;
         font-size: 0.875rem;
         line-height: 1.1375rem;
-        border-bottom: 1px solid #D1D1D6;
-      }
-
-      :host-context(body.dark-mode) .post-info-wrap {
-        border-bottom: 1px solid #48484a;
+        border-bottom: 1px solid var(--post-border-color, #D1D1D6);
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
+    // CSS 변수 업데이트를 위한 MutationObserver 설정
+    this.setupThemeObserver()
+
     this.initInfiniteScroll()
+  }
+
+  setupThemeObserver() {
+    // 초기 테마 설정
+    this.updateThemeVariables()
+
+    // body의 class 변경 감지
+    const observer = new MutationObserver(() => {
+      this.updateThemeVariables()
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
+  updateThemeVariables() {
+    const isDarkMode = document.body.classList.contains('dark-mode')
+    this.shadowRoot.host.style.setProperty(
+      '--post-item-bg',
+      isDarkMode ? '#1C1C1E' : '#ffffff',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--post-item-color',
+      isDarkMode ? '#ffffff' : '#000000',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--post-item-shadow',
+      isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--post-item-hover-shadow',
+      isDarkMode ? 'rgba(255, 255, 255, 0.2)' : '#cccccc40',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--post-detail-color',
+      isDarkMode ? '#ebebf5' : 'rgb(107, 107, 107)',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--post-border-color',
+      isDarkMode ? '#48484a' : '#D1D1D6',
+    )
   }
 
   waitForStylesLoaded() {

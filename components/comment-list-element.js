@@ -61,14 +61,8 @@ class CommentListElement extends HTMLElement {
         visibility: hidden;
         z-index: 1;
         box-shadow:
-          rgba(0, 0, 0, 0.05) 0px 0px 4px,
-          rgba(0, 0, 0, 0.15) 0px 2px 8px;
-      }
-
-      :host-context(body.dark-mode) .profile-dropdown {
-        box-shadow:
-          rgba(255, 255, 255, 0.05) 0px 0px 4px,
-          rgba(255, 255, 255, 0.15) 0px 2px 8px;
+          var(--dropdown-shadow-1) 0px 0px 4px,
+          var(--dropdown-shadow-2) 0px 2px 8px;
       }
 
       .profile-dropdown-menu {
@@ -76,23 +70,63 @@ class CommentListElement extends HTMLElement {
         padding-bottom: 0.625rem;
         padding-right: 1.5rem;
         padding-left: 1.5rem;
-        background-color: transparent;
+        background-color: var(--dropdown-menu-bg);
         cursor: pointer;
         transition: background-color 0.3s ease;
+        color: var(--dropdown-menu-color);
       }
-    
-      :host-context(body.dark-mode) .profile-dropdown-menu {
-        background-color: #141414;
-        color: #ffffff;
-      }
-    
-      :host-context(body.dark-mode) .profile-dropdown-menu:hover {
-        background-color: rgb(48, 48, 48)
+
+      .profile-dropdown-menu:hover {
+        background-color: var(--dropdown-menu-hover-bg);
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
+    this.setupThemeObserver()
+
     this.addEventListener(this.comments)
+  }
+
+  setupThemeObserver() {
+    // 초기 테마 설정
+    this.updateThemeVariables()
+
+    // body의 class 변경 감지
+    const observer = new MutationObserver(() => {
+      this.updateThemeVariables()
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
+  updateThemeVariables() {
+    const isDarkMode = document.body.classList.contains('dark-mode')
+    const host = this.shadowRoot.host
+
+    host.style.setProperty(
+      '--dropdown-shadow-1',
+      isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    )
+    host.style.setProperty(
+      '--dropdown-shadow-2',
+      isDarkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
+    )
+
+    host.style.setProperty(
+      '--dropdown-menu-bg',
+      isDarkMode ? '#141414' : 'transparent',
+    )
+    host.style.setProperty(
+      '--dropdown-menu-color',
+      isDarkMode ? '#ffffff' : 'inherit',
+    )
+    host.style.setProperty(
+      '--dropdown-menu-hover-bg',
+      isDarkMode ? 'rgb(48, 48, 48)' : 'rgba(0, 0, 0, 0.05)',
+    )
   }
 
   async loadPostId() {

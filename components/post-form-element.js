@@ -68,14 +68,9 @@ class postFormElement extends HTMLElement {
         width: 100%;
         box-sizing: border-box;
         border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-        background-color: #ffffff;
-      }
-  
-      :host-context(body.dark-mode) .input-value {
-        background-color: #141414;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-        color: #ffffff; 
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.16));
+        background-color: var(--input-value-bg, #ffffff);
+        color: var(--input-value-color);
       }
   
       .input-file-span {
@@ -87,10 +82,7 @@ class postFormElement extends HTMLElement {
         text-overflow: ellipsis;
         white-space: nowrap;
         box-sizing: border-box;
-      }
-  
-      :host-context(body.dark-mode) .input-file-span {
-        color: #ffffff; 
+        color: var(--input-value-color);
       }
 
       .login-submit {
@@ -99,7 +91,7 @@ class postFormElement extends HTMLElement {
         margin-top: 1vh;
         padding-top: 0.741vh;
         padding-bottom: 0.741vh;
-        background-color: #8e8e93;
+        background-color: var(--login-submit-bg);
         border: none;
         border-radius: 4px;
         color: #ffffff;
@@ -107,15 +99,45 @@ class postFormElement extends HTMLElement {
         font-size: 14px;
         cursor: not-allowed;
       }
-
-      :host-context(body.dark-mode) .login-submit {
-        background-color: #8e8e93;
-      }
     `)
 
     this.shadowRoot.adoptedStyleSheets = [mainStyleSheet, additionalStyles]
 
+    this.setupThemeObserver()
+
     this.style.visibility = 'visible' // 콘텐츠 표시
+  }
+
+  setupThemeObserver() {
+    // 초기 테마 설정
+    this.updateThemeVariables()
+
+    // body의 class 변경 감지
+    const observer = new MutationObserver(() => {
+      this.updateThemeVariables()
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
+  updateThemeVariables() {
+    const isDarkMode = document.body.classList.contains('dark-mode')
+    const host = this.shadowRoot.host
+
+    host.style.setProperty(
+      '--border-color',
+      isDarkMode ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.16)',
+    )
+    host.style.setProperty(
+      '--input-value-bg',
+      isDarkMode ? '#141414' : '#ffffff',
+    )
+
+    host.style.setProperty('--input-value-color', isDarkMode ? '#ffffff' : '')
+    host.style.setProperty('--login-submit-bg', isDarkMode ? '#8e8e93' : '')
   }
 
   template() {

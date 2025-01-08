@@ -43,15 +43,7 @@ class PostElement extends HTMLElement {
         text-wrap: nowrap;
         visibility: hidden;
         z-index: 1;
-        box-shadow:
-          rgba(0, 0, 0, 0.05) 0px 0px 4px,
-          rgba(0, 0, 0, 0.15) 0px 2px 8px;
-      }
-
-      :host-context(body.dark-mode) .profile-dropdown {
-        box-shadow:
-          rgba(255, 255, 255, 0.05) 0px 0px 4px,
-          rgba(255, 255, 255, 0.15) 0px 2px 8px;
+        box-shadow: 0px 0px 4px var(--dropdown-shadow-1), 0px 2px 8px var(--dropdown-shadow-2);
       }
 
       .profile-dropdown-menu {
@@ -59,40 +51,28 @@ class PostElement extends HTMLElement {
         padding-bottom: 0.625rem;
         padding-right: 1.5rem;
         padding-left: 1.5rem;
-        background-color: transparent;
+        background-color: var(--dropdown-menu-bg, transparent);
+        color: var(--dropdown-menu-color, inherit);
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
     
-      :host-context(body.dark-mode) .profile-dropdown-menu {
-        background-color: #141414;
-        color: #ffffff;
-      }
-              
-      :host-context(body.dark-mode) .profile-dropdown-menu:hover {
-        background-color: rgb(48, 48, 48)
+      .profile-dropdown-menu:hover {
+        background-color: var(--dropdown-menu-hover-bg, rgba(0, 0, 0, 0.05));
       }
 
       .post-wrap-detail {
         display: flex;
         flex-direction: row;
         gap: 10px;
-        color: rgb(107, 107, 107);
-      }
-
-      :host-context(body.dark-mode) .post-wrap-detail {
-        color: #ebebf5;
+        color: var(--detail-text-color, rgb(107, 107, 107));
       }
 
       .post-updateAt {
         margin-left: auto;
         align-self: end;
         text-wrap: nowrap;
-        color: rgb(107, 107, 107);
-      }
-
-      :host-context(body.dark-mode) .post-updateAt {
-        color: #ebebf5;
+        color: var(--detail-text-color, rgb(107, 107, 107));
       }
 
       .post-interaction-box {
@@ -107,32 +87,20 @@ class PostElement extends HTMLElement {
         font-weight: 700;
         text-align: center;
         gap: 4px;
-        color: rgb(107, 107, 107);
-      }
-
-      :host-context(body.dark-mode) .post-interaction-box {
-        color: #ebebf5;
+        color: var(--detail-text-color, rgb(107, 107, 107));
       }
 
       .post-interaction-value {
         padding: 0;
         font-size: 12px;
-        color: rgb(107, 107, 107);
+        color: var(--detail-text-color, rgb(107, 107, 107));
         text-align: center;
-      }
-
-      :host-context(body.dark-mode) .post-interaction-value {
-        color: #ebebf5;
       }
 
       .post-detail-top {
         width: 592px;
         padding: 2.222vh 1.25vw 2.222vh 1.25vw;
-        border-bottom: 1px solid #D1D1D6;
-      }
-
-      :host-context(body.dark-mode) .post-detail-top {
-        border-bottom: 1px solid #48484a;
+        border-bottom: 1px solid var(--border-color, #D1D1D6);
       }
 
       .post-detail-bottom {
@@ -140,18 +108,64 @@ class PostElement extends HTMLElement {
         flex-direction: column;
         align-items: center;
         padding: 2.222vh 1.25vw 2.963vh 1.25vw;
-        border-bottom: 1px solid #D1D1D6;
+        border-bottom: 1px solid var(--border-color, #D1D1D6);
       }
-
-      :host-context(body.dark-mode) .post-detail-bottom {
-        border-bottom: 1px solid #48484a;
-      } 
- 
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
+    this.setupThemeObserver()
+
     await this.loadPostData()
     this.loadLikeState()
+  }
+
+  setupThemeObserver() {
+    // 초기 테마 설정
+    this.updateThemeVariables()
+
+    // body의 class 변경 감지
+    const observer = new MutationObserver(() => {
+      this.updateThemeVariables()
+    })
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
+  updateThemeVariables() {
+    const isDarkMode = document.body.classList.contains('dark-mode')
+    const host = this.shadowRoot.host
+
+    host.style.setProperty(
+      '--dropdown-shadow-1',
+      isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    )
+    host.style.setProperty(
+      '--dropdown-shadow-2',
+      isDarkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
+    )
+
+    host.style.setProperty(
+      '--dropdown-menu-bg',
+      isDarkMode ? '#141414' : 'transparent',
+    )
+    host.style.setProperty(
+      '--dropdown-menu-color',
+      isDarkMode ? '#ffffff' : 'inherit',
+    )
+    host.style.setProperty(
+      '--dropdown-menu-hover-bg',
+      isDarkMode ? 'rgb(48, 48, 48)' : 'rgba(0, 0, 0, 0.05)',
+    )
+
+    host.style.setProperty(
+      '--detail-text-color',
+      isDarkMode ? '#ebebf5' : 'rgb(107, 107, 107)',
+    )
+
+    host.style.setProperty('--border-color', isDarkMode ? '#48484a' : '#D1D1D6')
   }
 
   loadLikeState() {
