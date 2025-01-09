@@ -6,7 +6,11 @@ import {
 } from '/services/comment-api.js'
 import { getSessionUser } from '/services/user-api.js'
 
-import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import {
+  formatDate,
+  formatCommentDate,
+  formatTime,
+} from '/utils/format-date.js'
 import handleNavigation from '/utils/navigation.js'
 
 class CommentListElement extends HTMLElement {
@@ -173,7 +177,7 @@ class CommentListElement extends HTMLElement {
                   `
             }
               <div class="post-writer-name">${comment.writer}</div>
-              <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
+              <div class="post-updateAt">${formatCommentDate(comment.updated_at) + ' ' + formatTime(comment.updated_at)}</div>
             </div>
             <div class="comment-contents">${comment.content}</div>
           </div>

@@ -2,7 +2,11 @@ import checkCount from '/utils/check-count.js'
 import handleNavigation from '/utils/navigation.js'
 import { getSessionUser } from '/services/user-api.js'
 import { getPostDetail, deletePost, likes } from '/services/post-api.js'
-import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import {
+  formatDate,
+  formatCommentDate,
+  formatTime,
+} from '/utils/format-date.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -321,7 +325,7 @@ class PostElement extends HTMLElement {
           <div class="wrap-for-gap">
             <div class="post-writer-name">${this.post.post_writer}</div>
             <div class="post-wrap-detail-box">
-              <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
+              <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at) + ' ' + formatTime(this.post.post_updated_at)}</div>
               <div>
                 <div class="post-wrap-detail">
                   <div class="detail-icon">
