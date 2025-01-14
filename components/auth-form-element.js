@@ -359,7 +359,7 @@ class AuthFormElement extends HTMLElement {
 
       if (!inputNickname.value.trim()) {
         this.nicknameCheck = false
-        nicknameHyperText.innerText = '닉네임을 입력해주세요.'
+        nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'
         nicknameHyperText.style.visibility = 'visible'
       }
     }
