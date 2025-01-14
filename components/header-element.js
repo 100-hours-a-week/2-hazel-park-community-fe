@@ -11,10 +11,16 @@ class headerElement extends HTMLElement {
   }
 
   async connectedCallback() {
-    // 로딩 상태 Promise 저장
-    this.loadingPromise = this.fetchData()
+    // 스타일과 데이터를 병렬로 로드
+    await Promise.all([this.loadStyles(), this.fetchData()])
 
-    // 스타일 로드
+    // 템플릿 렌더링
+    this.shadowRoot.innerHTML += this.template()
+    this.initializeComponent()
+    this.initializeTheme()
+  }
+
+  async loadStyles() {
     const styleSheet = document.createElement('link')
     styleSheet.rel = 'stylesheet'
     styleSheet.href = '/styles/global.css'
@@ -22,6 +28,11 @@ class headerElement extends HTMLElement {
 
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(`
+      header {
+        background-color: var(--header-bg, #ffffff);
+        border-bottom: 1px solid var(--header-border-bottom, #48484a);
+      }
+
       .profile-dropdown {
         position: absolute;
         width: 7.1875rem;
@@ -60,14 +71,6 @@ class headerElement extends HTMLElement {
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
     this.setupThemeObserver()
-
-    // 스타일 로드 후 템플릿 렌더링
-    styleSheet.addEventListener('load', async () => {
-      await this.loadingPromise // 데이터 로드 대기
-      this.shadowRoot.innerHTML += this.template()
-      this.initializeComponent()
-      this.initializeTheme() // 테마 초기화
-    })
   }
 
   setupThemeObserver() {
@@ -88,6 +91,12 @@ class headerElement extends HTMLElement {
   updateThemeVariables() {
     const isDarkMode = document.body.classList.contains('dark-mode')
     const host = this.shadowRoot.host
+
+    host.style.setProperty('--header-bg', isDarkMode ? '#000000' : '#ffffff')
+    host.style.setProperty(
+      '--header-border-bottom',
+      isDarkMode ? '#48484a' : '#d1d1d6',
+    )
 
     host.style.setProperty(
       '--dropdown-shadow-1',

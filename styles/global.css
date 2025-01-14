@@ -37,15 +37,14 @@ body.dark-mode::-webkit-scrollbar {
 }
 
 header {
+  position: fixed;
+  width: 100%;
   padding-top: 8px;
   padding-bottom: 8px;
   display: flex;
   justify-content: center;
   border-bottom: 1px solid #d1d1d6;
-}
-
-body.dark-mode header {
-  border-bottom: 1px solid #48484a;
+  z-index: 9999;
 }
 
 main {
