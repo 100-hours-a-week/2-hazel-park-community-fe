@@ -32,7 +32,7 @@
 .
 ├── assets # svg, png 파일
 ├── components # custom element
-├── data # 디비 연결 전 사용했던 더미 데이터
+├── data # 디비 연결 전 사용했던 Json 더미 데이터
 ├── html # html 페이지
 ├── scripts # html에 대응하는 javascipt 코드
 ├── services # api 연결 코드
