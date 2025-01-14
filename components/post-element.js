@@ -108,6 +108,7 @@ class PostElement extends HTMLElement {
       }
 
       .post-detail-bottom {
+        width: 592px;
         display: flex;
         flex-direction: column;
         align-items: center;

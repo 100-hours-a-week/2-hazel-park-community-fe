@@ -143,7 +143,7 @@ class postFormElement extends HTMLElement {
   template() {
     return `
       <div class="post-form-wrap">
-        <form class="post-form">
+        <form class="post-form-detail">
           ${this.isMakePostPage ? this.makePostForm() : this.editPostForm()}
           <input id="submit" type="submit" value="Post" class="make-post-submit" />
         </form>
@@ -169,7 +169,9 @@ class postFormElement extends HTMLElement {
         <div class="input-title">Photo</div>
         <div class="input-file-wrap">
           <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
-          <label for="imageUpload" class="input-file-label">Upload</label>
+          <label for="imageUpload" class="input-file-label">
+            Upload
+          </label>
           <span id="input-file-span" class="input-file-span">Your photo</span>
         </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>

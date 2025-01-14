@@ -7,15 +7,22 @@
 
 .post-form {
   margin-top: 4.722vh;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+}
 
+.post-form-detail {
+  margin-top: 4.722vh;
+  width: 592px;
   display: flex;
   flex-direction: column;
   text-align: start;
 }
 
 .post-form-wrap {
-  padding-right: 34.583vw;
-  padding-left: 34.583vw;
+  display: flex;
+  justify-content: center;
 }
 
 .input-title {
