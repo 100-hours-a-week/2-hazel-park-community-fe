@@ -23,7 +23,11 @@ export async function loginUser(email, password) {
       return null
     }
   } catch (error) {
-    alert(error.message)
+    if ((error.status = 429)) {
+      alert('잠시 후 다시 시도해 주세요!')
+    } else {
+      alert(error.message)
+    }
   }
 }
 
@@ -56,10 +60,12 @@ export async function checkEmailDuplicate(email) {
       body: JSON.stringify({ email }),
     })
     const data = await response.json()
-    console.log(data)
     return data
   } catch (error) {
-    console.error(error.message)
+    if ((error.status = 429)) {
+      alert('잠시 후 다시 시도해 주세요!')
+    }
+    // console.error(error.message)
     return false
   }
 }
@@ -76,7 +82,9 @@ export async function checkNicknameDuplicate(nickname) {
     const data = await response.json()
     return data
   } catch (error) {
-    console.error(error.message)
+    if ((error.status = 429)) {
+      alert('잠시 후 다시 시도해 주세요!')
+    }
     return false
   }
 }
@@ -129,7 +137,7 @@ export async function patchUserNickname(email, nickname, newImageData) {
 
     return response.status
   } catch (error) {
-    alert(error.message)
+    alert(error)
   }
 }
 

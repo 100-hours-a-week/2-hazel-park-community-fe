@@ -19,7 +19,7 @@
 
 .button {
   display: flex;
-  margin-top: 1.5rem;
+  margin-top: 82px;
   justify-content: center;
 }
 
@@ -99,6 +99,7 @@ body.dark-mode .add-post-button:hover .button-text {
 .post-item {
   width: 680px;
   height: 193px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -120,7 +121,7 @@ body.dark-mode .add-post-button:hover .button-text {
   display: flex;
   max-width: 464px;
   flex-direction: column;
-  justify-content: space-evenly;
+  gap: 20px;
 }
 
 .post-title {
@@ -213,6 +214,11 @@ body.dark-mode .add-post-button:hover .button-text {
     flex-direction: column;
   }
 
+  .button-wrap {
+    width: 90%;
+    justify-content: flex-end;
+  }
+
   .add-post-button {
     width: 48px;
     padding: 0;
@@ -235,22 +241,26 @@ body.dark-mode .add-post-button:hover .button-text {
 
   .post-list {
     gap: 0.5rem;
-    padding: 0 1rem;
+    padding: 0 24px;
   }
 
   .post-item {
     width: 100%;
-    padding: 1rem;
+    height: 160px;
+    /* padding: 1rem; */
+    margin: 0 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .post-title {
+    -webkit-line-clamp: 1;
     font-size: 18px;
     line-height: 24px;
     max-height: 48px;
   }
 
   .post-contents {
+    -webkit-line-clamp: 1;
     font-size: 14px;
     line-height: 18px;
     max-height: 36px;
@@ -266,6 +276,14 @@ body.dark-mode .add-post-button:hover .button-text {
   .post-wrap-detail {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .post-info-wrap-left {
+    overflow: hidden;
+    display: flex;
+    max-width: 464px;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .post-writer-wrap {
@@ -290,6 +308,11 @@ body.dark-mode .add-post-button:hover .button-text {
   .title {
     flex-direction: column;
     margin-top: 1.5rem;
+  }
+
+  .button-wrap {
+    width: 90%;
+    justify-content: flex-end;
   }
 
   .add-post-button {
