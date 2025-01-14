@@ -24,7 +24,7 @@ class EditFormElement extends HTMLElement {
 
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(`
-       .input-value {
+      .input-value {
         margin-top: 1.481vh;
         padding: 1.852vh 0 1.852vh 1.25vw;
         width: 100%;
@@ -34,7 +34,6 @@ class EditFormElement extends HTMLElement {
         background-color: var(--input-value-bg, #ffffff);
         color: var(--input-value-color);
       }
-
       .login-submit {
         width: 355px;
         height: 33px;
@@ -47,9 +46,41 @@ class EditFormElement extends HTMLElement {
         font-weight: 500;
         font-size: 14px;
         cursor: not-allowed;
-        background-color: var(--login-submit-bg);
+        background-color: var(--login-submit-bg-disabled, #f9f9f9);
       }
 
+      .login-submit.enabled {
+        background-color: var(--login-submit-bg-enabled, #0a84ff);
+        cursor: pointer;
+      }
+
+      .login-submit.disabled {
+        background-color: var(--login-submit-bg-disabled, #8e8e93);
+        cursor: not-allowed;
+      }
+
+      @media all and (max-width: 479px) {
+        .login-submit {
+          width: 80px;
+          margin: 0 auto;
+        }
+      }
+
+      /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px) */
+      @media all and (min-width: 480px) and (max-width: 767px) {
+        .login-submit {
+          width: 160px;
+          margin: 0 auto;
+        }
+      }
+
+      /* 테블릿 가로 (해상도 768px ~ 1023px) */
+      @media all and (min-width: 768px) and (max-width: 1023px) {
+        .login-submit {
+          width: 200px;
+          margin: 0 auto;
+        }
+      }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
@@ -79,20 +110,23 @@ class EditFormElement extends HTMLElement {
 
     host.style.setProperty(
       '--input-value-bg',
-      isDarkMode ? '#141414' : '#ffffff',
+      isDarkMode ? '#141414' : '#f9f9f9',
     )
     host.style.setProperty(
       '--input-value-border',
       isDarkMode ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.16)',
     )
-
     host.style.setProperty(
       '--input-value-color',
       isDarkMode ? '#ffffff' : 'inherit',
     )
     host.style.setProperty(
-      '--login-submit-bg',
-      isDarkMode ? '#8e8e93' : 'inherit',
+      '--login-submit-bg-enabled',
+      isDarkMode ? '#0a84ff' : '#0a84ff',
+    )
+    host.style.setProperty(
+      '--login-submit-bg-disabled',
+      isDarkMode ? '#8e8e93' : '#f9f9f9',
     )
   }
 
@@ -266,8 +300,8 @@ class EditFormElement extends HTMLElement {
       'nickname-hyper-text',
     )
     const submit = this.shadowRoot.getElementById('submit')
-    submit.style.backgroundColor = ''
-    submit.style.cursor = 'not-allowed'
+
+    submit.classList.add('disabled') // 초기 상태는 비활성화
 
     if (!nickname) {
       this.nicknameCheck = false
@@ -283,9 +317,9 @@ class EditFormElement extends HTMLElement {
       nicknameHyperText.style.visibility = 'visible'
     } else {
       const isDuplicate = await checkNicknameDuplicate(nickname)
-      if (isDuplicate.code == 400) {
+      if (!isDuplicate || isDuplicate.code === 400) {
         this.nicknameCheck = false
-        nicknameHyperText.innerText = `* ${isDuplicate.message}`
+        nicknameHyperText.innerText = '* 15분 뒤에 다시 시도해 주세요.'
         nicknameHyperText.style.visibility = 'visible'
       } else {
         this.nicknameCheck = true
@@ -295,6 +329,21 @@ class EditFormElement extends HTMLElement {
     }
 
     this.validateImage()
+    this.validateSubmitButton()
+  }
+
+  validateSubmitButton() {
+    const submit = this.shadowRoot.getElementById('submit')
+
+    if (this.nicknameCheck || this.newImageData) {
+      submit.classList.remove('disabled')
+      submit.classList.add('enabled')
+      submit.disabled = false
+    } else {
+      submit.classList.remove('enabled')
+      submit.classList.add('disabled')
+      submit.disabled = true
+    }
   }
 
   validateImageFile(file) {
@@ -332,7 +381,9 @@ class EditFormElement extends HTMLElement {
     const submit = this.shadowRoot.getElementById('submit')
 
     // 기본 상태 초기화
-    submit.style.backgroundColor = '#8e8e93'
+    const isDarkMode = document.body.classList.contains('dark-mode')
+
+    submit.style.backgroundColor = isDarkMode ? '#8e8e93' : '#f9f9f9'
     submit.style.cursor = 'not-allowed'
     submit.disabled = true
 

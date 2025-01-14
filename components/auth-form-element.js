@@ -85,11 +85,14 @@ class AuthFormElement extends HTMLElement {
     )
     host.style.setProperty(
       '--input-value-bg',
-      isDarkMode ? '#141414' : '#ffffff',
+      isDarkMode ? '#141414' : '#f9f9f9',
     )
 
     host.style.setProperty('--input-value-color', isDarkMode ? '#ffffff' : '')
-    host.style.setProperty('--login-submit-bg', isDarkMode ? '#8e8e93' : '')
+    host.style.setProperty(
+      '--login-submit-bg',
+      isDarkMode ? '#8e8e93' : '#f9f9f9',
+    )
   }
 
   template() {
@@ -235,7 +238,7 @@ class AuthFormElement extends HTMLElement {
     const nicknameHyperText = this.shadowRoot.getElementById(
       'nickname-hyper-text',
     )
-    nickname = escapeHtml(nickname)
+    nickname = this.escapeHtml(nickname)
     if (!nickname) {
       this.nicknameCheck = false
       nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'

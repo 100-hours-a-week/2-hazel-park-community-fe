@@ -233,3 +233,27 @@ body.dark-mode .profile-dropdown-menu {
     rgba(255, 255, 255, 0.05) 0px 0px 4px,
     rgba(255, 255, 255, 0.15) 0px 2px 8px;
 }
+
+/* 모바일 세로 (해상도 ~ 479px) */
+@media all and (max-width: 479px) {
+  .sign-in {
+    width: 80px;
+    margin: 0 auto;
+  }
+}
+
+/* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px) */
+@media all and (min-width: 480px) and (max-width: 767px) {
+  .sign-in {
+    width: 160px;
+    margin: 0 auto;
+  }
+}
+
+/* 테블릿 가로 (해상도 768px ~ 1023px) */
+@media all and (min-width: 768px) and (max-width: 1023px) {
+  .sign-in {
+    width: 200px;
+    margin: 0 auto;
+  }
+}
