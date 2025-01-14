@@ -96,6 +96,8 @@ textarea {
 
 .profile-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .header-profile-img {

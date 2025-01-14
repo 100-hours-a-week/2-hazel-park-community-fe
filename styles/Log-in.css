@@ -83,6 +83,15 @@
 
 /* 모바일 세로 (해상도 ~ 479px) */
 @media all and (max-width: 479px) {
+  .login-form-wrap {
+    width: 100%;
+  }
+
+  .login-text {
+    font-size: 20px;
+    line-height: 1.8rem;
+    margin-bottom: 2vh;
+  }
 }
 
 /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px) */

@@ -90,6 +90,10 @@ class PostListElement extends HTMLElement {
         font-size: 0.875rem;
         line-height: 1.1375rem;
       }
+
+      .loading-lottie {
+        width: 4.167vw; height: 7.407vh
+      }
       
       @media all and (max-width: 479px) {
         .post-wrap-detail {
@@ -332,7 +336,7 @@ class PostListElement extends HTMLElement {
         src="https://lottie.host/7aabca84-399a-4a9d-98e6-4adf8833b9da/Mym1EA2Izc.lottie"
         background="transparent"
         speed="1"
-        style="width: 4.167vw; height: 7.407vh"
+        class="loading-lottie"
         direction="1"
         playMode="normal"
         loop

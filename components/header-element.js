@@ -37,6 +37,7 @@ class headerElement extends HTMLElement {
         position: absolute;
         width: 7.1875rem;
         margin-top: 0.278vh;
+        top: 36px;
         right: 0;
         display: flex;
         flex-direction: column;

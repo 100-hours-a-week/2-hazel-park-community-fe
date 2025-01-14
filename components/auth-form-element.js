@@ -52,6 +52,27 @@ class AuthFormElement extends HTMLElement {
         cursor: not-allowed;
         background-color: var(--login-submit-bg);
       }
+
+      @media all and (max-width: 479px) {
+        .login-submit {
+          width: 80px;
+          margin: 0 auto;
+        }
+      }
+        
+      @media all and (min-width: 480px) and (max-width: 767px) {
+        .login-submit {
+          width: 160px;
+          margin: 0 auto;
+        }
+      }
+
+      @media all and (min-width: 768px) and (max-width: 1023px) {
+        .login-submit {
+          width: 200px;
+          margin: 0 auto;
+        }
+      }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
