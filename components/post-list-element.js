@@ -1,7 +1,11 @@
 import checkCount from '/utils/check-count.js'
 import handleNavigation from '/utils/navigation.js'
 import { getPosts } from '/services/post-api.js'
-import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import {
+  formatDate,
+  formatCommentDate,
+  formatTime,
+} from '/utils/format-date.js'
 
 class PostListElement extends HTMLElement {
   constructor() {
@@ -52,9 +56,8 @@ class PostListElement extends HTMLElement {
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(`
       .post-item {
-        background-color: var(--post-item-bg, #ffffff);
         color: var(--post-item-color, #000000);
-        box-shadow: 0 2px 4px var(--post-item-shadow, rgba(0, 0, 0, 0.1)); 
+        border-bottom: 1px solid var(--border-color, #D1D1D6);
       }
     
       .post-item:hover {
@@ -65,25 +68,43 @@ class PostListElement extends HTMLElement {
       .post-wrap-detail {
         display: flex;
         flex-direction: row;
-        gap: 10px;
+        padding: 0 0 20px; 0;
+        gap: 20px;
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.1375rem;
         color: var(--post-detail-color, rgb(107, 107, 107));
       }
 
       .post-updateAt {
-        margin-left: auto;
-        align-self: end;
+        align-self: start;
         text-wrap: nowrap;
         color: var(--post-detail-color, rgb(107, 107, 107));
       }
 
       .post-info-wrap {
+        height: 100%;
         display: flex;
         justify-content: space-between;
-        padding: 0 1.5em 1.5em 1.5em;
         font-weight: 400;
         font-size: 0.875rem;
         line-height: 1.1375rem;
-        border-bottom: 1px solid var(--post-border-color, #D1D1D6);
+      }
+
+      .loading-lottie {
+        width: 4.167vw; height: 7.407vh
+      }
+      
+      @media all and (max-width: 479px) {
+        .post-wrap-detail {
+          margin-top: 0px;
+          gap: 16px;
+          padding: 0px;
+        }
+
+        .post-info-wrap {
+          padding-bottom: 0px;
+        }
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -113,7 +134,7 @@ class PostListElement extends HTMLElement {
     const isDarkMode = document.body.classList.contains('dark-mode')
     this.shadowRoot.host.style.setProperty(
       '--post-item-bg',
-      isDarkMode ? '#1C1C1E' : '#ffffff',
+      isDarkMode ? '#1C1C1E' : '',
     )
     this.shadowRoot.host.style.setProperty(
       '--post-item-color',
@@ -133,6 +154,10 @@ class PostListElement extends HTMLElement {
     )
     this.shadowRoot.host.style.setProperty(
       '--post-border-color',
+      isDarkMode ? '#48484a' : '#D1D1D6',
+    )
+    this.shadowRoot.host.style.setProperty(
+      '--border-color',
       isDarkMode ? '#48484a' : '#D1D1D6',
     )
   }
@@ -201,10 +226,34 @@ class PostListElement extends HTMLElement {
       postItem.classList.add('post-item')
 
       postItem.innerHTML = `
+         <div class="post-writer-wrap">
+          ${
+            post.img
+              ? `<img id="post-writer-img" src="${post.img}" class="post-writer-profile" />`
+              : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
+          }
+            <div class="post-writer">${post.writer}</div>
+          </div>
         <div class="post-info-wrap">
           <div class="post-info-wrap-left">
             <div class="post-title">${post.title}</div>
-            <div class="post-wrap-detail">
+            <div class="post-contents">${post.contents}</div>
+
+          </div>
+          ${
+            post.post_img
+              ? `
+          
+            <img class="post-img" src=${post.post_img} alt="post_img"/>
+          `
+              : ''
+          }
+ 
+        </div>
+        <div class="post-wrap-detail">
+              <div class="post-updateAt">
+                ${post.updated_at ? formatCommentDate(post.updated_at) : '날짜 정보 없음'}
+              </div>
               <div class="post-likes">
                 <i class="fa-solid fa-heart"></i>
                 ${checkCount(post.likes)}
@@ -217,20 +266,7 @@ class PostListElement extends HTMLElement {
                 <i class="fa-solid fa-eye"></i>
                ${checkCount(post.views)}
               </div>
-            </div>
-          </div>
-          <div class="post-updateAt">
-            ${post.updated_at ? formatCommentDate(post.updated_at) : '날짜 정보 없음'}
-          </div>
-        </div>
-        <div class="post-writer-wrap">
-          ${
-            post.img
-              ? `<img id="post-writer-img" src="${post.img}" class="post-writer-profile" />`
-              : `<img id="post-writer-div" class="post-writer-img" src='/assets/pre-profile.png' />`
-          }
-          <div class="post-writer">${post.writer}</div>
-        </div>
+       </div>
       `
 
       postItem.addEventListener('click', () => {
@@ -300,7 +336,7 @@ class PostListElement extends HTMLElement {
         src="https://lottie.host/7aabca84-399a-4a9d-98e6-4adf8833b9da/Mym1EA2Izc.lottie"
         background="transparent"
         speed="1"
-        style="width: 4.167vw; height: 7.407vh"
+        class="loading-lottie"
         direction="1"
         playMode="normal"
         loop

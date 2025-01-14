@@ -38,7 +38,11 @@ export async function uploadComment(postId, writer, updated_at, content) {
     })
 
     return await response.json()
-  } catch (error) {}
+  } catch (error) {
+    if ((error.status = 429)) {
+      alert('잠시 후 다시 시도해 주세요!')
+    }
+  }
 }
 
 export async function editComments(postId, commentId, content, updated_at) {
@@ -59,7 +63,11 @@ export async function editComments(postId, commentId, content, updated_at) {
     const data = await response.json()
     return data
   } catch (error) {
-    alert(error.message)
+    if ((error.status = 429)) {
+      alert('잠시 후 다시 시도해 주세요!')
+    } else {
+      alert(error.message)
+    }
     return []
   }
 }

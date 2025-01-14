@@ -36,8 +36,20 @@ export const formatCommentDate = (time) => {
   const minutes = String(date.getUTCMinutes()).padStart(2, '0')
 
   if (hours > 12) {
-    return `${month} ${day}, ${year} PM ${hours}:${minutes}`
+    return `${month} ${day}, ${year}`
   } else if (hours <= 12) {
-    return `${month} ${day}, ${year} AM ${hours}:${minutes}`
+    return `${month} ${day}, ${year}`
+  }
+}
+
+export const formatTime = (time) => {
+  const date = new Date(time)
+  const hours = String(date.getUTCHours()).padStart(2, '0')
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0')
+
+  if (hours > 12) {
+    return `PM ${hours}:${minutes}`
+  } else if (hours <= 12) {
+    return `AM ${hours}:${minutes}`
   }
 }

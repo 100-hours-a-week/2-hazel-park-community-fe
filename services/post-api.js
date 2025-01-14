@@ -23,12 +23,14 @@ export async function uploadPost(title, writer, updatedAt, contents, postImg) {
 
     if (!response.ok) {
       const result = await response.json()
-      alert(result.message)
+      if (response.status === 429) {
+        alert('잠시 후 다시 시도해 주세요!')
+      } else {
+        alert(result.message)
+      }
       return
     }
-  } catch (error) {
-    alert(error.message)
-  }
+  } catch (error) {}
 }
 
 export async function getPosts({ page = 0, limit = 4 } = {}) {

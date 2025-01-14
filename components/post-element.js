@@ -2,7 +2,11 @@ import checkCount from '/utils/check-count.js'
 import handleNavigation from '/utils/navigation.js'
 import { getSessionUser } from '/services/user-api.js'
 import { getPostDetail, deletePost, likes } from '/services/post-api.js'
-import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import {
+  formatDate,
+  formatCommentDate,
+  formatTime,
+} from '/utils/format-date.js'
 
 class PostElement extends HTMLElement {
   constructor() {
@@ -104,11 +108,22 @@ class PostElement extends HTMLElement {
       }
 
       .post-detail-bottom {
+        width: 592px;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 2.222vh 1.25vw 2.963vh 1.25vw;
         border-bottom: 1px solid var(--border-color, #D1D1D6);
+      }
+
+      /* 모바일 세로 (해상도 ~ 479px) */
+      @media all and (max-width: 479px) {
+        .post-detail-top,
+        .post-detail-bottom {
+        width: 100%;
+        padding: 1rem;
+        border-bottom: 1px solid #d1d1d6;
+        }
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -321,7 +336,7 @@ class PostElement extends HTMLElement {
           <div class="wrap-for-gap">
             <div class="post-writer-name">${this.post.post_writer}</div>
             <div class="post-wrap-detail-box">
-              <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at)}</div>
+              <div class="post-updateAt">${formatCommentDate(this.post.post_updated_at) + ' ' + formatTime(this.post.post_updated_at)}</div>
               <div>
                 <div class="post-wrap-detail">
                   <div class="detail-icon">

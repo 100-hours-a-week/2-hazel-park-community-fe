@@ -6,7 +6,11 @@ import {
 } from '/services/comment-api.js'
 import { getSessionUser } from '/services/user-api.js'
 
-import { formatDate, formatCommentDate } from '/utils/format-date.js'
+import {
+  formatDate,
+  formatCommentDate,
+  formatTime,
+} from '/utils/format-date.js'
 import handleNavigation from '/utils/navigation.js'
 
 class CommentListElement extends HTMLElement {
@@ -78,6 +82,10 @@ class CommentListElement extends HTMLElement {
 
       .profile-dropdown-menu:hover {
         background-color: var(--dropdown-menu-hover-bg);
+      }
+
+      .loading-lottie {
+        width: 4.167vw; height: 7.407vh
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -173,7 +181,7 @@ class CommentListElement extends HTMLElement {
                   `
             }
               <div class="post-writer-name">${comment.writer}</div>
-              <div class="post-updateAt">${formatCommentDate(comment.updated_at)}</div>
+              <div class="post-updateAt">${formatCommentDate(comment.updated_at) + ' ' + formatTime(comment.updated_at)}</div>
             </div>
             <div class="comment-contents">${comment.content}</div>
           </div>
@@ -330,7 +338,7 @@ class CommentListElement extends HTMLElement {
         src="https://lottie.host/7aabca84-399a-4a9d-98e6-4adf8833b9da/Mym1EA2Izc.lottie"
         background="transparent"
         speed="1"
-        style="width: 4.167vw; height: 7.407vh"
+        class="loading-lottie"
         direction="1"
         playMode="normal"
         loop
@@ -454,12 +462,13 @@ class CommentListElement extends HTMLElement {
 
     let charCountDisplay = document.createElement('div')
     charCountDisplay.id = 'char-count'
-    charCountDisplay.style.cssText = `
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 5px;
-      text-align: right;
-    `
+    // charCountDisplay.style.cssText = `
+    //   font-size: 0.9rem;
+    //   color: #666;
+    //   margin-top: 5px;
+    //   text-align: right;
+    // `
+    charCountDisplay.classList.add('char-count')
     charCountDisplay.textContent = `0 / 100`
 
     if (!document.getElementById('char-count')) {

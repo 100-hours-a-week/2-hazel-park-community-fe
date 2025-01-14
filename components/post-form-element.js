@@ -99,6 +99,15 @@ class postFormElement extends HTMLElement {
         font-size: 14px;
         cursor: not-allowed;
       }
+
+      @media all and (max-width: 479px) {
+        .char-count {
+          font-size: 10px;
+          color: #666;
+          margin-top: 5px;
+          text-align: right;
+        }
+      }
     `)
 
     this.shadowRoot.adoptedStyleSheets = [mainStyleSheet, additionalStyles]
@@ -133,17 +142,20 @@ class postFormElement extends HTMLElement {
     )
     host.style.setProperty(
       '--input-value-bg',
-      isDarkMode ? '#141414' : '#ffffff',
+      isDarkMode ? '#141414' : '#f9f9f9',
     )
 
     host.style.setProperty('--input-value-color', isDarkMode ? '#ffffff' : '')
-    host.style.setProperty('--login-submit-bg', isDarkMode ? '#8e8e93' : '')
+    host.style.setProperty(
+      '--login-submit-bg',
+      isDarkMode ? '#8e8e93' : '#f9f9f9',
+    )
   }
 
   template() {
     return `
       <div class="post-form-wrap">
-        <form class="post-form">
+        <form class="post-form-detail">
           ${this.isMakePostPage ? this.makePostForm() : this.editPostForm()}
           <input id="submit" type="submit" value="Post" class="make-post-submit" />
         </form>
@@ -160,7 +172,7 @@ class postFormElement extends HTMLElement {
       <div class="email-wrap">
           <div class="input-title">Contents *</div>
           <textarea id="input-contents" placeholder="내용을 입력해주세요." class="input-value input-value-textarea"></textarea>
-          <div id="contents-char-count" style="text-align: right; font-size: 0.9rem; color: #666;">
+          <div id="contents-char-count" class="char-count">
               0 / 1000
           </div>
           <div id="contents-hyper-text" style="height: 1.7em; visibility: hidden;" class="hyper-text"></div>
@@ -169,7 +181,9 @@ class postFormElement extends HTMLElement {
         <div class="input-title">Photo</div>
         <div class="input-file-wrap">
           <input id="imageUpload" type="file" class="input-value-file" accept=".jpg, .jpeg, .png, .gif"/>
-          <label for="imageUpload" class="input-file-label">Upload</label>
+          <label for="imageUpload" class="input-file-label">
+            Upload
+          </label>
           <span id="input-file-span" class="input-file-span">Your photo</span>
         </div>
         <div id="nickname-hyper-text" style="height: 1.5rem" class="hyper-text"></div>

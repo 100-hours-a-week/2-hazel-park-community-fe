@@ -52,6 +52,27 @@ class AuthFormElement extends HTMLElement {
         cursor: not-allowed;
         background-color: var(--login-submit-bg);
       }
+
+      @media all and (max-width: 479px) {
+        .login-submit {
+          width: 80px;
+          margin: 0 auto;
+        }
+      }
+        
+      @media all and (min-width: 480px) and (max-width: 767px) {
+        .login-submit {
+          width: 160px;
+          margin: 0 auto;
+        }
+      }
+
+      @media all and (min-width: 768px) and (max-width: 1023px) {
+        .login-submit {
+          width: 200px;
+          margin: 0 auto;
+        }
+      }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 
@@ -85,11 +106,14 @@ class AuthFormElement extends HTMLElement {
     )
     host.style.setProperty(
       '--input-value-bg',
-      isDarkMode ? '#141414' : '#ffffff',
+      isDarkMode ? '#141414' : '#f9f9f9',
     )
 
     host.style.setProperty('--input-value-color', isDarkMode ? '#ffffff' : '')
-    host.style.setProperty('--login-submit-bg', isDarkMode ? '#8e8e93' : '')
+    host.style.setProperty(
+      '--login-submit-bg',
+      isDarkMode ? '#8e8e93' : '#f9f9f9',
+    )
   }
 
   template() {
@@ -235,7 +259,7 @@ class AuthFormElement extends HTMLElement {
     const nicknameHyperText = this.shadowRoot.getElementById(
       'nickname-hyper-text',
     )
-    nickname = escapeHtml(nickname)
+    nickname = this.escapeHtml(nickname)
     if (!nickname) {
       this.nicknameCheck = false
       nicknameHyperText.innerText = '* 닉네임을 입력해주세요.'
