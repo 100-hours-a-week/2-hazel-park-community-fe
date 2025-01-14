@@ -1,6 +1,7 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
 
 .post {
+  margin-top: 82px;
   display: flex;
   flex-direction: column;
   align-items: center;
