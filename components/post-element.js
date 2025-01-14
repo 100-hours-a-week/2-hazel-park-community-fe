@@ -115,6 +115,16 @@ class PostElement extends HTMLElement {
         padding: 2.222vh 1.25vw 2.963vh 1.25vw;
         border-bottom: 1px solid var(--border-color, #D1D1D6);
       }
+
+      /* 모바일 세로 (해상도 ~ 479px) */
+      @media all and (max-width: 479px) {
+        .post-detail-top,
+        .post-detail-bottom {
+        width: 100%;
+        padding: 1rem;
+        border-bottom: 1px solid #d1d1d6;
+        }
+      }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
 

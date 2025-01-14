@@ -458,12 +458,13 @@ class CommentListElement extends HTMLElement {
 
     let charCountDisplay = document.createElement('div')
     charCountDisplay.id = 'char-count'
-    charCountDisplay.style.cssText = `
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 5px;
-      text-align: right;
-    `
+    // charCountDisplay.style.cssText = `
+    //   font-size: 0.9rem;
+    //   color: #666;
+    //   margin-top: 5px;
+    //   text-align: right;
+    // `
+    charCountDisplay.classList.add('char-count')
     charCountDisplay.textContent = `0 / 100`
 
     if (!document.getElementById('char-count')) {
