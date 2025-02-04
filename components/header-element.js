@@ -1,6 +1,5 @@
 import handleNavigation from '/utils/navigation.js'
-import { logoutUser } from '/services/user-api.js'
-import { getSessionUser } from '/services/user-api.js'
+import { getSessionUser, logoutUser, search } from '/services/user-api.js'
 
 class headerElement extends HTMLElement {
   constructor() {
@@ -24,7 +23,11 @@ class headerElement extends HTMLElement {
     const styleSheet = document.createElement('link')
     styleSheet.rel = 'stylesheet'
     styleSheet.href = '/styles/global.css'
+    const styleSheet2 = document.createElement('link')
+    styleSheet2.rel = 'stylesheet'
+    styleSheet2.href = '/styles/Posts.css'
     this.shadowRoot.appendChild(styleSheet)
+    this.shadowRoot.appendChild(styleSheet2)
 
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(`
@@ -62,11 +65,81 @@ class headerElement extends HTMLElement {
         background-color: var(--dropdown-menu-bg);
         cursor: pointer;
         transition: background-color 0.3s ease;
-        color: var(--dropdown-menu-color)
+        color: var(--dropdown-menu-color);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        display: flex;
+        align-items: center;
       }
       
       .profile-dropdown-menu:hover {
         background-color: var(--dropdown-menu-hover-bg);
+      }
+
+      .search-dropdown {
+        position: absolute;
+        width: 240px;
+        margin-top: 0.278vh;
+        top: 44px;
+        left: 167.26px;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255, 255, 255);
+        border-radius: 4px;
+        font-weight: 400;
+        font-size: 0.75rem;
+        line-heihgt: 0.9075rem;
+        text-wrap: nowrap;
+        visibility: hidden;
+        z-index: 1;
+        box-shadow:
+          var(--dropdown-shadow-1) 0px 0px 4px,
+          var(--dropdown-shadow-2) 0px 2px 8px;        
+      }
+
+      .search-box {
+        padding: 4px 16px 4px 16px;
+        width: 240px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 20px;
+        background-color: var(--search-box-bg);
+        justify-content: space-between;
+      }
+
+      .search-icon {
+        -webkit-text-stroke: 0.05px;
+        color: var(--search-icon-color);
+        cursor: pointer;
+      }
+
+      .profile-dropdown-menu-box {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        background-color: var(--dropdown-menu-bg);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: var(--dropdown-menu-color);
+        display: flex;
+        align-items: center;
+      }
+
+      .dropdown-header {
+        color: var(--dropdown-header-color)
+      }
+
+      .no-results {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 1.5rem;
+        padding-left: 1.5rem;
+        background-color: var(--dropdown-menu-bg);
+        transition: background-color 0.3s ease;
+        color: var(--dropdown-menu-color)
       }
     `)
     this.shadowRoot.adoptedStyleSheets = [sheet]
@@ -120,6 +193,21 @@ class headerElement extends HTMLElement {
       '--dropdown-menu-hover-bg',
       isDarkMode ? 'rgb(48, 48, 48)' : 'rgba(0, 0, 0, 0.05)',
     )
+
+    host.style.setProperty(
+      '--search-box-bg',
+      isDarkMode ? '#1c1c1e' : '#efefef',
+    )
+
+    host.style.setProperty(
+      '--search-icon-color',
+      isDarkMode ? '#ebebf5' : '#6b6b6b',
+    )
+
+    host.style.setProperty(
+      '--dropdown-header-color',
+      isDarkMode ? '#ebebf5' : '#6b6b6b',
+    )
   }
 
   // 테마 초기화 메서드
@@ -157,9 +245,24 @@ class headerElement extends HTMLElement {
     return `
     <header>
       <div id="header-wrap" class="header-wrap">
-        <p id="header-text" class="header-text">
-          Hazel Forum
-        </p>
+        <div class="search-wrap">
+          <p id="header-text" class="header-text">
+            Hazel Forum
+          </p>
+          <div class="search-box">
+            <input id="search-input" type="text" class="search-input"/>
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          </div>
+          <div id="search-dropdown" class="search-dropdown">
+            <div id="dropdown-people" class="profile-dropdown-menu-box" style="display: none">
+            </div>
+            <div id="dropdown-title" class="profile-dropdown-menu-box" style="display: none">
+            </div>
+            <div id="dropdown-write" class="profile-dropdown-menu">
+              글 쓰러 가기
+            </div>
+          </div>
+        </div>
         <div class="wrap-for-flex">
           <div class="theme-toggle">
             <i class="fa-solid fa-sun"></i>
@@ -211,6 +314,8 @@ class headerElement extends HTMLElement {
       dropdownEditPassword,
       dropdownLogin,
       dropdownLogout,
+      searchInput,
+      searchDropdown,
     } = this.getElements()
 
     headerText?.addEventListener('click', () =>
@@ -224,10 +329,25 @@ class headerElement extends HTMLElement {
     })
 
     document.addEventListener('click', (event) => {
+      searchDropdown.style.visibility = 'hidden'
       if (profileImg && !profileImg.contains(event.target)) {
         profileDropdown.style.visibility = 'hidden'
       }
     })
+
+    searchInput?.addEventListener('click', (event) => {
+      event.stopPropagation()
+      searchDropdown.style.visibility =
+        searchDropdown.style.visibility === 'visible' ? 'hidden' : 'visible'
+    })
+
+    searchInput?.addEventListener(
+      'input',
+      debounce(
+        () => this.searchKeyword(this.escapeHtml(searchInput.value.trim())),
+        300,
+      ),
+    )
 
     dropdownEditProfile.addEventListener('click', () =>
       handleNavigation('/html/edit-profile.html'),
@@ -262,6 +382,8 @@ class headerElement extends HTMLElement {
       dropdownLogout: getElement('dropdown-logout'),
       profileWrap: getElement('profile-wrap'),
       headerWrap: getElement('header-wrap'),
+      searchInput: getElement('search-input'),
+      searchDropdown: getElement('search-dropdown'),
     }
   }
 
@@ -283,6 +405,161 @@ class headerElement extends HTMLElement {
 
   getLoadingPromise() {
     return this.loadingPromise
+  }
+
+  escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+  }
+
+  async searchKeyword(keyword) {
+    console.log('검색 키워드:', keyword)
+
+    // 검색어가 없으면 dropdown 숨기기
+    const searchDropdown = this.shadowRoot.getElementById('search-dropdown')
+    if (!keyword) {
+      searchDropdown.style.visibility = 'hidden'
+      return
+    }
+
+    try {
+      const result = await search(keyword)
+
+      const noResultsMsg = searchDropdown.querySelector('.no-results')
+      if (noResultsMsg) {
+        noResultsMsg.remove()
+      }
+
+      if (!result || !result.results || result.results.length === 0) {
+        this.renderSearchResults([], [])
+        return
+      }
+
+      const users = result.results.filter((item) => item.type === 'user')
+      const posts = result.results.filter((item) => item.type === 'post')
+
+      this.renderSearchResults(users, posts)
+    } catch (error) {
+      console.error('검색 오류:', error)
+    }
+  }
+
+  renderSearchResults(users, posts) {
+    const searchDropdown = this.shadowRoot.getElementById('search-dropdown')
+
+    let dropdownPeople = this.shadowRoot.getElementById('dropdown-people')
+    let dropdownTitle = this.shadowRoot.getElementById('dropdown-title')
+    let dropdownWrite = this.shadowRoot.getElementById('dropdown-write')
+
+    if (!dropdownPeople) {
+      dropdownPeople = document.createElement('div')
+      dropdownPeople.id = 'dropdown-people'
+      dropdownPeople.classList.add('profile-dropdown-menu-box')
+      searchDropdown.appendChild(dropdownPeople)
+    }
+
+    if (!dropdownTitle) {
+      dropdownTitle = document.createElement('div')
+      dropdownTitle.id = 'dropdown-title'
+      dropdownTitle.classList.add('profile-dropdown-menu-box')
+      searchDropdown.appendChild(dropdownTitle)
+    }
+
+    if (!dropdownWrite) {
+      dropdownWrite = document.createElement('div')
+      dropdownWrite.id = 'dropdown-write'
+      dropdownWrite.classList.add('profile-dropdown-menu')
+      dropdownWrite.textContent = '글 쓰러 가기'
+
+      dropdownWrite.addEventListener('click', (event) => {
+        console.log('왜 이동이 안 될가')
+        event.stopPropagation() // 드롭다운이 먼저 사라지는 문제 방지
+        handleNavigation('/html/make-post.html')
+        searchDropdown.style.visibility = 'hidden' // 페이지 이동 후 드롭다운 숨기기
+      })
+    }
+
+    if (
+      !searchDropdown ||
+      !dropdownPeople ||
+      !dropdownTitle ||
+      !dropdownWrite
+    ) {
+      console.error('검색 결과를 표시할 DOM 요소를 찾을 수 없습니다.')
+      return
+    }
+
+    // 기존 검색 결과 초기화
+    dropdownPeople.innerHTML = '<div class="dropdown-header">People</div>'
+    dropdownTitle.innerHTML = '<div class="dropdown-header">Title</div>'
+
+    if (users.length === 0 && posts.length === 0) {
+      searchDropdown.innerHTML = '<div class="no-results">검색 결과 없음</div>'
+      searchDropdown.appendChild(dropdownWrite)
+      searchDropdown.style.visibility = 'visible'
+      return
+    }
+
+    // 유저 검색 결과
+    if (users.length > 0) {
+      dropdownPeople.style.display = 'block'
+      users.forEach((user) => {
+        const userItem = document.createElement('div')
+        userItem.classList.add('profile-dropdown-menu')
+        userItem.style.gap = '8px'
+
+        const userImg = document.createElement('img')
+        userImg.src = user.img || '/assets/pre-profile.png'
+        userImg.alt = `${user.name}의 프로필 이미지`
+        userImg.classList.add('post-writer-profile')
+
+        const userName = document.createElement('div')
+        userName.textContent = `${user.name}`
+
+        userItem.appendChild(userImg)
+        userItem.appendChild(userName)
+
+        // userItem.addEventListener('click', () =>
+        //   handleNavigation(`넣을까말까넣을까말까`),
+        // )
+
+        dropdownPeople.appendChild(userItem)
+      })
+    } else {
+      dropdownPeople.style.display = 'none'
+    }
+
+    // 게시글 검색 결과
+    if (posts.length > 0) {
+      dropdownTitle.style.display = 'block'
+      posts.forEach((post) => {
+        const postItem = document.createElement('div')
+        postItem.classList.add('profile-dropdown-menu')
+        postItem.textContent = post.name
+        postItem.addEventListener('click', () =>
+          handleNavigation(`/html/post.html?id=${post.id}`),
+        )
+        dropdownTitle.appendChild(postItem)
+      })
+    } else {
+      dropdownTitle.style.display = 'none'
+    }
+
+    searchDropdown.appendChild(dropdownWrite)
+
+    searchDropdown.style.visibility = 'visible'
+  }
+}
+
+function debounce(func, delay) {
+  let timer
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => func.apply(this, args), delay)
   }
 }
 
