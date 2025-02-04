@@ -191,3 +191,21 @@ export async function logoutUser() {
     alert(error.message)
   }
 }
+
+export async function search(keyword) {
+  try {
+    const response = await fetch(`${baseUrl}/search`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ keyword }),
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    alert(error.message)
+  }
+}

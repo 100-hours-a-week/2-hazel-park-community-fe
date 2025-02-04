@@ -81,6 +81,24 @@ textarea {
   align-items: center;
 }
 
+.search-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.search-input {
+  width: 100%;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
 .header-back {
   height: 18.89px;
 }
