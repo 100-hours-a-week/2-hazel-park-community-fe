@@ -258,7 +258,7 @@ class headerElement extends HTMLElement {
             </div>
             <div id="dropdown-title" class="profile-dropdown-menu-box" style="display: none">
             </div>
-            <div id="dropdown-write" class="profile-dropdown-menu">
+            <div id="dropdown-write" class="profile-dropdown-menu" style="display: block">
               글 쓰러 가기
             </div>
           </div>
@@ -316,6 +316,7 @@ class headerElement extends HTMLElement {
       dropdownLogout,
       searchInput,
       searchDropdown,
+      dropdownWrite,
     } = this.getElements()
 
     headerText?.addEventListener('click', () =>
@@ -368,6 +369,10 @@ class headerElement extends HTMLElement {
       this.updateProfileStatus()
       handleNavigation('/html/Log-in.html')
     })
+
+    dropdownWrite?.addEventListener('click', (event) => {
+      handleNavigation('/html/make-post.html')
+    })
   }
 
   getElements() {
@@ -384,6 +389,7 @@ class headerElement extends HTMLElement {
       headerWrap: getElement('header-wrap'),
       searchInput: getElement('search-input'),
       searchDropdown: getElement('search-dropdown'),
+      dropdownWrite: getElement('dropdown-write'),
     }
   }
 
@@ -474,13 +480,6 @@ class headerElement extends HTMLElement {
       dropdownWrite.id = 'dropdown-write'
       dropdownWrite.classList.add('profile-dropdown-menu')
       dropdownWrite.textContent = '글 쓰러 가기'
-
-      dropdownWrite.addEventListener('click', (event) => {
-        console.log('왜 이동이 안 될가')
-        event.stopPropagation() // 드롭다운이 먼저 사라지는 문제 방지
-        handleNavigation('/html/make-post.html')
-        searchDropdown.style.visibility = 'hidden' // 페이지 이동 후 드롭다운 숨기기
-      })
     }
 
     if (
